@@ -1,0 +1,9 @@
+# Local Claude Code project settings — machine-specific permissions, not part of the package
+.claude/settings.local.json
+
+# Private internal working notes — never shipped, never pushed
+dev/
+
+# OS cruft
+.DS_Store
+Thumbs.db
