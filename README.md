@@ -4,6 +4,10 @@ A protocol and skills kit for scoping, generating, and building Claude Code proj
 
 Banka gives a project two things most AI-assisted builds skip: a scoping step that decides how much structure a project actually needs *before* any files get generated, and a permanent, reusable set of Skills that carry a project through its whole build loop afterward — planning, delegation, review, recovery, and session handoff.
 
+## Why "Banka" 🛶
+
+*Banka* — shortened from *bangka*, Tagalog for the traditional Philippine outrigger boat — is simple, stable, and built to be steered deliberately rather than left to drift. That's the role this framework plays: it doesn't build the project for you, it keeps it pointed at a chosen destination through every session in between. Scoping sets the heading. The Skills Kit — `charter`, `survey`, `dredge`, `moor`, and the rest — is the crew that keeps the vessel on course, correcting drift instead of letting each session start over from nowhere. The destination is never abstract: a haven, the harbor a project was actually scoped to reach, not just wherever momentum happens to leave it.
+
 ```
 external scope (optional)
         |
