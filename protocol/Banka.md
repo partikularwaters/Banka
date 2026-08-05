@@ -8,6 +8,22 @@
 
 ---
 
+### Terms used throughout this document
+
+A handful of terms get used before the section that formally defines them. Quick orientation — each still has one authoritative definition, linked below, not repeated here.
+
+| Term | Means | Defined in full |
+| --- | --- | --- |
+| **Tier** | Minimal, Core, or Standard — how much file structure a project gets, sized to how complex it actually is. | Section 2 (how it's decided), Sections 3–5 (what each tier looks like) |
+| **Rubric** | A five-question yes/no checklist that scores a project and resolves its tier. | Section 2 |
+| **`IDEA-SCOPE.md`** | The permanent, never-edited record of a project's original scope, saved before any tier files are generated. | Section 1.5 |
+| **Hard Default / Soft Suggestion / Agnostic** | Three registers governing how confidently a default gets stated — settled fact, a proposal to react to, or a real choice to contrast, never pick for the user. | Section 2.6 |
+| **Fill-In Discipline** | The five binding rules for how content gets written into a project's generated files. | Section 2.5 |
+| **Craft Layer** | A quality-layer domain (e.g. animation) where a strong outside authority exists — Agnostic until a project opts in, Hard Default after. | Section 7.6 (the standard), Section 7.7 (the reference instance) |
+| **Skills Kit** | The nine permanent Skills (`charter`, `survey`, `dredge`, `remember`, `moor`, `scale`, `delegate`, `watershed`, `linis`) — installed once per machine, used across every project. | Section 7 |
+
+---
+
 ## SECTION 1: WHAT THIS PROTOCOL DOES NOT DO
 
 - It does not generate application code.

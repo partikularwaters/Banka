@@ -9,18 +9,18 @@ One diagram, then one paragraph per stage. If a file reference below looks wrong
 *(Kept deliberately free of box-drawing alignment — a fixed-width ASCII diagram breaks every time a skill name's length changes, which is exactly what happened here during the rename pass. Indentation and arrows only, nothing that depends on counting characters.)*
 
 ```
-STAGE 0 — Idea Mapping (IMS)
-  External, separate protocol. Never touches Claude Code.
-  idea-mapping-protocol.md, run in any chat surface.
-  Output: one markdown Idea Scope Document (ISD).
+STAGE 0 — External Scoping (optional)
+  Any scoping process, or the user's own notes. Never touches Claude Code.
+  Output: a document with a real shape — purpose, users, feature scope,
+  constraints, and a definition of done.
     |
-    |  the ISD, handed to Claude Code
+    |  handed to Claude Code
     v
 
 STAGE 1 — Scoping Intake (Protocol §1.5)
-  State 1: ISD + rubric already run  -> read tier directly
-  State 2: ISD, no rubric            -> read substance, run §2
-  State 3: nothing exists            -> run built-in fallback pass
+  State 1: scope doc + rubric already run  -> read tier directly
+  State 2: scope doc, no rubric            -> read substance, run §2
+  State 3: nothing exists                  -> run built-in fallback pass
   Writes: IDEA-SCOPE.md at project root (permanent, never edited)
     |
     |  a resolved tier: Minimal / Core / Standard
@@ -71,9 +71,9 @@ Also orthogonal:
 
 ---
 
-## Stage 0 — Idea Mapping (external)
+## Stage 0 — External Scoping (optional)
 
-Lives entirely outside this framework, at `idea-mapping-protocol.md` (currently user-managed, not shipped as part of this package — see the Naming/IMS decisions in `dev/memory-bank.md` for why that separation is deliberate, not an oversight). It runs Phase 0 (artifact gathering) through Phase 6 (definition of done), tags every substantive line with a decision-state taxonomy, runs three closing gates, and — as its very last act — runs *this* protocol's own complexity rubric (§2) if one is known, recording the individual per-question answers rather than a summary. Output is one self-contained markdown document, the Idea Scope Document (ISD), readable with zero further AI involvement.
+Not part of this framework, and not required by it — Section 1.5's State 3 exists precisely so nothing breaks if this stage is skipped entirely. Any process that produces a document with the right shape counts, regardless of its filename or which framework produced it: a stated purpose, users, a staged feature scope, constraints, and a definition of done. A dedicated scoping protocol run in a separate chat surface is one way to get there; a person's own notes in the same shape count equally. If that document also already contains this protocol's own complexity rubric (§2), recorded as individual per-question answers rather than a summary, Stage 1 reads the resulting tier directly instead of re-running it.
 
 ## Stage 1 — Scoping Intake (§1.5)
 
