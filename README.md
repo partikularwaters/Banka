@@ -25,7 +25,7 @@ Install the Banka Skills Kit from <path-to-clone>/skills-kit/ into
 2. Open a Claude Code session anywhere and paste the instruction above (with the real path to your clone).
 3. Done — every project on the machine now has access to all nine skills.
 
-**Upgrading from an older, pre-rename install:** check `~/.claude/commands/` (the old single-file command location) and `~/.claude/skills/` for stale files under the old names (`architect`, `review`, `recover`, `imprint`, or an old `remember`/`scale` predating this package) and remove those first — a same-named old command shadowing a new skill is worse than a missing one.
+**Before installing:** check `~/.claude/commands/` and `~/.claude/skills/` (personal, machine-wide) and, if you're in a specific project, its own `.claude/commands/` and `.claude/skills/` too, for any existing file with the same name as one of this package's nine skills. If you find one, don't delete it unilaterally — back it up and confirm with the user how they want to reconcile it before installing over it.
 
 Full install details and rationale: [protocol/Banka.md](protocol/Banka.md), Section 7.
 
