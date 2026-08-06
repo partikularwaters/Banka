@@ -20,7 +20,13 @@ Read the subject itself (`$ARGUMENTS`, or the most recent relevant work in this 
 
 ## Step 2 — Run five independent audits
 
-If this environment supports genuinely separate sub-agent or parallel-task execution, use it — five truly independent passes are stronger than one session role-playing five in sequence. If not, adopt each persona fully in turn, in this session, clearly labeled, and do not let one persona's conclusions leak into the next's framing before it's done.
+Check whether this environment has a subagent- or parallel-task-dispatch tool available (something that can spawn a separate model call and return its result, distinct from just continuing this session). If one exists, use it: dispatch all five personas below as separate calls, run in parallel, each given the subject and context files read in Step 1 plus that persona's paragraph verbatim as its entire instruction. Wait for all five to return before Step 3. Dispatching them one at a time and calling it parallel doesn't count — if the tool can't actually run them concurrently, that's the fallback path below, not this one.
+
+If no such tool exists, fall back: adopt each persona fully in turn, in this session, clearly labeled, and do not let one persona's conclusions leak into the next's framing before it's done.
+
+Whichever path runs, Step 3's report states which one plainly — never left for the user to guess.
+
+**A caveat that holds regardless of which path ran:** all five personas are the same underlying model reading the same context, differing only in which paragraph below they were given. That buys isolated framing and stops one lens from anchoring another — genuinely useful — but it is not the independence five different human reviewers would bring, and the report should not imply otherwise.
 
 **1. The Skeptic — Security & Failure Modes**
 Assumes the worst case. Where does this break under bad input, a malicious actor, a race condition, a dependency failing, or a value nobody thought to check? Every failure mode this persona finds gets stated as a concrete scenario, not a vague "could be more robust."
@@ -45,6 +51,8 @@ Adopt a sixth role — **the Consolidator** — genuinely distinct from the five
 
 ```
 ## Audit — [Subject]
+
+**Method:** [parallel subagent dispatch / sequential role-play in this session — state which one actually ran]
 
 ### Findings by perspective
 [Brief, attributed summary from each of the 5 — not full reports, the headline of each]
