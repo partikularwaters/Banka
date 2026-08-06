@@ -38,18 +38,19 @@ For each candidate item, determine its **delegation tier**:
 - Genuinely ambiguous — a judgment call the plan didn't fully resolve
 - Cross-cutting — touches multiple systems/files in ways that are easy to get subtly wrong
 
-**Before finalizing the split, check for over-splitting.** "Smallest independently-executable unit" cuts both ways — two candidate items are not actually independent units just because they could technically be described separately. Merge two Junior-safe items into a single ticket when both hold:
-- They touch the same file(s), or files tightly coupled to each other
-- Neither has independent value on its own — doing one without the other leaves nothing checkable or shippable (e.g. a form field with no handler wired to it)
+**Before finalizing the split, check for over-splitting.** "Smallest independently-executable unit" cuts both ways — two candidate items are not actually independent units just because they could technically be described separately. Merge two Junior-safe items into a single ticket when either holds:
+- They touch the same file(s)
+- One item's `Done when` condition cannot be verified true without the other item already being done — this is the "stated dependency" case from this step's opening paragraph, made concrete
 
-If either holds, keep them as separate tickets instead — the separate `/survey` checkpoint is worth the extra session, not overhead to eliminate:
-- Either item is independently valuable or shippable on its own
-- They touch different areas of the codebase
-- They carry different risk profiles (one sits closer to an Absolute Invariant than the other)
+Keep them as separate tickets when either holds instead — the separate `/survey` checkpoint is worth the extra session, not overhead to eliminate:
+- Each item's `Done when` condition is independently checkable on its own, with no dependency either direction
+- Either item independently qualifies as Senior-required under the tier rules above — never merge a Senior-required item into a Junior-safe one to make it delegable; reclassify the whole merged unit as Senior-required instead
 
-A merged ticket still follows Step 2's format exactly — one combined spec, one `Done when` covering the whole outcome, one ticket, one session. This is not a new execution mode; it's writing the ticket at the granularity it should have had from the start.
+**After merging, re-run tier classification on the combined scope** — don't grandfather a merged ticket's tier in from its pre-merge pieces. Two individually Junior-safe items can merge into something cross-cutting enough to require Senior-required (touching multiple files/systems in a way that's easy to get subtly wrong is already a Senior-required trigger above).
 
-State the tier and a one-line reason for every item, including the Senior-required ones — do not silently drop them from the queue, list them so the user knows what's intentionally being kept back.
+**A merged ticket unions both source items' boundaries, not just one.** Its `Files to touch` and `Files to NOT touch` cover the combined set from both; its `Do not` list carries forward every boundary either item stated. Dropping one item's boundary because the other item's spec became the base is exactly the kind of silent gap this project's checkability standard exists to prevent.
+
+State the tier and a one-line reason for every item, including the Senior-required ones — do not silently drop them from the queue, list them so the user knows what's intentionally being kept back. **State a one-line reason for every merge too**, the same way — "why is this one ticket, not two" should never require reverse-engineering from the merged ticket's shape.
 
 ---
 
@@ -85,6 +86,10 @@ add new dependencies without flagging first"]
 
 Create the file if it doesn't exist. Append tickets — never silently overwrite a queue that already has unstarted or in-progress items without telling the user what's being replaced.
 
+**Ticket numbers are append-only.** Never renumber or reuse a number already used in this file — not across separate `/delegate` runs, and not when a merge collapses two candidates into one. A stable number is what lets a session-opening prompt point at "Ticket N" unambiguously (see `delegation-queue.md`'s own sample prompts); a number that can shift meaning defeats that.
+
+For a merged ticket, the one-line spec summary in the checklist below must name both folded-in behaviors, not just the more prominent one — that line is often the only thing a future skim reads without opening the full spec.
+
 ```markdown
 # Delegation Queue
 
@@ -113,9 +118,9 @@ Delegation queue written: [N] tickets ready for a fresh session,
 [M] items kept here because [tier reasoning].
 
 For each ready ticket: open a new session, set it to the lighter
-model, and give it only the ticket text plus the project's context
-files. Do not carry this conversation's history into that session —
-a fresh session is the point.
+model, and point it at its ticket in delegation-queue.md — see that
+file's own sample prompts for the exact wording. Do not carry this
+conversation's history into that session — a fresh session is the point.
 
 After each ticket completes, come back here (or any senior-model
 session) and run /survey on the result before marking it done.

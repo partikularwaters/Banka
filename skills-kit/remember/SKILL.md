@@ -72,7 +72,7 @@ If version control is in use, run its equivalent of `git log --oneline -10` and 
 
 ### Step 2 — Read everything available
 
-Read the resolved session-state file first (`CLAUDE.md`'s Session Notes, `core/progress.md`, or `context/progress-tracker.md`). Under Core or Standard tier, also read every other file listed in `CLAUDE.md`'s Source of truth section. Do not scan beyond what's actually referenced.
+Read the resolved session-state file first (`CLAUDE.md`'s Session Notes, `core/progress.md`, or `context/progress-tracker.md`). Under Core or Standard tier, also read every other file listed in `CLAUDE.md`'s Source of truth section. Do not scan beyond what's actually referenced — with one deterministic exception, regardless of tier: if `delegation-queue.md` exists (project root for Minimal/Core, `/context/` for Standard), read it too. Model Delegation Setup can be enabled without every project's `CLAUDE.md` remembering to list it in prose, so this is a filesystem check, not a dependency on a list staying current — the same reasoning this project already uses for tier resolution itself.
 
 Never repeat or surface raw secrets from any source, even in restored context — summarize in redacted form only.
 
