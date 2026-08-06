@@ -110,6 +110,8 @@ After each ticket completes, come back here (or any senior-model
 session) and run /survey on the result before marking it done.
 ```
 
+Sample prompts for opening each kind of new session — one for a Junior-safe ticket, one for a Senior-required item on a stronger model — are kept in `delegation-queue.md`'s own template, not restated here, so there's one copy to keep current instead of two.
+
 ---
 
 ## The Rule

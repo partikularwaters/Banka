@@ -19,3 +19,48 @@ _Empty. Populated by `/delegate`._
 
 ## Completed
 _Move tickets here once `/survey` has passed them, with the date and a one-line outcome note._
+
+---
+
+## Sample prompts for opening the next session
+
+Copy whichever applies when starting a fresh session to work an item from this queue.
+
+**Junior-safe ticket (fresh session, lighter model):**
+```
+Read CLAUDE.md [and everything in /core/ or /context/, if applicable] in
+this project. You're picking up a delegated ticket from
+delegation-queue.md — your scope is that ticket only, per the "If you are
+executing a delegated ticket" section in CLAUDE.md.
+
+Here is your ticket:
+
+[paste the full Ticket block verbatim — Tier, Pattern to match, Files to
+touch, Files to NOT touch, Spec, Done when, Do not]
+
+Do not read or start any other ticket in the queue. Do not touch files
+outside what's listed above. If anything here is ambiguous or needs a
+value that isn't supplied, stop and report the gap — do not guess and
+proceed. When done, report completion against the "Done when" condition
+specifically, not just "it works."
+```
+
+**Senior-required item (fresh session, same or stronger model):**
+```
+Run /remember restore first — I want full current project context, not
+just this one item.
+
+This item was kept Senior-required in delegation-queue.md rather than
+delegated, because: [the one-line reason /delegate gave].
+
+It's part of the plan approved via /charter for [feature name]. Relevant
+section of that plan:
+
+[paste the specific plan section this item covers]
+
+This wasn't written as a self-contained ticket — Senior-required items
+aren't, by design. Treat it as open-ended within that plan's scope:
+resolve judgment calls as they come up rather than expecting everything
+pre-decided. Confirm you understand the item and its "why it's
+Senior-required" reason before starting.
+```
