@@ -29,19 +29,15 @@ Copy whichever applies when starting a fresh session to work an item from this q
 **Junior-safe ticket (fresh session, lighter model):**
 ```
 Read CLAUDE.md [and everything in /core/ or /context/, if applicable] in
-this project. You're picking up a delegated ticket from
-delegation-queue.md — your scope is that ticket only, per the "If you are
-executing a delegated ticket" section in CLAUDE.md.
-
-Here is your ticket:
-
-[paste the full Ticket block verbatim — Tier, Pattern to match, Files to
-touch, Files to NOT touch, Spec, Done when, Do not]
+this project. You're picking up a delegated ticket — per the "If you are
+executing a delegated ticket" section in CLAUDE.md, open
+delegation-queue.md and read Ticket [N] under Full ticket specs. That
+ticket is your entire scope.
 
 Do not read or start any other ticket in the queue. Do not touch files
-outside what's listed above. If anything here is ambiguous or needs a
+outside what Ticket [N] lists. If anything in it is ambiguous or needs a
 value that isn't supplied, stop and report the gap — do not guess and
-proceed. When done, report completion against the "Done when" condition
+proceed. When done, report completion against its "Done when" condition
 specifically, not just "it works."
 ```
 

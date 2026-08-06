@@ -38,6 +38,17 @@ For each candidate item, determine its **delegation tier**:
 - Genuinely ambiguous — a judgment call the plan didn't fully resolve
 - Cross-cutting — touches multiple systems/files in ways that are easy to get subtly wrong
 
+**Before finalizing the split, check for over-splitting.** "Smallest independently-executable unit" cuts both ways — two candidate items are not actually independent units just because they could technically be described separately. Merge two Junior-safe items into a single ticket when both hold:
+- They touch the same file(s), or files tightly coupled to each other
+- Neither has independent value on its own — doing one without the other leaves nothing checkable or shippable (e.g. a form field with no handler wired to it)
+
+If either holds, keep them as separate tickets instead — the separate `/survey` checkpoint is worth the extra session, not overhead to eliminate:
+- Either item is independently valuable or shippable on its own
+- They touch different areas of the codebase
+- They carry different risk profiles (one sits closer to an Absolute Invariant than the other)
+
+A merged ticket still follows Step 2's format exactly — one combined spec, one `Done when` covering the whole outcome, one ticket, one session. This is not a new execution mode; it's writing the ticket at the granularity it should have had from the start.
+
 State the tier and a one-line reason for every item, including the Senior-required ones — do not silently drop them from the queue, list them so the user knows what's intentionally being kept back.
 
 ---
