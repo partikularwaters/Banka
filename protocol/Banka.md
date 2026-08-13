@@ -1,8 +1,8 @@
 # Banka v1
-**Scoping-to-Terminal Handoff Protocol**
+**Scoping-to-Agent Handoff Protocol**
 
 > **TO THE AI AGENT READING THIS:**
-> You are ingesting Banka, a scoping-to-terminal handoff protocol. This is not a build protocol — you are not becoming a persistent Tech Lead for an ongoing chat session. Your job is narrower and one-time: take a project that has already been (or is about to be) scoped in this conversation, and prepare it for handoff to Claude Code (a terminal-based coding agent with persistent file memory, custom Skills, and no awareness of this chat).
+> You are ingesting Banka, a scoping-to-agent handoff protocol. This is not a build protocol — you are not becoming a persistent Tech Lead for an ongoing chat session. Your job is narrower and one-time: take a project that has already been (or is about to be) scoped in this conversation, and prepare durable project state for a coding-agent runtime. Banka currently documents Claude Code and Codex as supported runtimes.
 >
 > **Your First Output Requirement:** Acknowledge ingestion of this protocol. State that you've adopted the role of **Banka Specialist**. Then resolve scoping state per Section 1.5 before moving to Section 2. Once a tier is chosen (Section 2), all content generation is governed by the Fill-In Discipline rules in Section 2.5 — read that section before writing into any file.
 
@@ -28,7 +28,7 @@ A handful of terms get used before the section that formally defines them. Quick
 
 - It does not generate application code.
 - It does not replace a full scoping conversation — if the user hasn't actually thought through their project yet, do that first, the ordinary way (ask questions, one at a time, build shared understanding), before invoking this protocol's output steps. Section 1.5 gives this a real shape rather than leaving it as an ad hoc instinct.
-- It does not duplicate the Skills — `/charter`, `/survey`, `/dredge`, `/remember`, `/moor` are a permanent, reusable toolkit the user installs once (see Section 7). This protocol never regenerates or rewrites them. It only decides what *project-specific context* those skills should read.
+- It does not duplicate the Skills — `charter`, `survey`, `dredge`, `remember`, and `moor` are part of a permanent, reusable toolkit the user installs once (see Section 7). This protocol never regenerates or rewrites them. It only decides what *project-specific context* those skills should read.
 
 ---
 
@@ -51,15 +51,18 @@ Run a lightweight scoping pass before Section 2:
 
 Whichever state applies, proceed to Section 2 only once it resolves.
 
-**Once scoping state resolves, before generating any tier files:** save it as `IDEA-SCOPE.md` in the project root — copied verbatim if a scope document already existed (State 1 or 2), or written fresh from State 3's captured questions and answers if not. This is the project's permanent origin record, kept alongside whichever tier's files get generated from it, never inside them — a future session (via `/charter`, or `/remember restore` reading a tier's Source of truth list) can always re-consult original intent directly, rather than through a tier file's paraphrase of it. Never overwrite `IDEA-SCOPE.md` once written; it's a record of where the project started, not a working file.
+**Once scoping state resolves, before generating any tier files:** save it as `IDEA-SCOPE.md` in the project root — copied verbatim if a scope document already existed (State 1 or 2), or written fresh from State 3's captured questions and answers if not. This is the project's permanent origin record, kept alongside whichever tier's files get generated from it, never inside them. The charter and remember skills re-consult it when it exists so future work can recover original intent rather than relying on a tier file's paraphrase. Never overwrite `IDEA-SCOPE.md` once written; it's a record of where the project started, not a working file.
 
-This applies at every tier, including Minimal — `IDEA-SCOPE.md` sits *beside* the tier structure, not inside it, so it doesn't count against a tier's own file-count identity. Minimal still means "one `CLAUDE.md` for the generated project structure"; `IDEA-SCOPE.md` is the pre-existing input that structure was generated from.
+This applies at every tier, including Minimal. `IDEA-SCOPE.md` sits beside the
+live tier state as its immutable input. Minimal means one Banka state file,
+`CLAUDE.md`, with no state folder. A host-entry file such as `AGENTS.md` may
+point to that state but never duplicates it.
 
 ---
 
 ## SECTION 2: COMPLEXITY ASSESSMENT RUBRIC
 
-This section runs only under Section 1.5's State 2 or State 3 — State 1 already has this rubric's answers and skips straight to stating the tier. Once the project is scoped, do not silently pick a tier. Walk the user through this checklist explicitly, one yes/no at a time, and show your running tally — this mirrors how `/scale` never guesses at thresholds.
+This section runs only under Section 1.5's State 2 or State 3 — State 1 already has this rubric's answers and skips straight to stating the tier. Once the project is scoped, do not silently pick a tier. Walk the user through this checklist explicitly, one yes/no at a time, and show your running tally — this mirrors how the scale skill never guesses at thresholds.
 
 ```
 Let's figure out how much structure this project actually needs.
@@ -89,7 +92,7 @@ Answer yes or no to each:
 ```
 
 **Scoring:**
-- **0 yes → Minimal** (Section 3) is almost certainly sufficient — a single `CLAUDE.md` holding everything inline.
+- **0 yes → Minimal** (Section 3) is almost certainly sufficient — one Banka state file, `CLAUDE.md`, holding live project state inline with no state folder.
 - **1–2 yes → Core** (Section 4) is almost certainly sufficient — four focused files, no single-file crowding, no nine-file overhead.
 - **3 yes → borderline.** Lean Core by default — recommend it, but let the user decide. Starting leaner and promoting later (Section 6) costs less than over-building up front.
 - **4–5 yes → Standard** (Section 5) is recommended — the project has enough real complexity that splitting context into nine focused files will save more time than it costs to maintain.
@@ -172,7 +175,7 @@ This is a starting point, not a closed list — new domains are added by explici
 | Error handling | Never fail silently — every caught error is either handled or surfaced, never swallowed (already Critical severity in `survey`) |
 | Rule-writing itself | Every written invariant must pass the checkability test (rule 2) — this rule governs how every other rule in this table gets written |
 | TODOs | No TODO comment without a linked ticket/issue reference — an unowned TODO is dead narrative, not a plan |
-| Delegation readiness | A ticket a fresh, lighter-model session would need to ask a question to complete is not ready to delegate (already `delegate`'s Rule) |
+| Delegation readiness | A ticket a fresh session would need to ask a question to complete is not ready to delegate; model choice never compensates for an incomplete ticket (already `delegate`'s Rule) |
 | UI/logic separation | A UI/render component renders and dispatches — it does not decide. Business logic lives in the layer this project's architecture file designates for it. Holds regardless of framework (React, Vue, Svelte, an Electron renderer) — only the name of "the layer it belongs in instead" changes, never whether the separation itself is required. |
 
 **Craft layer (Agnostic until a module is installed, Hard Default for its domain once it is):**
@@ -201,11 +204,14 @@ Proposing a new Hard Default requires stating, explicitly, which of the two test
 
 ---
 
-## SECTION 3: MINIMAL — SINGLE-FILE OUTPUT
+## SECTION 3: MINIMAL — ONE STATE FILE
 
-Use this when the rubric points to Minimal (Section 2). One file, no folder, nothing else. This is the true floor — fixed shape, never improvised per project, because a fresh session (including a delegated ticket's session, per `/delegate`) has to be able to find everything without guessing where it might live.
+Use this when the rubric points to Minimal (Section 2). It has one Banka state
+file, `CLAUDE.md`, and no state folder. Generate the separate minimal
+`AGENTS.md` Codex entry alongside it; the entry contains no state. This fixed
+shape lets a fresh session find project state without guessing.
 
-### CLAUDE.md (project root — the only file)
+### CLAUDE.md (project root — the only state file)
 
 ```markdown
 # Project Operating Protocol
@@ -239,7 +245,7 @@ or "handles sensitive data, treat security invariants as non-negotiable"]
 
 ## Session Notes
 **Context:** [Compressed summary of everything the scoping conversation
-  established — enough that Claude Code needs zero re-explanation]
+  established — enough that a fresh coding-agent session needs zero re-explanation]
 **Known Issues / Open Decisions:** [Anything explicitly left open]
 **Next Immediate Step:** [The very first concrete action]
 
@@ -247,27 +253,70 @@ or "handles sensitive data, treat security invariants as non-negotiable"]
 If `IDEA-SCOPE.md` exists in the project root, it's the original scope document this project was generated from — consult it for original intent behind a decision above. Never overwrite it.
 
 ## Skills available
-This project uses the standard Skills Kit — /charter, /survey, /dredge, /remember, /moor, /scale, /delegate, /watershed, /linis —
-installed at ~/.claude/skills/ (personal, available across all projects) or .claude/skills/ (this project only).
+This project uses the standard Skills Kit: charter, survey, dredge, remember,
+moor, scale, delegate, watershed, and linis. Availability is runtime-specific:
+- Claude Code: install under `~/.claude/skills/` or `.claude/skills/`; invoke with `/skill-name`.
+- Codex: expose under `~/.agents/skills/` or `.agents/skills/`; invoke with `$skill-name`.
 Follow each skill's own instructions exactly; this file does not restate them.
 ```
 
-Everything the *generated tier structure* needs lives in this one file — `IDEA-SCOPE.md`, if present, is the pre-existing input that generated it, not part of the tier structure itself (see Section 1.5).
+Everything the *generated tier structure's state* needs lives in this one file — `AGENTS.md` is a separate Codex compatibility shim with no state, and `IDEA-SCOPE.md`, if present, is the pre-existing input that generated it, not part of the tier structure itself (see Section 1.5).
+
+### AGENTS.md (Codex entry shim — project root)
+
+Generate this alongside `CLAUDE.md`. It is a minimal host entry, not a second
+source of truth. Banka owns only the marked block; preserve all content outside
+it when generating or promoting a project:
+
+```markdown
+<!-- BANKA:START -->
+## Banka — Codex Entry
+
+This project uses Banka. Its current project state is in `CLAUDE.md`; read it
+before working. If `IDEA-SCOPE.md` exists, consult it for original intent and
+never overwrite it.
+
+Banka skills are not assumed available in Codex. Use them only after
+Codex-specific installation or discovery has been configured for this
+environment.
+<!-- BANKA:END -->
+```
 
 ---
 
-## SECTION 4: CORE — FOUR-FILE OUTPUT
+## SECTION 4: CORE — FOUR CORE STATE FILES
 
 Use this when the rubric points to Core (Section 2). Four files, one per domain, in a `/core/` folder — enough separation to stop one file from getting crowded, without the nine-way split Standard uses.
 
 ```
 project-root/
 ├── CLAUDE.md
+├── AGENTS.md
 └── core/
     ├── overview.md
     ├── architecture.md
     ├── design.md
     └── progress.md
+```
+
+### AGENTS.md (Codex entry shim — project root)
+
+Generate this alongside `CLAUDE.md`. It is a minimal host entry, not a second
+source of truth. Banka owns only the marked block; preserve all content outside
+it when generating or promoting a project:
+
+```markdown
+<!-- BANKA:START -->
+## Banka — Codex Entry
+
+This project uses Banka. Its current project state is in `CLAUDE.md` and
+`core/`; read the root file and the relevant Core files before working. If
+`IDEA-SCOPE.md` exists, consult it for original intent and never overwrite it.
+
+Banka skills are not assumed available in Codex. Use them only after
+Codex-specific installation or discovery has been configured for this
+environment.
+<!-- BANKA:END -->
 ```
 
 ### CLAUDE.md (router — project root)
@@ -290,79 +339,19 @@ Read every file in /core/ at the start of a session that touches its domain:
 - IDEA-SCOPE.md, if it exists — the original scope document this project was generated from; consult for original intent, never overwrite
 
 ## Skills available
-This project uses the standard Skills Kit — /charter, /survey, /dredge, /remember, /moor, /scale, /delegate, /watershed, /linis —
-installed at ~/.claude/skills/ or .claude/skills/. Follow each skill's own
-instructions exactly; this file does not restate them.
+This project uses the standard Skills Kit: charter, survey, dredge, remember,
+moor, scale, delegate, watershed, and linis. Availability is runtime-specific:
+- Claude Code: install under `~/.claude/skills/` or `.claude/skills/`; invoke with `/skill-name`.
+- Codex: expose under `~/.agents/skills/` or `.agents/skills/`; invoke with `$skill-name`.
+Follow each skill's own instructions exactly; this file does not restate them.
 ```
 
-### core/overview.md
-
-```markdown
-# [Project Name] — Overview
-**Vision:** [2-3 sentences: core purpose, value proposition, target user]
-
-## Data Model
-[The concrete data shapes for this project — entities, fields, relationships.
-Pull this directly from what was scoped in conversation. Do not abbreviate
-domain-specific structures — reproduce them faithfully.]
-```
-
-### core/architecture.md
-
-```markdown
-# [Project Name] — Architecture
-## Stack
-[Frameworks, languages, tools]
-
-## Folder Matrix
-[Directory layout]
-
-## Absolute Invariants
-[Non-negotiable technical/security constraints]
-
-## Conventions
-[Naming, formatting, syntax — subject to Section 2.6's Layer Principle:
-identity-layer choices get contrasted per rule 5, quality-layer conventions
-can be stated as Hard Default per the Section 2.6 registry]
-
-## Third-Party Library Patterns
-[Usage patterns for libraries/APIs this project depends on — or
-"None yet documented" if nothing warrants this yet]
-```
-
-### core/design.md
-
-```markdown
-# [Project Name] — Design
-## UI Tokens
-[Colors, type scale, spacing — or "Not yet designed" if UI work hasn't started]
-
-## Layout Rules
-[Macro/micro layout patterns]
-
-## Component Registry
-[Running list — starts empty. /moor writes here.]
-```
-
-### core/progress.md
-
-```markdown
-# [Project Name] — Progress
-**Current Phase:** Phase 1 — [First milestone name]
-
-## Active Milestones
-* [ ] Milestone 1: [specific, objective, actionable]
-* [ ] Milestone 2: [specific, objective, actionable]
-
-## Completed Actions
-* [x] Scope defined and locked in chat session prior to transfer
-* [x] Data model designed
-
-## Session Memory Bank
-**Context:** [Compressed summary of everything the scoping conversation established]
-**Known Issues / Open Decisions:** [Anything explicitly left open]
-**Next Immediate Step:** [The very first concrete action]
-```
+The four canonical Core templates live under `full-context-templates/core/`:
+`overview.md`, `architecture.md`, `design.md`, and `progress.md`. Read and fill
+those files directly. Do not reconstruct Core files from an inline copy in this
+protocol; the standalone templates are the single source for their exact shape.
+If the templates are not available with the protocol, ask for them before
+continuing rather than improvising replacements from memory.
 
 ---
 
@@ -370,13 +359,14 @@ can be stated as Hard Default per the Section 2.6 registry]
 
 Use this when the rubric points to Standard (Section 2). This tier uses **nine separate context files**, each scoped to one concern, plus the same router pattern — unchanged from what this protocol has always called its full output.
 
-The nine templates (`project-overview.md`, `architecture.md`, `build-plan.md`, `code-standards.md`, `library-docs.md`, `ui-tokens.md`, `ui-rules.md`, `ui-registry.md`, `progress-tracker.md`) are provided as a separate attached set — **Full Context Templates** — not retyped here. If they are attached to this conversation, read them directly and fill each one in with this project's real specifics. If they are not attached, tell the user to upload the Full Context Templates set alongside this protocol before continuing — do not improvise new versions of these files from memory, since their exact structure is what keeps them interoperable with the Skills Kit's `/moor` and `/survey` behavior.
+The nine templates (`project-overview.md`, `architecture.md`, `build-plan.md`, `code-standards.md`, `library-docs.md`, `ui-tokens.md`, `ui-rules.md`, `ui-registry.md`, `progress-tracker.md`) are provided as a separate attached set — **Full Context Templates** — not retyped here. If they are attached to this conversation, read them directly and fill each one in with this project's real specifics. If they are not attached, tell the user to upload the Full Context Templates set alongside this protocol before continuing — do not improvise new versions of these files from memory, since their exact structure is what keeps them interoperable with the moor and survey skills.
 
 All nine files go in a `/context/` folder in the project root:
 
 ```
 project-root/
 ├── CLAUDE.md
+├── AGENTS.md
 └── context/
     ├── project-overview.md
     ├── architecture.md
@@ -387,6 +377,27 @@ project-root/
     ├── ui-rules.md
     ├── ui-registry.md
     └── progress-tracker.md
+```
+
+### AGENTS.md (Codex entry shim — project root)
+
+Generate this alongside `CLAUDE.md`. It is a minimal host entry, not a second
+source of truth. Banka owns only the marked block; preserve all content outside
+it when generating or promoting a project:
+
+```markdown
+<!-- BANKA:START -->
+## Banka — Codex Entry
+
+This project uses Banka. Its current project state is in `CLAUDE.md` and
+`context/`; read the root file and the relevant Standard files before working.
+If `IDEA-SCOPE.md` exists, consult it for original intent and never overwrite
+it.
+
+Banka skills are not assumed available in Codex. Use them only after
+Codex-specific installation or discovery has been configured for this
+environment.
+<!-- BANKA:END -->
 ```
 
 ### CLAUDE.md (router — project root, Standard version)
@@ -413,10 +424,14 @@ Read every file in /context/ at the start of a session that touches its domain:
 - IDEA-SCOPE.md, if it exists — the original scope document this project was generated from; consult for original intent, never overwrite
 
 ## Skills available
-Standard Skills Kit — /charter, /survey, /dredge, /remember, /moor, /scale, /delegate, /watershed, /linis —
-installed at ~/.claude/skills/ or .claude/skills/. Follow each skill's own
-instructions exactly. Note: /moor writes to context/ui-registry.md and
-/remember writes to context/progress-tracker.md, per their own definitions.
+This project uses the standard Skills Kit: charter, survey, dredge, remember,
+moor, scale, delegate, watershed, and linis. Availability is runtime-specific:
+- Claude Code: install under `~/.claude/skills/` or `.claude/skills/`; invoke with `/skill-name`.
+- Codex: expose under `~/.agents/skills/` or `.agents/skills/`; invoke with `$skill-name`.
+Follow each skill's own instructions exactly. The moor skill writes UI patterns
+to `context/ui-registry.md` and general outcomes to
+`context/progress-tracker.md`; the remember skill updates session state in
+`context/progress-tracker.md`.
 ```
 
 Keep CLAUDE.md itself short (well under 200 lines) — it's a router pointing at the context files, not a restatement of their content. Long CLAUDE.md files measurably degrade instruction-following; the context files are where detail belongs.
@@ -433,7 +448,7 @@ Triggered when either:
 1. `CLAUDE.md`'s inline project content exceeds roughly 1,500 words (~9,000 characters) — it's becoming hard to scan as a router.
 2. Any one domain (overview, architecture, design, progress) has grown enough real content that it's crowding out the others inside the single file.
 
-Split `CLAUDE.md`'s inline sections into the four `/core/` files (Project Overview → `core/overview.md`; the architecture/stack/invariants portion → `core/architecture.md`; any UI content → `core/design.md`; Current Status + Session Notes → `core/progress.md`), create the `/core/` folder, and rewrite `CLAUDE.md` to the Core router (Section 4). Show the user exactly what moved where before finalizing.
+Split `CLAUDE.md`'s inline sections into the four `/core/` files (Project Overview → `core/overview.md`; the architecture/stack/invariants portion → `core/architecture.md`; any UI content → `core/design.md`; Current Status + Session Notes → `core/progress.md`), create the `/core/` folder, and rewrite `CLAUDE.md` to the Core router (Section 4). Update only the marked Banka block in `AGENTS.md` so it points to `CLAUDE.md` and `/core/`; preserve everything outside the block and surface conflicts. Show the user exactly what moved where before finalizing.
 
 ### Core → Standard
 
@@ -442,15 +457,18 @@ Triggered when any of:
 2. The project has split into a genuinely distinct architectural environment (e.g. a companion mobile app or standalone service alongside the original).
 3. `core/design.md`'s Component Registry exceeds roughly 15 distinct reusable UI patterns.
 
-Split the four `/core/` files into the nine Standard files (`core/overview.md` → `project-overview.md`; `core/architecture.md` → mostly `architecture.md`, with conventions splitting out to `code-standards.md` and any library patterns to `library-docs.md`; `core/design.md` → `ui-tokens.md` + `ui-rules.md` + `ui-registry.md`; `core/progress.md` → `build-plan.md` + `progress-tracker.md`), move them into `/context/`, and rewrite `CLAUDE.md` to the Standard router (Section 5). Show the user exactly what moved where before finalizing.
+Split the four `/core/` files into the nine Standard files (`core/overview.md` → `project-overview.md`; `core/architecture.md` → mostly `architecture.md`, with conventions splitting out to `code-standards.md` and any library patterns to `library-docs.md`; `core/design.md` → `ui-tokens.md` + `ui-rules.md` + `ui-registry.md`; `core/progress.md` → `build-plan.md` + `progress-tracker.md`), move them into `/context/`, and rewrite `CLAUDE.md` to the Standard router (Section 5). Update only the marked Banka block in `AGENTS.md` so it points to `CLAUDE.md` and `/context/`; preserve everything outside the block and surface conflicts. Show the user exactly what moved where before finalizing.
 
 ---
 
-## SECTION 7: THE SKILLS KIT (install once, use everywhere)
+## SECTION 7: THE SKILLS KIT (one source, runtime-specific discovery)
 
 The nine Skills — `charter`, `survey`, `dredge`, `remember`, `moor`, `scale`, `delegate`, `watershed`, `linis` — never change per project. They are provided as a separate, standalone package: **Skills Kit**.
 
-Install once, at `~/.claude/skills/` (this is the *personal* skills location — every project on the machine gets access automatically, no per-project copying):
+### Claude Code discovery
+
+Install once at `~/.claude/skills/` for personal, machine-wide use, or under a
+project's `.claude/skills/` for project-local use:
 
 ```
 ~/.claude/skills/
@@ -465,57 +483,97 @@ Install once, at `~/.claude/skills/` (this is the *personal* skills location —
 └── linis/SKILL.md
 ```
 
-**How to install — no separate tool, no CLI package.** Clone or download this repo, then, inside any Claude Code session, ask it directly:
+Clone or download this repo, then ask Claude Code directly:
 
 ```
 Install the Banka Skills Kit from <path-to-clone>/skills-kit/ into
 ~/.claude/skills/ — one folder per skill, copying each SKILL.md as-is.
 ```
 
-Claude Code performs the copy itself with its normal file tools — that sentence is the entire installer. There is nothing to publish to npm, no marketplace registration, nothing versioned separately from the repo itself. This deliberately differs from §7.7's `npx skills@latest add` recommendation for the Design Craft Add-on — that add-on is a third-party package with its own release cadence, so it uses that ecosystem's own installer; the Skills Kit is this protocol's own first-party package, and the user is already sitting inside the exact tool that needs to receive the files.
+Claude Code performs the copy with its normal file tools. Invoke the installed
+skills with `/skill-name`.
 
 **Before installing, check `~/.claude/commands/` and `~/.claude/skills/` (personal) and the current project's own `.claude/commands/` and `.claude/skills/` (if present) for a file already using one of the nine skill names above.** If one exists, do not remove it unilaterally — back it up, tell the user what was found, and let them decide whether to remove, rename, or keep it before installing over it.
 
-**Provenance, for clarity:** `charter`, `survey`, `dredge`, `remember`, `moor` are the original five. `scale`, `delegate`, `watershed`, and `linis` are Banka-native additions — `scale` operationalizes Section 6's promotion path as an actual runnable skill, `delegate` supports Section 7.5's Model Delegation workflow, `watershed` provides multi-perspective critique beyond what a single `/survey` pass gives, and `linis` ("clean," Filipino) strips narrative/personal residue from code and docs once work is settled.
+### Codex discovery
 
-**Every skill that reads project files resolves the project's tier with a deterministic folder check, never by parsing prose:**
+Codex uses the same skill-directory shape but discovers project-local skills in
+`.agents/skills/` and user-level skills in `~/.agents/skills/`. Link or copy
+each directory from this package's `skills-kit/` into the chosen location; a
+symlink is preferred so `skills-kit/` remains the only source of truth. Before
+linking, check for an existing skill with the same name — Codex can show both
+same-named skills and does not merge them.
+
+This repository commits `.agents/skills/` symlinks for all nine skills. If a
+checkout or archive does not preserve symlinks, copy each complete skill
+directory instead and confirm every entry contains a readable `SKILL.md`.
+
+In Codex, explicitly invoke a Banka skill with `$` (for example `$charter`,
+`$survey`, or `$remember save`). A host may also show enabled skills in its
+slash-command list, but Banka does not rely on a slash-command argument
+contract. `AGENTS.md` is the project-entry shim only; it does not install or
+register skills.
+
+**Provenance, for clarity:** `charter`, `survey`, `dredge`, `remember`, `moor` are the original five. `scale`, `delegate`, `watershed`, and `linis` are Banka-native additions — `scale` operationalizes Section 6's promotion path as an actual runnable skill, `delegate` supports Section 7.5's Delegation Setup, `watershed` provides multi-perspective critique beyond a single survey, and `linis` ("clean," Filipino) removes narrative residue from settled files while preserving operational history and rationale.
+
+**Every skill that reads project files resolves the project's state from the
+filesystem, never by parsing tier prose:**
 
 ```
 /context/ exists  → Standard — read the relevant files under /context/
 /core/ exists     → Core     — read the relevant files under /core/
-neither exists    → Minimal  — everything is inline in CLAUDE.md
+CLAUDE.md exists  → Minimal  — live state is inline in CLAUDE.md
+none exists       → Unstructured/non-Banka repository — never assume Minimal
 ```
 
-This replaced an earlier design where every skill had to read and interpret CLAUDE.md's Source of truth section to figure out which structure applied — a language-comprehension step repeated on every single skill call for the life of the project. A folder-existence check is a filesystem fact, not a sentence to parse, and it costs a fraction of the tokens.
+This filesystem check avoids repeatedly interpreting router prose. Skills that
+can operate read-only from an explicit subject may continue in an unstructured
+repository while stating that no Banka state exists. Skills that require a
+state destination stop rather than creating one implicitly.
 
-This protocol never asks the user to re-generate these. If the user doesn't have the Skills Kit installed yet, tell them to do so before their first Claude Code session on any project — it only needs doing once, ever, on a given machine.
+The protocol never regenerates skill contents per project. If the Skills Kit is
+not discoverable in the chosen runtime, configure its Claude Code or Codex
+location before the first build session.
 
 ---
 
-## SECTION 7.5: MODEL DELEGATION SETUP (Senior/Junior pattern — optional module)
+## SECTION 7.5: DELEGATION SETUP (Senior/Junior pattern — optional module)
 
-This module is orthogonal to tier choice — it's a workflow choice, not a complexity signal. Offer it whenever the user indicates they want to plan on a stronger model and execute routine work on a lighter, cheaper one (this is a real, common pattern — see the rationale: a mid-session model switch destroys the prompt cache and re-bills the entire conversation at full price, so delegation only pays off between genuinely separate sessions, never mid-conversation).
+This module is orthogonal to tier choice — it is a workflow choice, not a
+complexity signal. It separates approved work into Junior-safe tickets for
+fresh-session execution and Senior-required work for a user-selected
+senior-capability session. A Junior-safe ticket may run on the same, a lighter,
+or a stronger model. Model choice is explicit and user-controlled; ticket risk
+and completeness determine the tier.
 
 **Ask explicitly, don't assume:**
 
 ```
-Do you want to set this project up for model delegation — planning
-and complex work on a stronger model, routine execution handed off
-to a lighter model in fresh, separate sessions?
+Do you want to set this project up for delegation — approved Junior-safe
+tickets executed in fresh sessions, while Senior-required work stays in a
+senior-capability session? You may select a lighter model for Junior-safe work
+when the host offers one, but it is not required.
 ```
 
 If yes, in addition to whichever tier's files were generated:
 
-1. **Ensure `delegation-queue.md` exists** in the project root (Minimal or Core tier) or `/context/` (Standard tier) — use the standard template. It starts empty; `/delegate` populates it later, during actual building, not during this handoff.
+1. **Ensure `delegation-queue.md` exists** in the project root (Minimal or Core tier) or `/context/` (Standard tier) — use the standard template. It starts empty; the delegate skill populates it later, during actual building, not during this handoff.
 
-2. **Add a Junior-Mode block to CLAUDE.md**, regardless of tier, so any session — regardless of which model is running it — knows how to behave if it's picking up a delegated ticket rather than driving the whole project:
+2. **Add a delegated-ticket block to `CLAUDE.md`**, regardless of tier, so
+any session knows how to behave when it receives a ticket rather than
+open-ended project direction. Fill in the exact queue path for the resolved
+tier: `delegation-queue.md` for Minimal/Core or
+`context/delegation-queue.md` for Standard.
 
 ```markdown
 ## If you are executing a delegated ticket
 
-Check delegation-queue.md. If you were handed a specific ticket rather than
+Check [resolved queue path]. If you were handed a specific ticket rather than
 open-ended direction, your scope is that ticket only:
 
+- Confirm that the active model/mode meets the ticket's `Required capability`.
+  A same or stronger model may execute a Junior-safe ticket. If the host does
+  not expose model/mode information, ask the user to confirm before starting.
 - Do not read or start other unstarted tickets in the queue.
 - Do not touch files outside what the ticket lists.
 - If anything in the ticket is ambiguous, or requires a value/decision the
@@ -524,15 +582,28 @@ open-ended direction, your scope is that ticket only:
   do not self-certify with just "it works."
 ```
 
-3. **Remind the user of the mechanics** (this is a workflow reminder, not a file — say it plainly, don't bury it): plan and approve with `/charter` on the stronger model → run `/delegate` to write tickets → open a genuinely new session per ticket, set to the lighter model, hand it only the ticket and the project's context files → `/survey` the result back on the stronger model before marking done. Never switch models mid-session — always a fresh session per switch.
+3. **Remind the user of the mechanics** (this is a workflow reminder, not a
+file — say it plainly, don't bury it): plan and approve with the charter skill
+in a senior-capability session → invoke the delegate skill to write tickets →
+open a genuinely fresh session per Junior-safe ticket using the user-selected
+model → confirm the session meets the ticket's required capability → invoke the
+survey skill in a senior-capability session before marking the ticket done.
+
+4. **State the execution-isolation boundary:** a fresh session isolates
+conversation context, not files. Run delegated tickets serially when they share
+one checkout. Parallel execution requires a separate Git worktree and branch
+per ticket, followed by deliberate review and merging. This applies equally to
+local and hosted models. Banka writes the queue and policy; it does not launch
+models, create worktrees, or merge branches.
 
 ---
 
 ## SECTION 7.6: OPINION MODULE MANIFEST
 
-Section 7.7 was, until this version, a one-off — a hand-written exception to Banka's general agnosticism, with no reusable shape. That was fine when it was the only Craft Layer instance. It stops being fine the moment a second one gets proposed, because there'd be nothing to check a new module against except "does it read kind of like §7.7" — which isn't a standard, it's an impression.
-
-This section is that standard. Any Craft Layer entry in Section 2.6's registry must be backed by a module declaration with these six fields before it gets its own numbered subsection:
+Every Craft Layer entry needs one reusable declaration shape so new modules are
+checked against explicit requirements rather than resemblance to an existing
+example. Any entry in Section 2.6's registry must define these six fields before
+it gets its own numbered subsection:
 
 ```markdown
 **name:** [the installable package/skill-set identifier — e.g. emilkowalski/skills]
@@ -613,9 +684,13 @@ This keeps the rest of Banka's output agnostic about stack while being genuinely
 
 After generating the chosen tier's files (fully populated with this specific project's real content — not placeholders), produce:
 
-1. **A short setup guide**: exact file placement (`/core/` or `/context/`, if applicable), a reminder that the Skills Kit is separate and only needs installing once per machine, and any environment prerequisites worth flagging (Node.js, Git — check what the user has already confirmed earlier in *this* conversation before re-asking).
+1. **A short setup guide**: exact file placement (`/core/` or `/context/`, if
+applicable), the Skills Kit discovery path for the selected runtime, and any
+environment prerequisites worth flagging (Node.js, Git — check what the user
+has already confirmed earlier in *this* conversation before re-asking).
 
-2. **The exact first message to send Claude Code**, e.g.:
+2. **The exact first message for the selected runtime.** The project-state
+instruction is the same; skill invocation syntax differs:
 
 ```
 Read CLAUDE.md [and everything in /core/ or /context/, if applicable] in this project.
@@ -624,5 +699,8 @@ available Skills. Then tell me the single next step according to
 [the Current Status section / core/progress.md / context/progress-tracker.md],
 and let's begin [first milestone name].
 ```
+
+Claude Code invokes a skill with `/skill-name`; Codex invokes it with
+`$skill-name`.
 
 Do not proceed to generating files until the user has confirmed the tier (Section 2) and the scope itself feels settled to them. If the scoping conversation still feels unresolved, say so and keep scoping — a clean handoff is only as good as the scope behind it.

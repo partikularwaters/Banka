@@ -19,7 +19,7 @@ Macro (page-level) and micro (component-level) layout patterns actually used in 
 
 ## Component Registry
 
-Running list — starts empty. `/moor` writes here.
+Running list — starts empty. The moor skill writes here.
 
 ### `[Component Name]`
 File: `[filepath]`

@@ -1,6 +1,8 @@
 # Banka
 
-A protocol and skills kit for scoping, generating, and building Claude Code projects at the right tier of complexity — agnostic about your stack, opinionated about quality.
+A protocol and skills kit for scoping, generating, and building coding-agent
+projects at the right tier of complexity — agnostic about stack, opinionated
+about quality, and currently workable in Claude Code and Codex.
 
 Banka gives a project two things most AI-assisted builds skip: a scoping step that decides how much structure a project actually needs *before* any files get generated, and a permanent, reusable set of Skills that carry a project through its whole build loop afterward — planning, delegation, review, recovery, and session handoff.
 
@@ -28,25 +30,31 @@ This is the compressed version. For the full picture — one diagram, one paragr
 
 ## The skills
 
-Nine Skills, installed once per machine, used the same way across every Banka project regardless of tier:
+Nine Skills with one canonical source, exposed through each supported runtime's
+discovery location and used across every Banka project regardless of tier:
 
 | Skill | What it does |
 | --- | --- |
 | `charter` | Thinks through what's about to get built like a senior engineer would, before any code — surfaces decisions, produces a plan you confirm first. |
-| `delegate` | Splits an approved plan into self-contained tickets a fresh, lighter-model session can execute with zero prior context. |
+| `delegate` | Splits an approved plan into Junior-safe tickets for fresh-session execution and keeps judgment-heavy work Senior-required. Model choice remains explicit and user-controlled. |
 | `dredge` | Diagnoses a build failure before responding to it — targeted fix, hard reset, or genuine rethink are different problems. |
 | `moor` | Captures a UI pattern or engineering outcome once it's settled, so the next session builds on it instead of drifting. |
 | `remember` | Saves session state on close, restores it on open — always checking disk/git reality first, never trusting this conversation's own memory. |
 | `scale` | Promotes a project exactly one tier at a time, Minimal → Core → Standard, only when a real threshold is met. |
 | `survey` | Checks a build against what was planned, the project's own declared rules, and production-readiness — then routes real findings to the right next skill. |
 | `watershed` | Runs a genuinely contested or high-stakes call through five independent perspectives, then consolidates one recommendation. |
-| `linis` | Cleans narrative residue — dates, quotes, "trying this out" framing, historical storytelling — out of settled code and docs. Never run against active work. |
+| `linis` | Cleans narrative residue from settled files while preserving operational history, provenance, compatibility facts, and load-bearing rationale. Never runs against active work. |
 
 Each skill's full behavior lives in its own `SKILL.md` under [skills-kit/](skills-kit/) — the table above is the quick-reference, not the source of truth.
 
 ## Installing the Skills Kit
 
-No CLI, no package to publish — the install step is one instruction to Claude Code itself:
+`skills-kit/` is the canonical source for all nine skills. Choose the discovery
+path for the runtime you use.
+
+### Claude Code
+
+Ask Claude Code to install the kit:
 
 ```
 Install the Banka Skills Kit from <path-to-clone>/skills-kit/ into
@@ -54,12 +62,37 @@ Install the Banka Skills Kit from <path-to-clone>/skills-kit/ into
 ```
 
 1. Clone this repo: `git clone https://github.com/partikularwaters/Banka.git`
-2. Open a Claude Code session anywhere and paste the instruction above (with the real path to your clone).
-3. Done — every project on the machine now has access to all nine skills.
+2. Open a Claude Code session and paste the instruction above with the real clone path.
+3. Invoke skills with `/skill-name`, for example `/charter` or `/remember restore`.
 
 **Before installing:** check `~/.claude/commands/` and `~/.claude/skills/` (personal, machine-wide) and, if you're in a specific project, its own `.claude/commands/` and `.claude/skills/` too, for any existing file with the same name as one of this package's nine skills. If you find one, don't delete it unilaterally — back it up and confirm with the user how they want to reconcile it before installing over it.
 
 Full install details and rationale: [protocol/Banka.md](protocol/Banka.md), Section 7.
+
+### Codex
+
+This repository exposes the same nine `skills-kit/` directories to Codex through
+project-local `.agents/skills/` symlinks. They are links, not copies: edit the
+source in `skills-kit/` only. Invoke skills with `$skill-name`, for example
+`$charter` or `$remember restore`.
+
+For another project, link each Banka skill directory into that project's
+`.agents/skills/`, or into `~/.agents/skills/` for one user's machine-wide
+installation. Check for an existing skill with the same name before creating a
+link: Codex does not merge duplicate skill names.
+
+If an archive or checkout does not preserve symlinks, copy each complete skill
+directory instead. Confirm every entry contains a readable `SKILL.md`; the
+directory under `skills-kit/` remains authoritative.
+
+Run `scripts/check-repo-integrity.sh` from this repository to verify all nine
+links, their `SKILL.md` files and names, the generated Banka block markers, and
+known obsolete terminology.
+
+The Banka source repository is not itself a Banka-enabled application project:
+it intentionally has no project-state `CLAUDE.md`, `/core/`, or `/context/`.
+Read-only skills can inspect an explicitly supplied subject and these repository
+docs; state-writing skills stop rather than treating the repository as Minimal.
 
 ## Where to start
 
@@ -67,27 +100,36 @@ Banka's scoping step (Protocol §1.5) resolves into one of three states — whic
 
 - **Nothing scoped yet.** Open a fresh chat, hand it [protocol/Banka.md](protocol/Banka.md), and start describing the idea. Section 1.5's built-in fallback pass (State 3) scopes it for you before any tier gets chosen.
 - **You already have a scope document** — from any process, any shape, any filename, as long as it states a purpose, users, a feature scope, constraints, and a definition of done. Hand it along with the protocol doc. Section 1.5 reads it directly (State 1 if its own rubric was already run, State 2 if not) instead of re-asking what's already answered.
-- **A Banka project already exists on disk.** Skip the protocol doc entirely — open Claude Code in the project and go straight to the build loop below with `/remember restore`.
+- **A Banka project already exists on disk.** Skip the protocol doc and open the project in the supported runtime. Restore with `/remember restore` in Claude Code or `$remember restore` in Codex.
 
 ## The build loop
 
 ```
-/charter → plan, wait for approval (reads IDEA-SCOPE.md too)
+charter → plan, wait for approval (reads IDEA-SCOPE.md too)
    |
-/delegate → optional: split the plan into tickets for a lighter model
+delegate → optional: split approved work into Junior-safe tickets
    |
 [build]
    |
-/moor → capture what's worth remembering
+moor → capture what's worth remembering
    |
-/survey → check plan-alignment, system integrity, prod-readiness
-   |    ├─→ /dredge     if something is actually broken
-   |    └─→ /watershed  if it's a genuine multi-angle judgment call
+survey → check plan-alignment, system integrity, prod-readiness
+   |    ├─→ dredge     if something is actually broken
+   |    └─→ watershed  if it's a genuine multi-angle judgment call
    |
-/remember save → close the session
+remember save → close the session
 ```
 
-The loop repeats every session; `/remember restore` opens the next one. `/scale` runs orthogonally, whenever a project outgrows its current tier.
+Use `/skill-name` in Claude Code and `$skill-name` in Codex. The loop repeats
+every session; the remember skill in restore mode opens the next one. The scale
+skill runs orthogonally whenever a project outgrows its current tier.
+
+Delegated tickets run serially when sessions share one checkout. Parallel work
+requires a separate Git worktree and branch per ticket because a fresh session
+isolates conversation history, not files. Local and hosted models can both
+execute Banka tickets when their host can read project state, edit the assigned
+checkout/worktree, and run verification; Banka does not launch or orchestrate
+models itself.
 
 ## What gets written, and where
 
@@ -96,25 +138,28 @@ This is what Banka generates *inside a project you build* — not this repo's ow
 | Artifact | Path | Written by |
 | --- | --- | --- |
 | `IDEA-SCOPE.md` | project root | Section 1.5 — permanent record of original scope, never edited afterward |
-| `CLAUDE.md` | project root | Sections 3/4/5, sized to tier — the first file every skill reads |
-| Core files (`overview.md`, `architecture.md`, `design.md`, `progress.md`) | `/core/` | Core-tier generation; restructured by `/scale` on promotion |
-| Standard files (nine files) | `/context/` | Standard-tier generation; restructured by `/scale` on promotion |
-| `delegation-queue.md` | project root (Minimal/Core) or `/context/` (Standard) | `/delegate` |
-| UI patterns | `ui-registry.md` (Standard) / `core/design.md` (Core) / inline (Minimal) | `/moor` |
-| Session state | `progress.md`, `progress-tracker.md`, or `CLAUDE.md`'s Session Notes | `/moor`, `/remember` |
+| `CLAUDE.md` | project root | Sections 3/4/5, sized to tier — the current Banka source of truth and the first file every skill reads |
+| `AGENTS.md` | project root | Sections 3/4/5 — minimal Codex entry shim that points to the current `CLAUDE.md` state; it is not a second source of truth |
+| Core files (`overview.md`, `architecture.md`, `design.md`, `progress.md`) | `/core/` | Core-tier generation; restructured by `scale` on promotion |
+| Standard files (nine files) | `/context/` | Standard-tier generation; restructured by `scale` on promotion |
+| `delegation-queue.md` | project root (Minimal/Core) or `/context/` (Standard) | `delegate` |
+| UI patterns | `ui-registry.md` (Standard) / `core/design.md` (Core) / inline (Minimal) | `moor` |
+| Session state | `progress.md`, `progress-tracker.md`, or `CLAUDE.md`'s Session Notes | `moor`, `remember` |
 
 ## This repo's own structure
 
 ```
 Banka/
+├── .agents/skills/                # Codex discovery links to the nine canonical skills
 ├── protocol/Banka.md              # the core handoff protocol
+├── scripts/check-repo-integrity.sh # repository-local packaging smoke check
 ├── system-map.md                  # one-doc orientation, start here
 ├── skills-kit/                    # the nine Skills — install once, use everywhere
 │   └── {charter,survey,dredge,remember,moor,scale,delegate,watershed,linis}/SKILL.md
 └── full-context-templates/
     ├── core/                      # the four Core-tier files
     ├── standard/                  # the nine Standard-tier files
-    └── delegation-queue.md        # tier-agnostic, used by /delegate
+    └── delegation-queue.md        # tier-agnostic, used by delegate
 ```
 
 ## Optional: Craft Layer modules

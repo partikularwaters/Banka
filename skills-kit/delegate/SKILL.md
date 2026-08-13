@@ -1,21 +1,34 @@
 ---
 name: delegate
-description: After a plan is approved (via /charter), break it into self-contained tickets that a separate, less capable model in a fresh session — with zero memory of this conversation — can execute correctly. Writes the queue to delegation-queue.md and flags which items must stay with the current model instead.
+description: After a plan is approved, break it into self-contained Junior-safe tickets for fresh-session execution and identify Senior-required work that needs stronger judgment. Writes to the tier-resolved delegation queue; model choice remains explicit and user-controlled.
 ---
 
-Delegation only pays off if each ticket can be executed correctly by a model that has never seen this conversation, has no access to the reasoning that produced the plan, and cannot ask a clarifying follow-up mid-task. If a ticket needs any of those things, it is not ready to delegate — it needs to stay with you, in this session, or be rewritten until it doesn't.
+Delegation only pays off if each ticket can be executed correctly by a fresh
+session that has never seen this conversation and has no access to the reasoning
+that produced the plan. Model capability and session separation are different:
+a Junior-safe ticket may run on the same, a lighter, or a stronger model, while
+Senior-required work must run in the user-selected senior-capability mode.
 
-This skill does not write code. It writes tickets. Writing a bad ticket is more expensive than writing no ticket — a bad ticket costs a full fresh-session context load, produces wrong output, and then needs a `/dredge` pass to fix. Take the time to make each one right.
+Fresh-session isolation covers conversation context, not working files. Banka's
+safe default is **serial execution in one checkout**: finish and survey one
+ticket before another session edits the same working directory. Parallel ticket
+execution is allowed only when each session receives a separate Git worktree
+and branch, with its results reviewed and merged deliberately. A local or
+cloud-hosted model may execute a ticket if its host can read the assigned
+project state, edit the assigned checkout/worktree, and run the required
+verification; Banka does not launch models or create worktrees itself.
+
+This skill does not write code. It writes tickets. Writing a bad ticket is more expensive than writing no ticket — a bad ticket costs a full fresh-session context load, produces wrong output, and then needs the dredge skill to fix. Take the time to make each one right.
 
 ---
 
 ## Step 0 — Require an approved plan first
 
-Do not run this skill against an unapproved idea. If `/charter` has not produced a "Blueprint ready" implementation plan for this work, stop and say so:
+Do not run this skill against an unapproved idea. If the charter skill has not produced a "Blueprint ready" implementation plan for this work, stop and say so:
 
 ```
-This needs an approved plan first. Run /charter on this feature,
-confirm the plan, then come back to /delegate.
+This needs an approved plan first. Invoke the charter skill on this feature,
+confirm the plan, then invoke the delegate skill.
 ```
 
 ---
@@ -26,13 +39,13 @@ Break the approved implementation plan into the smallest independently-executabl
 
 For each candidate item, determine its **delegation tier**:
 
-**Tier: Junior-safe (delegate to a lighter model, fresh session)**
+**Tier: Junior-safe (eligible for fresh-session delegation)**
 - Follows an existing, already-established pattern elsewhere in the codebase
 - Touches no file listed under an Absolute Invariant in the project's architecture file
 - Has low ambiguity — the plan already resolved the judgment calls, nothing is left to interpret
 - Does not touch encryption, auth, payment, or any security/compliance-tagged boundary
 
-**Tier: Senior-required (stays with the current model, current or a fresh session — never delegated to a lighter model)**
+**Tier: Senior-required (run only in the user-selected senior-capability mode)**
 - Establishes a new pattern for the first time (nothing yet exists to match)
 - Touches an Absolute Invariant file or a security/compliance boundary
 - Genuinely ambiguous — a judgment call the plan didn't fully resolve
@@ -42,7 +55,7 @@ For each candidate item, determine its **delegation tier**:
 - They touch the same file(s)
 - One item's `Done when` condition cannot be verified true without the other item already being done — this is the "stated dependency" case from this step's opening paragraph, made concrete
 
-Keep them as separate tickets when either holds instead — the separate `/survey` checkpoint is worth the extra session, not overhead to eliminate:
+Keep them as separate tickets when either holds instead — the separate survey checkpoint is worth the extra session, not overhead to eliminate:
 - Each item's `Done when` condition is independently checkable on its own, with no dependency either direction
 - Either item independently qualifies as Senior-required under the tier rules above — never merge a Senior-required item into a Junior-safe one to make it delegable; reclassify the whole merged unit as Senior-required instead
 
@@ -64,6 +77,7 @@ Each ticket must include:
 ### Ticket [N]: [short name]
 
 **Tier:** Junior-safe
+**Required capability:** Junior-safe or higher; a stronger model may execute this ticket
 **Pattern to match:** [exact file/component to copy the shape of — never "follow best practices," always a real pointer]
 **Files to touch:** [exact paths]
 **Files to NOT touch:** [anything adjacent that must stay untouched]
@@ -82,11 +96,17 @@ add new dependencies without flagging first"]
 
 ---
 
-## Step 3 — Write the queue to delegation-queue.md
+## Step 3 — Write the tier-resolved queue
 
-Create the file if it doesn't exist. Append tickets — never silently overwrite a queue that already has unstarted or in-progress items without telling the user what's being replaced.
+Resolve the project before writing: `/context/` →
+`context/delegation-queue.md`; `/core/` or `CLAUDE.md` → root
+`delegation-queue.md`. If none exists, stop: this is not yet a Banka-enabled
+project, so no queue destination is defined. Create the resolved file if it
+doesn't exist. Append tickets — never silently overwrite a queue that already
+has unstarted or in-progress items without telling the user what's being
+replaced.
 
-**Ticket numbers are append-only.** Never renumber or reuse a number already used in this file — not across separate `/delegate` runs, and not when a merge collapses two candidates into one. A stable number is what lets a session-opening prompt point at "Ticket N" unambiguously (see `delegation-queue.md`'s own sample prompts); a number that can shift meaning defeats that.
+**Ticket numbers are append-only.** Never renumber or reuse a number already used in this file — not across separate delegate runs, and not when a merge collapses two candidates into one. A stable number is what lets a session-opening prompt point at "Ticket N" unambiguously (see the queue's own sample prompts); a number that can shift meaning defeats that.
 
 For a merged ticket, the one-line spec summary in the checklist below must name both folded-in behaviors, not just the more prominent one — that line is often the only thing a future skim reads without opening the full spec.
 
@@ -95,7 +115,7 @@ For a merged ticket, the one-line spec summary in the checklist below must name 
 
 Generated from: [feature/plan name] — [date]
 
-## Ready for a fresh, lighter-model session
+## Ready for fresh-session execution (Junior-safe)
 - [ ] Ticket 1: [name] — [one-line spec summary]
 - [ ] Ticket 2: [name] — [one-line spec summary]
 
@@ -117,16 +137,27 @@ Tell the user plainly what happens next — this skill does not open new session
 Delegation queue written: [N] tickets ready for a fresh session,
 [M] items kept here because [tier reasoning].
 
-For each ready ticket: open a new session, set it to the lighter
-model, and point it at its ticket in delegation-queue.md — see that
-file's own sample prompts for the exact wording. Do not carry this
+For each ready ticket: open a fresh session using this host's normal
+new-session mechanism, then point it at its ticket in the tier-resolved queue —
+see that file's own sample prompts for the exact wording. Use a lighter model
+only when this host offers one and the user has selected it; the same or a
+stronger model may execute any Junior-safe ticket. Do not carry this
 conversation's history into that session — a fresh session is the point.
 
-After each ticket completes, come back here (or any senior-model
-session) and run /survey on the result before marking it done.
+At session start, confirm that the active model/mode meets the ticket's
+`Required capability`. If the host does not expose that information, ask the
+user to confirm it before starting. Never execute Senior-required work in a
+Junior-only mode.
+
+Unless the user has explicitly assigned separate Git worktrees and branches,
+run tickets serially in a shared checkout. A fresh session alone does not make
+parallel filesystem edits safe.
+
+After each ticket completes, return to a senior-capability session and invoke
+the survey skill on the result before marking it done.
 ```
 
-Sample prompts for opening each kind of new session — one for a Junior-safe ticket, one for a Senior-required item on a stronger model — are kept in `delegation-queue.md`'s own template, not restated here, so there's one copy to keep current instead of two.
+Sample prompts for opening each kind of new session — one for a Junior-safe ticket, one for a Senior-required item — are kept in the delegation queue template, not restated here, so there's one copy to keep current instead of two.
 
 ---
 

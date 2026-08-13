@@ -6,15 +6,16 @@
 
 One diagram, then one paragraph per stage. If a file reference below looks wrong, the file itself is authoritative — this doc explains connections, it doesn't redefine anything.
 
-*(Kept deliberately free of box-drawing alignment — a fixed-width ASCII diagram breaks every time a skill name's length changes, which is exactly what happened here during the rename pass. Indentation and arrows only, nothing that depends on counting characters.)*
+The diagram uses indentation and arrows so labels can change without breaking
+fixed-width alignment.
 
 ```
 STAGE 0 — External Scoping (optional)
-  Any scoping process, or the user's own notes. Never touches Claude Code.
+  Any scoping process, or the user's own notes. Runtime-independent.
   Output: a document with a real shape — purpose, users, feature scope,
   constraints, and a definition of done.
     |
-    |  handed to Claude Code
+    |  handed to a supported coding-agent runtime
     v
 
 STAGE 1 — Scoping Intake (Protocol §1.5)
@@ -27,32 +28,32 @@ STAGE 1 — Scoping Intake (Protocol §1.5)
     v
 
 STAGE 2 — Tier Generation (Protocol §3 / §4 / §5)
-  Minimal:  CLAUDE.md only, inline, fixed shape
-  Core:     CLAUDE.md router + /core/ (4 files)
-  Standard: CLAUDE.md router + /context/ (9 files)
+  Minimal:  one CLAUDE.md state file + AGENTS.md Codex entry, no state folder
+  Core:     CLAUDE.md router + AGENTS.md Codex shim + /core/ (4 files)
+  Standard: CLAUDE.md router + AGENTS.md Codex shim + /context/ (9 files)
   Section 2.6 (Layer Principle) governs every default written in:
   Agnostic (identity layer) vs. Hard Default (quality layer)
     |
     |  a real project now exists on disk
     v
 
-STAGE 3 — The Build Loop (skills-kit/, installed once, per machine)
-  /charter    -> plan, wait for approval (reads IDEA-SCOPE.md too)
-  /delegate   -> optional: split an approved plan into tickets
-                 for a lighter model, fresh session per ticket
+STAGE 3 — The Build Loop (skills-kit/, exposed per supported runtime)
+  charter    -> plan, wait for approval (reads IDEA-SCOPE.md too)
+  delegate   -> optional: split an approved plan into Junior-safe tickets
+                for fresh-session execution; model choice stays user-controlled
   [build]
-  /moor       -> capture a UI pattern or engineering outcome
-  /survey     -> check plan-alignment, system integrity, prod-ready
-      -> /dredge    if something is actually broken
-      -> /watershed if it is a genuine multi-angle judgment call
-  /remember save -> close the session
+  moor       -> capture a UI pattern or engineering outcome
+  survey     -> check plan-alignment, system integrity, prod-ready
+      -> dredge    if something is actually broken
+      -> watershed if it is a genuine multi-angle judgment call
+  remember save -> close the session
 
-  Loop repeats every session. /remember restore opens the next one.
+  Loop repeats every session. remember restore opens the next one.
     |
     |  the project outgrows its tier
     v
 
-STAGE 4 — Promotion (Protocol §6, skill: /scale)
+STAGE 4 — Promotion (Protocol §6, skill: scale)
   Minimal -> Core -> Standard, always one tier at a time,
   triggered by real thresholds, never guessed or skipped.
 
@@ -65,8 +66,13 @@ Orthogonal, not a stage — can attach at any point in Stage 3:
 
 Also orthogonal:
 
-  /linis — cleanup pass, run once a version ships or a milestone
+  linis — scoped cleanup pass, run once a version ships or a milestone
   closes. Never run against active work.
+
+Codex discovery (repository-local, not project state):
+
+  .agents/skills/* -> symlinks to skills-kit/*
+  $skill-name invokes a skill in Codex; Claude Code uses /skill-name.
 ```
 
 ---
@@ -81,16 +87,23 @@ The seam between the two systems. Checks, in order: does a scope document exist 
 
 ## Stage 2 — Tier Generation (§3 / §4 / §5)
 
-The tier resolved in Stage 1 determines the file shape: Minimal (one `CLAUDE.md`), Core (`CLAUDE.md` + four files under `/core/`), or Standard (`CLAUDE.md` + nine files under `/context/`). Every default written into these files is governed by §2.6's Layer Principle — Agnostic defaults (stack, language, styling) get contrasted, never picked for the user; Hard Defaults (error handling, comment policy, the registry in §2.6) get stated as settled fact.
+The tier resolved in Stage 1 determines the file shape: Minimal has one Banka state file (`CLAUDE.md`) and no state folder; Core adds four files under `/core/`; Standard uses nine files under `/context/`. Each tier may also include a minimal `AGENTS.md` Codex entry that points to the existing Banka state without duplicating it. Every default written into shared state is governed by §2.6's Layer Principle — Agnostic defaults (stack, language, styling) get contrasted, never picked for the user; Hard Defaults (error handling, comment policy, the registry in §2.6) get stated as settled fact.
 
 ## Stage 3 — The Build Loop (skills-kit/)
 
-The nine skills, installed once per machine, used across every project regardless of tier (each resolves its own tier via a folder-existence check, never by parsing `CLAUDE.md` prose). The typical shape of one working session: `/charter` plans and waits for approval (now also reading `IDEA-SCOPE.md` if present, to keep new work traceable to original scope) → optionally `/delegate` splits approved work into tickets for a lighter model in a fresh session → building happens → `/moor` captures anything worth remembering → `/survey` checks the result, routing to `/dredge` if something's actually broken or `/watershed` if it's a genuine multi-perspective judgment call → `/remember save` closes the session. `/remember restore` opens the next one, checking disk/git reality before trusting anything the last session assumed.
+The nine skills are exposed through the supported runtime's discovery location
+and used across every Banka-enabled project regardless of tier. Each resolves
+Standard from `/context/`, Core from `/core/`, and Minimal from `CLAUDE.md`; if
+none exists, it treats the repository as unstructured rather than assuming
+Minimal. A typical session runs charter → optional delegate → build → moor →
+survey, with dredge or watershed used when routed there. Remember closes and
+restores sessions after checking disk and version-control reality. Claude Code
+uses `/skill-name`; Codex uses `$skill-name`.
 
-## Stage 4 — Promotion (§6, `/scale`)
+## Stage 4 — Promotion (§6, scale)
 
-A project can outgrow its tier. `/scale` promotes exactly one tier at a time — Minimal → Core, or Core → Standard, never skipping — only when a real threshold is met or explicitly requested, and always shows what moved where before anything old gets deleted.
+A project can outgrow its tier. The scale skill promotes exactly one tier at a time — Minimal → Core, or Core → Standard, never skipping — only when a real threshold is met or explicitly requested, and always shows what moved where before anything old gets deleted.
 
-## Orthogonal: Craft Layer Modules (§7.6 / §7.7) and `/linis`
+## Orthogonal: Craft Layer Modules (§7.6 / §7.7) and linis
 
-Two mechanisms that can engage at any point in Stage 3, not tied to a specific stage: a Craft Layer module (§7.6's manifest, §7.7's reference instance) is Agnostic until a project opts in, then Hard Default for that one domain only. `/linis` is a cleanup pass for settled work — narrative residue, dates, quotes — run once something ships, never against work still in motion.
+Two mechanisms can engage at any point in Stage 3: a Craft Layer module is Agnostic until a project opts in, then Hard Default for that domain only. Linis removes narrative residue from settled files while preserving operational history, provenance, compatibility facts, and load-bearing rationale.

@@ -61,7 +61,7 @@ Three levels, used consistently. Exact sizes/weights live in `ui-tokens.md`'s Ty
 - **Body/primary text** — the default for any readable content.
 - **Secondary/muted text** — labels, timestamps, captions, anything supporting rather than primary.
 
-**Invariant:** never introduce a fourth text size/weight combination outside these three without adding it to `ui-tokens.md`'s Typography table first — an ad hoc text style is exactly the drift `/moor` exists to catch.
+**Invariant:** never introduce a fourth text size/weight combination outside these three without adding it to `ui-tokens.md`'s Typography table first — an ad hoc text style is exactly the drift the moor skill exists to catch.
 
 ---
 
