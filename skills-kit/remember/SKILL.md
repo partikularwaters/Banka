@@ -5,7 +5,12 @@ description: Save what matters at the end of a session so the next session picks
 
 AI has no memory between sessions. Every new session starts blank. This skill fixes that — but the fix is the file on disk, never this conversation's own recollection of it, since another session may have touched the project since this conversation last looked.
 
-**First, resolve the project's structure:** check which folder exists. `/context/` → Standard tier — session state lives in `context/progress-tracker.md`; a changed invariant belongs in whichever specific domain file actually owns it, not in progress-tracker.md. `/core/` → Core tier — session state lives in `core/progress.md`. Neither → Minimal tier — session state lives in `CLAUDE.md`'s Session Notes section directly.
+**First, resolve the project's structure:** `/context/` → Standard tier —
+session state lives in `context/progress-tracker.md`; `/core/` → Core tier —
+session state lives in `core/progress.md`; `CLAUDE.md` → Minimal tier — session
+state lives in its Current Status and Session Notes sections. If none exists,
+stop: this repository is not Banka-enabled and has no defined session-state
+destination. Never create one implicitly.
 
 ## Security Boundary
 
@@ -13,8 +18,8 @@ Never persist secrets — API keys, tokens, passwords, private keys, cookies, co
 
 ## How to Invoke
 
-`/remember save` — at end of session.
-`/remember restore` — at start of new session.
+Claude Code: `/remember save` or `/remember restore`.
+Codex: `$remember save` or `$remember restore`.
 No argument given → ask which is meant.
 
 ---
@@ -38,29 +43,25 @@ Think like handing off to an equally skilled colleague who knows nothing about t
 
 Do not capture: implementation detail visible in the code itself, anything already documented in the context files, or the blow-by-blow process of how something was built — only what was built and decided.
 
-### Safety check, then write
+### Safety check, then update the existing structure
 
-Run a final pass for anything secret-shaped before writing. If the session-state file already exists with unsaved content, summarize what's currently there and confirm before overwriting:
+Run a final pass for anything secret-shaped before writing. Update the resolved
+file by section; never replace it with a standalone memory document:
 
-```
-[CLAUDE.md's Session Notes / core/progress.md / context/progress-tracker.md] already has content from a previous session:
-[one-line summary]. Overwrite? (yes / no)
-```
+- **Minimal — `CLAUDE.md`:** update Current Status, Completed Actions, Known
+  Issues / Open Decisions, Session Notes, and Next Immediate Step.
+- **Core — `core/progress.md`:** update Current Phase, Active Milestones,
+  Completed Actions, Known Issues, Session Memory Bank, and Next Immediate Step.
+- **Standard — `context/progress-tracker.md`:** update Completed, In Progress,
+  Up Next, Blocked, Known Issues, Decisions Made, and Session Notes.
 
-### Format
+When a captured decision changes a global invariant, architecture, token, or
+other domain-owned fact, update the file that owns that fact rather than logging
+the change only in session state. Preserve unrelated sections and prior durable
+entries. Show a concise summary of proposed section changes before writing if
+existing content would be replaced rather than appended or status-updated.
 
-```markdown
-# Memory — [Feature or Session Name]
-
-## What was built
-## Decisions made
-## Problems solved
-## Current state
-## Next session starts with
-## Open questions
-```
-
-Confirm after writing: `Memory saved. Next session: run /remember restore to pick up from here.`
+Confirm after writing: `Session state saved. Next session: invoke the remember skill in restore mode.`
 
 ---
 
@@ -68,11 +69,17 @@ Confirm after writing: `Memory saved. Next session: run /remember restore to pic
 
 ### Step 1 — Check for drift before anything else
 
-If version control is in use, run its equivalent of `git log --oneline -10` and `git status` immediately — even if the session-state file looks complete and current. **A project folder worked by more than one session (including a different Claude Code session, possibly running concurrently) can have real changes on disk that no saved memory file mentions yet.** Treat this as standing practice, not a one-off check triggered only when something seems wrong — the whole point is that a stale assumption looks exactly like a correct one until it's checked.
+If version control is in use, run its equivalent of `git log --oneline -10` and `git status` immediately — even if the session-state file looks complete and current. **A project folder worked by more than one session can have real changes on disk that no saved state mentions yet.** Treat this as standing practice, not a one-off check triggered only when something seems wrong — the whole point is that a stale assumption looks exactly like a correct one until it's checked.
 
 ### Step 2 — Read everything available
 
-Read the resolved session-state file first (`CLAUDE.md`'s Session Notes, `core/progress.md`, or `context/progress-tracker.md`). Under Core or Standard tier, also read every other file listed in `CLAUDE.md`'s Source of truth section. Do not scan beyond what's actually referenced — with one deterministic exception, regardless of tier: if `delegation-queue.md` exists (project root for Minimal/Core, `/context/` for Standard), read it too. Model Delegation Setup can be enabled without every project's `CLAUDE.md` remembering to list it in prose, so this is a filesystem check, not a dependency on a list staying current — the same reasoning this project already uses for tier resolution itself.
+Read the resolved session-state file first (`CLAUDE.md`'s Current Status and
+Session Notes, `core/progress.md`, or `context/progress-tracker.md`). Under Core
+or Standard, also read every other file listed in `CLAUDE.md`'s Source of truth
+section. At every tier, read `IDEA-SCOPE.md` when it exists. Also read the exact
+tier-resolved queue when present: root `delegation-queue.md` for Minimal/Core,
+or `context/delegation-queue.md` for Standard. Do not scan beyond these declared
+sources.
 
 Never repeat or surface raw secrets from any source, even in restored context — summarize in redacted form only.
 
@@ -100,4 +107,6 @@ Say so honestly. Do not guess or silently reconcile a contradiction — surface 
 
 ## The Rule
 
-Every session ends with `/remember save`. Every session starts with `/remember restore` — and restore always means checking disk/version-control reality first, this conversation's own memory second.
+Every session ends by invoking the remember skill in save mode. Every session
+starts by invoking it in restore mode — and restore always means checking
+disk/version-control reality first, this conversation's own memory second.

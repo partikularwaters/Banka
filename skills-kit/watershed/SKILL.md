@@ -1,12 +1,12 @@
 ---
 name: watershed
-description: Get a wider, multi-angle critique of a piece of code, a plan, or an idea by evaluating it through five distinct critical perspectives, then a sixth pass that consolidates them into one clear, prioritized recommendation. Use when a decision is genuinely contested, high-stakes, or a single reviewer's perspective (even a careful one, like /survey) isn't enough.
+description: Get a wider, multi-angle critique of code, a plan, or an idea through five distinct critical perspectives, followed by a sixth consolidation pass. Use when a decision is contested, high-stakes, or one careful survey is not enough.
 argument-hint: [describe the code, plan, or idea to audit]
 ---
 
 A single reviewer, however careful, has one perspective. Some decisions are worth more than that — not because the reviewer is bad at reviewing, but because different failure modes are visible from different angles, and a security-minded read misses what a maintainability-minded read catches, and neither catches what a real end-user's experience would.
 
-This skill does not replace `/survey` (which checks against *this project's own declared rules*) or `/dredge` (which diagnoses a specific known failure). It's for the case where the question is genuinely open — a plan not yet committed to, a piece of code with no obvious single "correct" answer, an architectural fork where reasonable engineers would land in different places.
+This skill does not replace survey (which checks against *this project's own declared rules*) or dredge (which diagnoses a specific known failure). It's for the case where the question is genuinely open — a plan not yet committed to, a piece of code with no obvious single "correct" answer, an architectural fork where reasonable engineers would land in different places.
 
 ---
 
@@ -16,7 +16,12 @@ Before running anything, be clear with the user: is this code, a plan/proposal, 
 
 ## Step 1 — Read what's needed
 
-Read the subject itself (`$ARGUMENTS`, or the most recent relevant work in this session), and this project's context files (architecture, code standards, ui-rules, etc., resolved by checking which folder exists — `/context/` for Standard tier, `/core/` for Core tier, or inline in `CLAUDE.md` for Minimal tier) so every persona below is grounded in this project's actual reality, not a generic one.
+Read the explicitly supplied subject, or the most recent relevant work in this
+session if no subject was supplied, and resolve project context: `/context/` for
+Standard, `/core/` for Core, or `CLAUDE.md` for Minimal. If none exists, this is
+an unstructured/non-Banka repository, not Minimal. Use the supplied subject and
+relevant repository documentation, state the missing Banka structure, and do
+not invent project-specific invariants.
 
 ## Step 2 — Run five independent audits
 
@@ -38,7 +43,11 @@ Assumes the proposal is over-built until proven otherwise. What's here that wasn
 Ignores internal elegance entirely. Would an actual person, in the actual context this gets used, succeed at using this without confusion, without a support request, without giving up? What's technically correct but practically unusable?
 
 **4. The Maintainer — Future-Session Continuity**
-Assumes a different session — possibly a different, less capable model (see the `delegate` skill), possibly months later — has to pick this up with zero memory of today. Is intent documented, or only implementation? Would `ui-registry.md`/`progress-tracker.md`/naming actually prevent drift, or just look like they would?
+Assumes a different session — possibly running a different user-selected model,
+possibly months later — has to pick this up with zero memory of today. Is intent
+documented, or only implementation? Would
+`ui-registry.md`/`progress-tracker.md`/naming actually prevent drift, or just
+look like they would?
 
 **5. The Domain Enforcer — Project-Specific Correctness**
 The strictest, most literal-minded persona. Checks purely against this project's own declared invariants, conventions, and prior decisions (its context files) — not general best practice, not the auditor's own taste. Where does this quietly contradict something this project already committed to?
@@ -79,4 +88,4 @@ Present the consolidated audit and stop. Do not implement the recommendation aut
 
 ## When not to reach for this
 
-Don't use `/watershed` for routine checklist review (`/survey` does that faster and is usually sufficient) or for a specific, already-identified bug (`/dredge` diagnoses that directly). Reach for this when the actual question is "which direction is right," not "did we do the thing we already decided correctly."
+Don't use watershed for routine checklist review (survey does that faster and is usually sufficient) or for a specific, already-identified bug (dredge diagnoses that directly). Reach for this when the actual question is "which direction is right," not "did we do the thing we already decided correctly."

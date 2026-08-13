@@ -2,7 +2,7 @@
 
 # Code Standards
 
-Implementation rules for the entire project. Followed in every session without exception — this is what prevents pattern drift across sessions, and across different models if Model Delegation (Section 7.5) is in use.
+Implementation rules for the entire project. Followed in every session without exception — this is what prevents pattern drift across sessions and execution models when Delegation Setup (Section 7.5) is in use.
 
 **Every rule in this file must pass the checkability test** (Fill-In Discipline, Section 2.5, rule 2): could a session check real code against this and get a clear yes/no? A rule that only *sounds* like guidance gets rewritten concrete or removed — it does not stay in as filler.
 
@@ -10,10 +10,10 @@ Implementation rules for the entire project. Followed in every session without e
 
 ## Engineering Mindset
 
-- Think before implementing — understand what's being built and why before writing a line. This is what `/charter` exists to force before code starts.
+- Think before implementing — understand what's being built and why before writing a line. This is what the charter skill exists to force before code starts.
 - Scope is sacred — build only what the current plan/ticket requires. Do not add adjacent improvements uninvited.
 - Clean over clever — simple, readable code is preferred even when a denser version is possible.
-- One thing at a time — finish a feature fully (including `/survey`) before starting the next.
+- One thing at a time — finish a feature fully, including a survey, before starting the next.
 
 ---
 
@@ -133,7 +133,7 @@ see Database / Data Access below.
 
 ## Delegation Tiering (see the `delegate` skill for the full mechanism)
 
-**Register: Hard Default** for the underlying rule (Section 2.6 registry — delegation readiness); the specific items in each list below are this project's own instantiation of it, not universal. Project-specific guidance on what's safe to hand to a lighter model in a fresh session, versus what stays with the stronger model:
+**Register: Hard Default** for the underlying rule (Section 2.6 registry — delegation readiness); the specific items in each list below are this project's own instantiation of it, not universal. `Junior-safe` and `Senior-required` describe the minimum execution capability and judgment the work needs, not a particular model product. A same or stronger model may execute Junior-safe work; Senior-required work never runs in a Junior-only mode.
 
 **Junior-safe by default in this project:**
 - Adding a new field to an existing form that already has a matching pattern
@@ -164,7 +164,10 @@ see Database / Data Access below.
 | -------- | ------- | ----- |
 | `[VAR_NAME]` | `[file/module]` | `[never logged, never committed]` |
 
-**Invariant:** no secret, key, or credential-shaped value is ever written into a context file, `memory.md`, or committed to version control — see the `remember` skill's own Security Boundary, which already enforces this for session memory specifically.
+**Invariant:** no secret, key, or credential-shaped value is ever written into
+`CLAUDE.md`, `core/progress.md`, `context/progress-tracker.md`, any other context
+file, or version control. The remember skill enforces the same boundary when it
+updates session state.
 
 ---
 

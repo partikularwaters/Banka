@@ -34,13 +34,13 @@ If the fix doesn't work: stop. Don't suggest another fix immediately — the roo
 
 ## Step 3B — Hard Reset
 
-Acknowledge plainly this isn't a failure, it's the correct response to a polluted context. Extract what's worth keeping (original feature intent, what's actually correct so far, what's been learned about what doesn't work) into a reset note. Instruct: save the note, end this session, start fresh, `/remember restore` if memory exists, approach again with the reset note as context. Do not continue in this session.
+Acknowledge plainly this isn't a failure, it's the correct response to a polluted context. Extract what's worth keeping (original feature intent, what's actually correct so far, what's been learned about what doesn't work) into a reset note. Instruct: save the note, end this session, start fresh, invoke the remember skill in restore mode if Banka state exists, and approach again with the reset note as context. Do not continue in this session.
 
 ## Step 3C — Rethink
 
 Name the wrong assumption explicitly: what was assumed vs. what's actually true. Propose the correct approach, what gets discarded, what can be kept. Do not start rebuilding immediately — present the analysis and wait for the developer to agree.
 
-**If, after this diagnosis, more than one plausible correct approach remains** — not just "the old approach was wrong" but genuine disagreement about what the right one is — that's a good moment to suggest `/watershed` for a wider, multi-angle pass before committing to a direction, rather than picking one here on a single perspective.
+**If, after this diagnosis, more than one plausible correct approach remains** — not just "the old approach was wrong" but genuine disagreement about what the right one is — suggest the watershed skill for a wider, multi-angle pass before committing to a direction, rather than picking one here on a single perspective.
 
 ## The Principle
 

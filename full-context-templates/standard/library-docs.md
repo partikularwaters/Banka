@@ -10,19 +10,44 @@ Read the relevant section before implementing any feature that touches these lib
 
 ## Before Using Any Library
 
-Before implementing any feature that uses a third party library:
+First identify the exact installed version from the project's dependency files
+or lockfile. Then use the right authority for the question being answered:
 
-1. **Check CLAUDE.md** at the project root — it lists every skill installed for this project. Skills contain up-to-date API documentation and usage patterns specific to this codebase.
-2. **Check if an MCP server is configured** for that library. If one is available — use it before falling back to general knowledge.
-3. **Read this file** for project-specific patterns that override general library knowledge.
+- **API facts:** official documentation for the installed version establishes
+  which functions, options, and behaviors the library supports. An MCP server
+  may retrieve that documentation, but the connector itself is not the
+  authority.
+- **Project policy:** `architecture.md`, `code-standards.md`, and this file
+  establish how this project permits the library to be used, including wrappers,
+  security boundaries, approved features, and version pins.
+- **Workflow guidance:** a relevant skill may explain a repeatable procedure,
+  but it cannot override project invariants or claim support the installed
+  version does not have.
+- **Fallback knowledge:** general model knowledge is used only when the sources
+  above do not answer the question, and any version-sensitive claim must be
+  verified before implementation.
 
-The order of authority is:
+These are separate authorities, not one universal ranking:
 
 ```
-MCP server (real-time docs) → Skills → This file (project rules) → General training knowledge
+What does the installed library support?
+  → Official documentation for the installed version
+
+How may this project use it?
+  → Project architecture, code standards, and this file
+
+What repeatable process should the agent follow?
+  → Relevant skill, within the two boundaries above
+
+No reliable source answers the question?
+  → General model knowledge, clearly marked and verified before use
 ```
 
-Never rely on general training knowledge alone for library APIs — they change frequently and training data may be outdated.
+When sources conflict, do not silently choose one. For example, current
+documentation for a newer major version does not override the version installed
+here, and a library capability does not override a project rule that prohibits
+its use. Report any genuine incompatibility and propose an explicit dependency
+upgrade, project-rule revision, or supported alternative.
 
 ---
 

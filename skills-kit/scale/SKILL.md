@@ -6,7 +6,18 @@ argument-hint: (usually no argument needed)
 
 CRITICAL: Do not execute a promotion unless the user explicitly requested this command, OR one of the current tier's thresholds is actually met (see below). **Always promote exactly one tier at a time** — even if it looks like both tiers' thresholds are already met, promote to the next tier up, confirm it's correct, then separately re-check whether a second promotion is also warranted. Never jump from Minimal straight to Standard in one pass.
 
-**First: resolve the current tier.** Check which folder exists. `/context/` → this project is already Standard tier — stop here and tell the user no promotion is possible, it's already at the fullest structure. `/core/` → this project is Core tier — check the Core → Standard thresholds below. Neither → this project is Minimal tier — check the Minimal → Core thresholds below.
+**First: resolve the current tier.** Check which state exists. `/context/` →
+this project is already Standard tier — stop here and tell the user no promotion
+is possible. `/core/` → this project is Core tier — check the Core → Standard
+thresholds below. `CLAUDE.md` → this project is Minimal tier — check the Minimal
+→ Core thresholds below. If none exists, stop: this is not a Banka-enabled
+project, so there is no tier to promote.
+
+Before changing `AGENTS.md`, locate the block between `<!-- BANKA:START -->`
+and `<!-- BANKA:END -->`. Update only that Banka-owned block and preserve all
+content outside it. If an older unmarked Banka shim exists, show the proposed
+marked migration for confirmation. If unrelated instructions directly conflict
+with the new Banka block, stop and surface the conflict instead of choosing one.
 
 **Then: check which (if any) threshold for the current tier is met, and state this plainly.** If none are met and the user did not explicitly request this: stop here and say no promotion is needed — do not proceed further.
 
@@ -26,8 +37,8 @@ If triggered, perform the promotion:
    - Project Overview's Stack, Folder Matrix, and Absolute Invariants → `core/architecture.md`
    - Any UI-related content → `core/design.md`
    - Current Status and Session Notes → `core/progress.md`
-3. Rewrite `CLAUDE.md` to the Core router format — its Source of truth section now lists the four `/core/` files.
-4. Output all four new files and the rewritten `CLAUDE.md` in full. Explicitly list what moved from `CLAUDE.md` into which new file, so the user can confirm before anything is deleted. **Once confirmed, remove the inline content from `CLAUDE.md`** — leaving both copies in place risks a future session reading stale, duplicated content instead of the real Core source of truth.
+3. Rewrite `CLAUDE.md` to the Core router format — its Source of truth section now lists the four `/core/` files. Update only the Banka-owned block in `AGENTS.md` so it points to `CLAUDE.md` and `/core/`; do not copy project state into it.
+4. Output all four new files and the rewritten `CLAUDE.md` in full, plus the proposed replacement for the marked Banka block in `AGENTS.md`. Explicitly list what moved from `CLAUDE.md` into which new file, so the user can confirm before anything is deleted. **Once confirmed, remove the inline content from `CLAUDE.md`** — leaving both copies in place risks a future session reading stale, duplicated content instead of the real Core source of truth.
 
 ## Core → Standard
 
@@ -48,5 +59,5 @@ If triggered, perform the promotion:
 5. Split `core/progress.md`:
    - Active Milestones and Completed Actions → `context/build-plan.md`
    - Session Memory Bank and any Known Issues / Open Decisions → `context/progress-tracker.md`
-6. Rewrite `CLAUDE.md` to the Standard router format — its Source of truth section now lists all nine `/context/` files, and its Skills available note updates to reflect that `/moor` writes to `context/ui-registry.md` (UI patterns) or `context/progress-tracker.md` (general outcomes), and `/remember` saves/restores session state in `context/progress-tracker.md`.
-7. Output all nine new files and the rewritten `CLAUDE.md` in full. Explicitly list what moved from which `/core/` file into which new one, so the user can confirm before anything is deleted. **Once confirmed, delete the `/core/` folder** — leaving it in place risks a future session reading stale, orphaned files instead of the real Standard source of truth.
+6. Rewrite `CLAUDE.md` to the Standard router format — its Source of truth section now lists all nine `/context/` files, and its Skills available note updates to reflect that the moor skill writes to `context/ui-registry.md` (UI patterns) or `context/progress-tracker.md` (general outcomes), and the remember skill saves/restores session state in `context/progress-tracker.md`. Update only the Banka-owned block in `AGENTS.md` so it points to `CLAUDE.md` and `/context/`; do not copy project state into it.
+7. Output all nine new files and the rewritten `CLAUDE.md` in full, plus the proposed replacement for the marked Banka block in `AGENTS.md`. Explicitly list what moved from which `/core/` file into which new one, so the user can confirm before anything is deleted. **Once confirmed, delete the `/core/` folder** — leaving it in place risks a future session reading stale, orphaned files instead of the real Standard source of truth.

@@ -3,21 +3,24 @@ name: moor
 description: After building any UI component or resolving a notable engineering outcome, extract what matters and save it to the correct project file — the UI registry for UI patterns, the session-state file for everything else. So every future session builds on what's already established instead of drifting from it.
 ---
 
-**First, resolve the project's structure:** check which folder exists. `/context/` → Standard tier — nine files under `/context/`. `/core/` → Core tier — four files under `/core/`. Neither → Minimal tier — everything lives inline in `CLAUDE.md`. Use whichever real files actually exist, never assume filenames.
+**First, resolve the project's structure:** `/context/` → Standard tier — nine
+files under `/context/`; `/core/` → Core tier — four files under `/core/`;
+`CLAUDE.md` → Minimal tier — state lives inline. If none exists, stop: this is
+not a Banka-enabled project and there is no defined destination to moor into.
+Never create Banka state implicitly.
 
-UI consistency and institutional memory do not happen by accident — they happen because every session captures what it just did, in a place a future session (possibly a different, lighter model — see the `delegate` skill) will actually read before building something similar.
+UI consistency and institutional memory depend on every session capturing what
+it settled in a place a future session — possibly using a different
+user-selected model — will read before building something similar.
 
 ## How to Invoke
 
-```
-/moor
-```
-To target a specific file: `/moor [filepath]`
-To audit an existing codebase for inconsistencies: `/moor audit`
+Claude Code: `/moor`, `/moor [filepath]`, or `/moor audit`.
+Codex: `$moor`, `$moor [filepath]`, or `$moor audit`.
 
 If no filepath is given, identify recently created/modified component files automatically.
 
-**Use audit mode when:** the project's UI already exists and consistency is uncertain, multiple sessions have passed without running `/moor`, something looks visually off but it's hard to pinpoint why, or before establishing `ui-registry.md` for the first time on an existing project.
+**Use audit mode when:** the project's UI already exists and consistency is uncertain, multiple sessions have passed without invoking moor, something looks visually off but it's hard to pinpoint why, or before establishing `ui-registry.md` for the first time on an existing project.
 
 ---
 
@@ -69,7 +72,7 @@ Flag anything inconsistent or surprising found during extraction.
 
 ---
 
-## Audit Mode — /moor audit
+## Audit Mode
 
 Scans the whole codebase, finds conflicts, establishes a clean baseline before any further single-component capturing happens.
 
@@ -81,4 +84,4 @@ Scans the whole codebase, finds conflicts, establishes a clean baseline before a
 
 ## The Rule
 
-Build something worth remembering. Run `/moor`. Move on. A registry that's sometimes updated is unreliable — consistency is a habit, not a feature.
+Build something worth remembering. Invoke moor. Move on. A registry that's sometimes updated is unreliable — consistency is a habit, not a feature.
