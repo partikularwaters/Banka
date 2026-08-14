@@ -1,0 +1,11 @@
+# AI Commit Attribution
+
+Before creating a commit, follow the AI assistance attribution convention in
+`CONTRIBUTING.md`. When your work materially shaped the commit, add this trailer
+to the commit-message body using your actual product and model when known:
+
+```text
+Assisted-by: <provider or product> (<model, if known>)
+```
+
+Do not invent an AI email address or substitute `Co-authored-by`.

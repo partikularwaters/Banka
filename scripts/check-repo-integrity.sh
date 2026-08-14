@@ -13,18 +13,15 @@ fail() {
 
 for skill in "${skills[@]}"; do
   source_dir="$repo_root/skills-kit/$skill"
-  discovery_link="$repo_root/.agents/skills/$skill"
+  repo_local_skill="$repo_root/.agents/skills/$skill"
 
   test -f "$source_dir/SKILL.md" || fail "Missing skills-kit/$skill/SKILL.md"
-  test -L "$discovery_link" || fail ".agents/skills/$skill is missing or is not a symlink"
-  test -f "$discovery_link/SKILL.md" || fail ".agents/skills/$skill does not resolve to a SKILL.md"
+  if test -e "$repo_local_skill" || test -L "$repo_local_skill"; then
+    fail ".agents/skills/$skill duplicates a user-level Banka skill"
+  fi
 
   declared_name=$(sed -n 's/^name: //p' "$source_dir/SKILL.md" | head -n 1)
   test "$declared_name" = "$skill" || fail "skills-kit/$skill declares name: $declared_name"
-
-  resolved_source=$(cd "$source_dir" && pwd -P)
-  resolved_link=$(cd "$discovery_link" && pwd -P)
-  test "$resolved_link" = "$resolved_source" || fail ".agents/skills/$skill does not point to skills-kit/$skill"
 done
 
 start_count=$(grep -c '<!-- BANKA:START -->' "$repo_root/protocol/Banka.md")

@@ -255,8 +255,8 @@ If `IDEA-SCOPE.md` exists in the project root, it's the original scope document 
 ## Skills available
 This project uses the standard Skills Kit: charter, survey, dredge, remember,
 moor, scale, delegate, watershed, and linis. Availability is runtime-specific:
-- Claude Code: install under `~/.claude/skills/` or `.claude/skills/`; invoke with `/skill-name`.
-- Codex: expose under `~/.agents/skills/` or `.agents/skills/`; invoke with `$skill-name`.
+- Claude Code: install once under `~/.claude/skills/`; invoke with `/skill-name`.
+- Codex: install once under `~/.agents/skills/`; invoke with `$skill-name`.
 Follow each skill's own instructions exactly; this file does not restate them.
 ```
 
@@ -276,9 +276,9 @@ This project uses Banka. Its current project state is in `CLAUDE.md`; read it
 before working. If `IDEA-SCOPE.md` exists, consult it for original intent and
 never overwrite it.
 
-Banka skills are not assumed available in Codex. Use them only after
-Codex-specific installation or discovery has been configured for this
-environment.
+Banka skills should be installed once at `~/.agents/skills/`. If they are not
+available, install the Skills Kit there before invoking them; do not create a
+project-local copy of the standard kit.
 <!-- BANKA:END -->
 ```
 
@@ -313,9 +313,9 @@ This project uses Banka. Its current project state is in `CLAUDE.md` and
 `core/`; read the root file and the relevant Core files before working. If
 `IDEA-SCOPE.md` exists, consult it for original intent and never overwrite it.
 
-Banka skills are not assumed available in Codex. Use them only after
-Codex-specific installation or discovery has been configured for this
-environment.
+Banka skills should be installed once at `~/.agents/skills/`. If they are not
+available, install the Skills Kit there before invoking them; do not create a
+project-local copy of the standard kit.
 <!-- BANKA:END -->
 ```
 
@@ -341,8 +341,8 @@ Read every file in /core/ at the start of a session that touches its domain:
 ## Skills available
 This project uses the standard Skills Kit: charter, survey, dredge, remember,
 moor, scale, delegate, watershed, and linis. Availability is runtime-specific:
-- Claude Code: install under `~/.claude/skills/` or `.claude/skills/`; invoke with `/skill-name`.
-- Codex: expose under `~/.agents/skills/` or `.agents/skills/`; invoke with `$skill-name`.
+- Claude Code: install once under `~/.claude/skills/`; invoke with `/skill-name`.
+- Codex: install once under `~/.agents/skills/`; invoke with `$skill-name`.
 Follow each skill's own instructions exactly; this file does not restate them.
 ```
 
@@ -394,9 +394,9 @@ This project uses Banka. Its current project state is in `CLAUDE.md` and
 If `IDEA-SCOPE.md` exists, consult it for original intent and never overwrite
 it.
 
-Banka skills are not assumed available in Codex. Use them only after
-Codex-specific installation or discovery has been configured for this
-environment.
+Banka skills should be installed once at `~/.agents/skills/`. If they are not
+available, install the Skills Kit there before invoking them; do not create a
+project-local copy of the standard kit.
 <!-- BANKA:END -->
 ```
 
@@ -426,8 +426,8 @@ Read every file in /context/ at the start of a session that touches its domain:
 ## Skills available
 This project uses the standard Skills Kit: charter, survey, dredge, remember,
 moor, scale, delegate, watershed, and linis. Availability is runtime-specific:
-- Claude Code: install under `~/.claude/skills/` or `.claude/skills/`; invoke with `/skill-name`.
-- Codex: expose under `~/.agents/skills/` or `.agents/skills/`; invoke with `$skill-name`.
+- Claude Code: install once under `~/.claude/skills/`; invoke with `/skill-name`.
+- Codex: install once under `~/.agents/skills/`; invoke with `$skill-name`.
 Follow each skill's own instructions exactly. The moor skill writes UI patterns
 to `context/ui-registry.md` and general outcomes to
 `context/progress-tracker.md`; the remember skill updates session state in
@@ -467,8 +467,7 @@ The nine Skills — `charter`, `survey`, `dredge`, `remember`, `moor`, `scale`, 
 
 ### Claude Code discovery
 
-Install once at `~/.claude/skills/` for personal, machine-wide use, or under a
-project's `.claude/skills/` for project-local use:
+Install once at `~/.claude/skills/` for personal, machine-wide use:
 
 ```
 ~/.claude/skills/
@@ -493,20 +492,26 @@ Install the Banka Skills Kit from <path-to-clone>/skills-kit/ into
 Claude Code performs the copy with its normal file tools. Invoke the installed
 skills with `/skill-name`.
 
-**Before installing, check `~/.claude/commands/` and `~/.claude/skills/` (personal) and the current project's own `.claude/commands/` and `.claude/skills/` (if present) for a file already using one of the nine skill names above.** If one exists, do not remove it unilaterally — back it up, tell the user what was found, and let them decide whether to remove, rename, or keep it before installing over it.
+**Before installing, check `~/.claude/commands/` and `~/.claude/skills/`, plus
+any old project-local `.claude/commands/` or `.claude/skills/` entries, for a
+file already using one of the nine skill names above.** If one exists, do not
+remove it unilaterally — back it up, tell the user what was found, and let them
+decide whether to remove, rename, or keep it before installing over it.
 
 ### Codex discovery
 
-Codex uses the same skill-directory shape but discovers project-local skills in
-`.agents/skills/` and user-level skills in `~/.agents/skills/`. Link or copy
-each directory from this package's `skills-kit/` into the chosen location; a
-symlink is preferred so `skills-kit/` remains the only source of truth. Before
-linking, check for an existing skill with the same name — Codex can show both
-same-named skills and does not merge them.
+Install the standard Banka kit once at the Codex user-level location,
+`~/.agents/skills/`. Link each directory from this package's `skills-kit/` into
+that location; a symlink is preferred so `skills-kit/` remains the only source
+of truth. Before linking, check the user-level directory and existing projects
+for a Banka skill with the same name — Codex can show duplicate same-named
+skills and does not merge them.
 
-This repository commits `.agents/skills/` symlinks for all nine skills. If a
-checkout or archive does not preserve symlinks, copy each complete skill
-directory instead and confirm every entry contains a readable `SKILL.md`.
+Do not install the standard Banka kit under a project's `.agents/skills/`.
+Repository-local discovery is reserved for skills that genuinely belong only to
+that repository. If symlinks cannot be preserved on the machine, copy each
+complete skill directory into `~/.agents/skills/` instead and confirm every
+entry contains a readable `SKILL.md`.
 
 In Codex, explicitly invoke a Banka skill with `$` (for example `$charter`,
 `$survey`, or `$remember save`). A host may also show enabled skills in its
@@ -532,8 +537,8 @@ repository while stating that no Banka state exists. Skills that require a
 state destination stop rather than creating one implicitly.
 
 The protocol never regenerates skill contents per project. If the Skills Kit is
-not discoverable in the chosen runtime, configure its Claude Code or Codex
-location before the first build session.
+not discoverable in the chosen runtime, configure its user-level Claude Code or
+Codex location before the first build session.
 
 ---
 
