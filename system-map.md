@@ -69,9 +69,9 @@ Also orthogonal:
   linis — scoped cleanup pass, run once a version ships or a milestone
   closes. Never run against active work.
 
-Codex discovery (repository-local, not project state):
+Codex discovery (user-level, shared by every repository):
 
-  .agents/skills/* -> symlinks to skills-kit/*
+  ~/.agents/skills/* -> symlinks to Banka/skills-kit/*
   $skill-name invokes a skill in Codex; Claude Code uses /skill-name.
 ```
 

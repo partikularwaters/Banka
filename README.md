@@ -71,23 +71,24 @@ Full install details and rationale: [protocol/Banka.md](protocol/Banka.md), Sect
 
 ### Codex
 
-This repository exposes the same nine `skills-kit/` directories to Codex through
-project-local `.agents/skills/` symlinks. They are links, not copies: edit the
-source in `skills-kit/` only. Invoke skills with `$skill-name`, for example
-`$charter` or `$remember restore`.
+Install the nine skills once for the current user by linking each canonical
+directory under `skills-kit/` into `~/.agents/skills/`. Codex then exposes the
+same Banka skills in every repository. Invoke them with `$skill-name`, for
+example `$charter` or `$remember restore`.
 
-For another project, link each Banka skill directory into that project's
-`.agents/skills/`, or into `~/.agents/skills/` for one user's machine-wide
-installation. Check for an existing skill with the same name before creating a
-link: Codex does not merge duplicate skill names.
+Before installing, check `~/.agents/skills/` and the projects you use for an
+existing Banka skill with the same name. Migrate or remove old project-local
+copies only after confirming they are not customized: Codex can show duplicate
+same-named skills and does not merge them.
 
 If an archive or checkout does not preserve symlinks, copy each complete skill
 directory instead. Confirm every entry contains a readable `SKILL.md`; the
 directory under `skills-kit/` remains authoritative.
 
 Run `scripts/check-repo-integrity.sh` from this repository to verify all nine
-links, their `SKILL.md` files and names, the generated Banka block markers, and
-known obsolete terminology.
+canonical `SKILL.md` files and names, confirm repository-local Banka duplicates
+have not been reintroduced, check the generated Banka block markers, and scan
+for known obsolete terminology.
 
 The Banka source repository is not itself a Banka-enabled application project:
 it intentionally has no project-state `CLAUDE.md`, `/core/`, or `/context/`.
@@ -150,7 +151,6 @@ This is what Banka generates *inside a project you build* — not this repo's ow
 
 ```
 Banka/
-├── .agents/skills/                # Codex discovery links to the nine canonical skills
 ├── protocol/Banka.md              # the core handoff protocol
 ├── scripts/check-repo-integrity.sh # repository-local packaging smoke check
 ├── system-map.md                  # one-doc orientation, start here
