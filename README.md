@@ -170,6 +170,7 @@ Banka stays agnostic about stack and framework, but defers to genuinely strong o
 
 - [system-map.md](system-map.md) — full connective picture, one diagram plus one paragraph per stage.
 - [protocol/Banka.md](protocol/Banka.md) — the authoritative rules: the rubric, the Layer Principle, all three tiers' exact output, the Skills Kit, and Craft Layer modules.
+- [CONTRIBUTING.md](CONTRIBUTING.md) — contribution guidance, including Banka's transparent AI-assistance commit convention.
 
 ## License
 
