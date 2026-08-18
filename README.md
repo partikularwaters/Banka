@@ -89,6 +89,7 @@ adoption     established?
                      |
                      v
                Banka operation
+```
 
 **ASMP scopes. Docking prepares. Banka adopts and operates.**
 
