@@ -4,20 +4,32 @@ A protocol and skills kit for scoping, generating, and building coding-agent
 projects at the right tier of complexity — agnostic about stack, opinionated
 about quality, and currently workable in Claude Code and Codex.
 
-Banka gives a project two things most AI-assisted builds skip: a scoping step that decides how much structure a project actually needs *before* any files get generated, and a permanent, reusable set of Skills that carry a project through its whole build loop afterward — planning, delegation, review, recovery, and session handoff.
+Banka gives a project two things most AI-assisted builds skip: an adoption
+flow that establishes project readiness and decides how much structure a
+project actually needs *before* any files get generated, and a permanent,
+reusable set of Skills that carry a project through its whole build loop
+afterward — planning, delegation, review, recovery, and session handoff.
 
 ## Why "Banka" 🛶
 
-*Banka* — shortened from *bangka*, Tagalog for the traditional Philippine outrigger boat — is simple, stable, and built to be steered deliberately rather than left to drift. That's the role this framework plays: it doesn't build the project for you, it keeps it pointed at a chosen destination through every session in between. Scoping sets the heading. The Skills Kit — `charter`, `survey`, `dredge`, `moor`, and the rest — is the crew that keeps the vessel on course, correcting drift instead of letting each session start over from nowhere. The destination is never abstract: a haven, the harbor a project was actually scoped to reach, not just wherever momentum happens to leave it.
+*Banka* — shortened from *bangka*, Tagalog for the traditional Philippine
+outrigger boat — is simple, stable, and built to be steered deliberately rather
+than left to drift. That's the role this framework plays: it doesn't build the
+project for you, it keeps it pointed at a chosen destination through every
+session in between. Scoping sets the heading. The Skills Kit — `charter`,
+`survey`, `dredge`, `moor`, and the rest — is the crew that keeps the vessel on
+course, correcting drift instead of letting each session start over from
+nowhere. The destination is never abstract: a haven, the harbor a project was
+actually scoped to reach, not just wherever momentum happens to leave it.
 
 ```
-external scope (optional)
+adoption entry  ──►  scope / brownfield prerequisites resolved
         |
         v
 scoping intake  ──►  tier resolved: Minimal / Core / Standard
         |
         v
-tier generation  ──►  a real project now exists on disk
+tier generation  ──►  Banka project state established
         |
         v
 the build loop (skills-kit/, repeats every session)
@@ -26,7 +38,74 @@ the build loop (skills-kit/, repeats every session)
 promotion, if the project outgrows its tier
 ```
 
-This is the compressed version. For the full picture — one diagram, one paragraph per stage, every arrow explained — read [system-map.md](system-map.md) first. [protocol/Banka.md](protocol/Banka.md) is the authoritative source underneath both; if anything here or in the system map looks wrong, the protocol doc wins.
+This is the compressed version. For the full picture — one diagram, one paragraph
+per stage, every arrow explained — read [system-map.md](system-map.md) first.
+[protocol/Banka.md](protocol/Banka.md) is the authoritative source underneath both;
+if anything here or in the system map looks wrong, the protocol doc wins.
+
+## Entering Banka
+
+You can start with Banka. You do not need to determine in advance whether a
+project needs a separate scoping or brownfield-preparation process.
+
+Banka first determines the condition of the project, then routes only when
+needed:
+
+```
+Start with Banka
+      |
+      v
+Is scope adequate?
+  |          |
+  no        yes
+  |          |
+  v          |
+Clarify      |
+scope        |
+  |          |
+  +----------+
+      |
+      v
+Is this an existing
+or brownfield project?
+  |              |
+  no            yes
+  |              |
+  v              v
+Banka        Is readiness
+adoption     established?
+                 |       |
+                no      yes
+                 |       |
+                 v       |
+          Banka Docking  |
+                 |       |
+          Ready for Banka
+                 |       |
+                 +-------+
+                     |
+                     v
+               Banka adoption
+                     |
+                     v
+               Banka operation
+
+**ASMP scopes. Docking prepares. Banka adopts and operates.**
+
+Banka requires adequate scope, not a particular scoping method. The
+[Adaptive Scope Mapping Protocol (ASMP)](https://github.com/partikularwaters/adaptive-scope-mapping-protocol)
+is one available route when intent is materially unclear.
+
+For an existing project whose readiness has not been established,
+[Banka Docking](https://github.com/partikularwaters/banka-docking-protocol)
+is Banka's canonical preparation protocol. Docking operates against the existing
+project and returns readiness evidence before Banka adoption continues.
+A brownfield project may also reveal inadequate scope during Docking. In that
+case, scope is clarified first, Docking resumes, and Banka adoption begins only
+after the project reaches Ready for Banka.
+
+See [BANKA-ADOPTION-GUIDE.md](BANKA-ADOPTION-GUIDE.md) for the full entry and
+handoff flow.
 
 ## The skills
 
@@ -95,14 +174,6 @@ it intentionally has no project-state `CLAUDE.md`, `/core/`, or `/context/`.
 Read-only skills can inspect an explicitly supplied subject and these repository
 docs; state-writing skills stop rather than treating the repository as Minimal.
 
-## Where to start
-
-Banka's scoping step (Protocol §1.5) resolves into one of three states — which one applies decides how you open the first session:
-
-- **Nothing scoped yet.** Open a fresh chat, hand it [protocol/Banka.md](protocol/Banka.md), and start describing the idea. Section 1.5's built-in fallback pass (State 3) scopes it for you before any tier gets chosen.
-- **You already have a scope document** — from any process, any shape, any filename, as long as it states a purpose, users, a feature scope, constraints, and a definition of done. Hand it along with the protocol doc. Section 1.5 reads it directly (State 1 if its own rubric was already run, State 2 if not) instead of re-asking what's already answered.
-- **A Banka project already exists on disk.** Skip the protocol doc and open the project in the supported runtime. Restore with `/remember restore` in Claude Code or `$remember restore` in Codex.
-
 ## The build loop
 
 ```
@@ -168,8 +239,9 @@ Banka stays agnostic about stack and framework, but defers to genuinely strong o
 
 ## Learn more
 
-- [system-map.md](system-map.md) — full connective picture, one diagram plus one paragraph per stage.
-- [protocol/Banka.md](protocol/Banka.md) — the authoritative rules: the rubric, the Layer Principle, all three tiers' exact output, the Skills Kit, and Craft Layer modules.
+- [system-map.md](system-map.md) — the full connective picture of how Banka works.
+- [BANKA-ADOPTION-GUIDE.md](BANKA-ADOPTION-GUIDE.md) — how new and existing projects enter Banka, including scope and brownfield-readiness routing.
+- [protocol/Banka.md](protocol/Banka.md) — the authoritative rules: adoption entry, the complexity rubric, the Layer Principle, all three tiers' exact output, the Skills Kit, and Craft Layer modules.
 - [CONTRIBUTING.md](CONTRIBUTING.md) — contribution guidance, including Banka's transparent AI-assistance commit convention.
 
 ## License

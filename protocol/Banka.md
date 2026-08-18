@@ -4,7 +4,7 @@
 > **TO THE AI AGENT READING THIS:**
 > You are ingesting Banka, a scoping-to-agent handoff protocol. This is not a build protocol — you are not becoming a persistent Tech Lead for an ongoing chat session. Your job is narrower and one-time: take a project that has already been (or is about to be) scoped in this conversation, and prepare durable project state for a coding-agent runtime. Banka currently documents Claude Code and Codex as supported runtimes.
 >
-> **Your First Output Requirement:** Acknowledge ingestion of this protocol. State that you've adopted the role of **Banka Specialist**. Then resolve scoping state per Section 1.5 before moving to Section 2. Once a tier is chosen (Section 2), all content generation is governed by the Fill-In Discipline rules in Section 2.5 — read that section before writing into any file.
+> **Your First Output Requirement:** Acknowledge ingestion of this protocol. State that you've adopted the role of **Banka Specialist**. Then resolve the adoption entry gate in Section 0 before proceeding with Banka adoption. Once Section 0 permits Banka to proceed, resolve scoping state per Section 1.5 before moving to Section 2. Once a tier is chosen (Section 2), all content generation is governed by the Fill-In Discipline rules in Section 2.5 — read that section before writing into any file.
 
 ---
 
@@ -24,11 +24,89 @@ A handful of terms get used before the section that formally defines them. Quick
 
 ---
 
+## SECTION 0: ADOPTION ENTRY GATE
+
+Before Banka adoption proceeds, establish whether the project satisfies the
+prerequisites for Banka to become authoritative.
+
+### 0.1 Scope prerequisite
+
+Banka requires adequate scope before adoption. It does not require a particular
+scoping process, artifact name, or protocol.
+
+If available scope is materially inadequate, clarify it before continuing.
+The Adaptive Scope Mapping Protocol (ASMP) is one available route for producing
+decision-ready scope, but ASMP is not a Banka dependency when adequate scope
+already exists from another source.
+
+Once scope is sufficient to support Banka's proportional scoping intake,
+continue through the entry gate. Section 1.5 may normalize existing scope and
+fill modest gaps; it is not a substitute for dedicated scoping when the project
+is materially underdeveloped.
+
+### 0.2 Brownfield readiness prerequisite
+
+A new project with adequate scope may proceed into Banka's normal adoption
+workflow.
+
+An existing or brownfield project must also have sufficient current evidence
+that it is ready for Banka adoption.
+
+When that readiness has not already been established, apply the current
+canonical Banka Docking Protocol against the existing project. Do not duplicate
+Docking's assessment rules or readiness workflow inside Banka.
+
+If Docking determines that scope is inadequate, complete the required scope
+clarification and then return to Docking. Do not proceed directly from scope
+clarification to Banka adoption.
+
+Banka adoption may resume when Docking establishes `Ready for Banka` and the
+owner chooses to continue.
+
+`Ready for Banka` establishes readiness to begin Banka adoption. It does not
+establish that Banka adoption is complete.
+
+### 0.3 Protocol authority
+
+When ASMP is invoked, ASMP is authoritative for its scoping workflow.
+
+When Banka Docking is invoked, Docking is authoritative for its brownfield
+readiness workflow.
+
+Once the entry prerequisites are satisfied, Banka is authoritative for tier
+selection, Banka state generation, runtime integration, and ongoing Banka
+operation.
+
+Use the current canonical companion protocols rather than copying their internal
+rules into Banka.
+
+### 0.4 Adoption completion
+
+`Ready for Banka` permits Banka adoption to begin; it does not mean adoption is
+complete.
+
+Banka adoption is complete when the selected tier and required Banka state have
+been established, applicable runtime integration is available, relevant existing
+project knowledge has been preserved or deliberately reconciled, and a new
+session can recover sufficient durable state to continue safely.
+
+Until these conditions are satisfied, treat Banka adoption as in progress.
+
+Once adoption is complete, normal Banka operation begins.
+
+---
+
 ## SECTION 1: WHAT THIS PROTOCOL DOES NOT DO
 
 - It does not generate application code.
-- It does not replace a full scoping conversation — if the user hasn't actually thought through their project yet, do that first, the ordinary way (ask questions, one at a time, build shared understanding), before invoking this protocol's output steps. Section 1.5 gives this a real shape rather than leaving it as an ad hoc instinct.
-- It does not duplicate the Skills — `charter`, `survey`, `dredge`, `remember`, and `moor` are part of a permanent, reusable toolkit the user installs once (see Section 7). This protocol never regenerates or rewrites them. It only decides what *project-specific context* those skills should read.
+- It does not replace dedicated scoping when a project is materially
+  underdeveloped. Section 0 governs whether scope is sufficient to enter Banka;
+  Section 1.5 then normalizes available scope and fills only proportional gaps
+  before the complexity rubric runs.
+- It does not duplicate the Skills — `charter`, `survey`, `dredge`, `remember`,
+  and `moor` are part of a permanent, reusable toolkit the user installs once
+  (see Section 7). This protocol never regenerates or rewrites them. It only
+  decides what *project-specific context* those skills should read.
 
 ---
 

@@ -4,24 +4,38 @@
 
 # System Map
 
-One diagram, then one paragraph per stage. If a file reference below looks wrong, the file itself is authoritative — this doc explains connections, it doesn't redefine anything.
+One diagram, then one paragraph per stage. If a file reference below looks
+wrong, the file itself is authoritative — this doc explains connections,
+it doesn't redefine anything.
 
 The diagram uses indentation and arrows so labels can change without breaking
 fixed-width alignment.
 
 ```
-STAGE 0 — External Scoping (optional)
-  Any scoping process, or the user's own notes. Runtime-independent.
-  Output: a document with a real shape — purpose, users, feature scope,
-  constraints, and a definition of done.
+STAGE 0 — Adoption Entry (Protocol §0)
+  Establish whether Banka's prerequisites are satisfied.
+
+  Is scope adequate?
+    no  -> clarify scope before adoption continues
+           -> ASMP is one available route; no particular scoping method is required
+    yes -> continue
+
+  Is this an existing / brownfield project?
+    no  -> proceed to Banka scoping intake
+    yes -> is current readiness already established?
+             no  -> apply Banka Docking
+                    -> Docking must reach `Ready for Banka`
+             yes -> continue
+
+  Entry prerequisites satisfied
     |
-    |  handed to a supported coding-agent runtime
+    |  Banka adoption may proceed
     v
 
 STAGE 1 — Scoping Intake (Protocol §1.5)
   State 1: scope doc + rubric already run  -> read tier directly
   State 2: scope doc, no rubric            -> read substance, run §2
-  State 3: nothing exists                  -> run built-in fallback pass
+  State 3: no scope document               -> run lightweight Banka intake
   Writes: IDEA-SCOPE.md at project root (permanent, never edited)
     |
     |  a resolved tier: Minimal / Core / Standard
@@ -34,7 +48,7 @@ STAGE 2 — Tier Generation (Protocol §3 / §4 / §5)
   Section 2.6 (Layer Principle) governs every default written in:
   Agnostic (identity layer) vs. Hard Default (quality layer)
     |
-    |  a real project now exists on disk
+    |  Banka project state established
     v
 
 STAGE 3 — The Build Loop (skills-kit/, exposed per supported runtime)
@@ -77,17 +91,58 @@ Codex discovery (user-level, shared by every repository):
 
 ---
 
-## Stage 0 — External Scoping (optional)
+## Stage 0 — Adoption Entry (§0)
 
-Not part of this framework, and not required by it — Section 1.5's State 3 exists precisely so nothing breaks if this stage is skipped entirely. Any process that produces a document with the right shape counts, regardless of its filename or which framework produced it: a stated purpose, users, a staged feature scope, constraints, and a definition of done. A dedicated scoping protocol run in a separate chat surface is one way to get there; a person's own notes in the same shape count equally. If that document also already contains this protocol's own complexity rubric (§2), recorded as individual per-question answers rather than a summary, Stage 1 reads the resulting tier directly instead of re-running it.
+Before Banka adoption begins, Banka establishes whether the project satisfies
+its entry prerequisites.
+
+Adequate scope is required, but Banka does not require a particular scoping
+method, artifact name, or protocol. If the available scope is materially
+inadequate, clarify it before continuing. The Adaptive Scope Mapping Protocol
+(ASMP) is one available route for producing decision-ready scope; another
+adequate source is equally valid.
+
+Existing or brownfield projects have an additional readiness prerequisite.
+When current evidence does not already establish readiness, Banka routes the
+project through the current Banka Docking Protocol. Docking may itself identify
+inadequate scope; when that happens, complete the required scope clarification
+and then return to Docking. Banka adoption resumes only after Docking establishes
+`Ready for Banka` and the owner chooses to continue.
+
+`Ready for Banka` means the prerequisites for Banka adoption have been
+established. It does not mean Banka adoption is already complete.
 
 ## Stage 1 — Scoping Intake (§1.5)
 
-The seam between the two systems. Checks, in order: does a scope document exist with a rubric already run (State 1 — skip straight to stating the tier), does one exist without a rubric (State 2 — read it, then run §2), or does neither exist (State 3 — run a lightweight, unbranded scoping pass built into this protocol itself). Whichever state applies, the resolving document gets saved as `IDEA-SCOPE.md` at the project root before any tier files are generated — permanent, never edited afterward, sitting beside the generated structure rather than inside it.
+Once the adoption entry prerequisites are satisfied, Banka normalizes the scope
+it receives and fills only proportional gaps before resolving the project's
+tier.
+
+If a scope document already contains Banka's complexity rubric (State 1), Banka
+reads the recorded per-question answers and states the resulting tier. If scope
+exists without the rubric (State 2), Banka reads its substance and runs §2. If
+no scope document exists but the project is sufficiently developed to proceed
+(State 3), Banka runs its lightweight scoping intake.
+
+If that lightweight intake instead reveals that the project is materially
+underdeveloped, stop and return to the Stage 0 scope prerequisite rather than
+forcing the project through tier selection.
+
+Whichever state resolves successfully, the resulting scope is saved as
+`IDEA-SCOPE.md` at the project root before tier files are generated — permanent,
+never edited afterward, and stored beside the generated Banka structure rather
+than inside it.
 
 ## Stage 2 — Tier Generation (§3 / §4 / §5)
 
-The tier resolved in Stage 1 determines the file shape: Minimal has one Banka state file (`CLAUDE.md`) and no state folder; Core adds four files under `/core/`; Standard uses nine files under `/context/`. Each tier may also include a minimal `AGENTS.md` Codex entry that points to the existing Banka state without duplicating it. Every default written into shared state is governed by §2.6's Layer Principle — Agnostic defaults (stack, language, styling) get contrasted, never picked for the user; Hard Defaults (error handling, comment policy, the registry in §2.6) get stated as settled fact.
+The tier resolved in Stage 1 determines the file shape: Minimal has one Banka
+state file (`CLAUDE.md`) and no state folder; Core adds four files under `/core/`;
+Standard uses nine files under `/context/`. Each tier may also include a
+minimal `AGENTS.md` Codex entry that points to the existing Banka state without
+duplicating it. Every default written into shared state is governed by §2.6's
+Layer Principle — Agnostic defaults (stack, language, styling) get contrasted,
+never picked for the user; Hard Defaults (error handling, comment policy, the
+registry in §2.6) get stated as settled fact.
 
 ## Stage 3 — The Build Loop (skills-kit/)
 
@@ -102,8 +157,14 @@ uses `/skill-name`; Codex uses `$skill-name`.
 
 ## Stage 4 — Promotion (§6, scale)
 
-A project can outgrow its tier. The scale skill promotes exactly one tier at a time — Minimal → Core, or Core → Standard, never skipping — only when a real threshold is met or explicitly requested, and always shows what moved where before anything old gets deleted.
+A project can outgrow its tier. The scale skill promotes exactly one tier at a
+time — Minimal → Core, or Core → Standard, never skipping — only when a real
+threshold is met or explicitly requested, and always shows what moved where
+before anything old gets deleted.
 
 ## Orthogonal: Craft Layer Modules (§7.6 / §7.7) and linis
 
-Two mechanisms can engage at any point in Stage 3: a Craft Layer module is Agnostic until a project opts in, then Hard Default for that domain only. Linis removes narrative residue from settled files while preserving operational history, provenance, compatibility facts, and load-bearing rationale.
+Two mechanisms can engage at any point in Stage 3: a Craft Layer module is
+Agnostic until a project opts in, then Hard Default for that domain only.
+Linis removes narrative residue from settled files while preserving operational
+history, provenance, compatibility facts, and load-bearing rationale.
