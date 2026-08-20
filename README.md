@@ -127,8 +127,8 @@ decision-ready scope and sufficient readiness evidence already exist through
 other means.
 
 **ASMP ([Adaptive Scope Mapping Protocol](https://github.com/partikularwaters/adaptive-scope-mapping-protocol))** defines decision-ready scope from
-unclear, evolving, or incomplete intent. It is one method for establishing the
-scope condition needed before Banka adoption.
+unclear, evolving, or incomplete intent. It is one method for creating
+decision-ready scope before Banka adoption.
 
 **Docking ([Banka Docking Protocol](https://github.com/partikularwaters/banka-docking-protocol))** verifies readiness evidence for existing or
 brownfield projects. It is one method for preparing a project whose current
