@@ -12,30 +12,30 @@ The diagram uses indentation and arrows so labels can change without breaking
 fixed-width alignment.
 
 ```
-STAGE 0 — Adoption Entry (Protocol §0)
-  Establish whether Banka's prerequisites are satisfied.
+STAGE 0 — Project Assessment (Protocol §0)
+  Banka evaluates whether the project satisfies two conditions.
 
-  Is scope adequate?
+  Is decision-ready scope present?
     no  -> clarify scope before adoption continues
-           -> ASMP is one available route; no particular scoping method is required
+           -> Any valid scoping method is acceptable; ASMP is one available route
     yes -> continue
 
   Is this an existing / brownfield project?
     no  -> proceed to Banka scoping intake
-    yes -> is current readiness already established?
+    yes -> does sufficient readiness evidence already exist?
              no  -> apply Banka Docking
                     -> Docking must reach `Ready for Banka`
              yes -> continue
 
-  Entry prerequisites satisfied
+  Adoption conditions satisfied
     |
     |  Banka adoption may proceed
     v
 
 STAGE 1 — Scoping Intake (Protocol §1.5)
-  State 1: scope doc + rubric already run  -> read tier directly
-  State 2: scope doc, no rubric            -> read substance, run §2
-  State 3: no scope document               -> run lightweight Banka intake
+  State 1: scope doc + rubric already run -> read tier directly
+  State 2: scope doc, no rubric           -> read substance, run §2
+  State 3: no scope document              -> run lightweight Banka intake
   Writes: IDEA-SCOPE.md at project root (permanent, never edited)
     |
     |  a resolved tier: Minimal / Core / Standard
@@ -91,32 +91,32 @@ Codex discovery (user-level, shared by every repository):
 
 ---
 
-## Stage 0 — Adoption Entry (§0)
+## Stage 0 — Project Assessment (§0)
 
-Before Banka adoption begins, Banka establishes whether the project satisfies
-its entry prerequisites.
+Before Banka adoption begins, Banka evaluates whether the project satisfies two
+adoption conditions.
 
-Adequate scope is required, but Banka does not require a particular scoping
-method, artifact name, or protocol. If the available scope is materially
-inadequate, clarify it before continuing. The Adaptive Scope Mapping Protocol
-(ASMP) is one available route for producing decision-ready scope; another
-adequate source is equally valid.
+Decision-ready scope is required, but Banka does not require a particular
+scoping method, artifact name, or protocol. If the available scope is not
+decision-ready, clarify it before continuing. The Adaptive Scope Mapping
+Protocol (ASMP) is one available route for producing decision-ready scope;
+another valid scope source is equally acceptable.
 
-Existing or brownfield projects have an additional readiness prerequisite.
-When current evidence does not already establish readiness, Banka routes the
-project through the current Banka Docking Protocol. Docking may itself identify
-inadequate scope; when that happens, complete the required scope clarification
-and then return to Docking. Banka adoption resumes only after Docking establishes
-`Ready for Banka` and the owner chooses to continue.
+Existing or brownfield projects have an additional readiness evidence
+requirement. When current evidence does not already establish readiness, Banka
+routes the project through the current Banka Docking Protocol. Docking may
+itself identify scope that is unclear or not decision-ready; when that happens,
+complete the required scope clarification and then return to Docking. Banka
+adoption resumes only after Docking establishes `Ready for Banka` and the owner
+chooses to continue.
 
 `Ready for Banka` means the prerequisites for Banka adoption have been
 established. It does not mean Banka adoption is already complete.
 
 ## Stage 1 — Scoping Intake (§1.5)
 
-Once the adoption entry prerequisites are satisfied, Banka normalizes the scope
-it receives and fills only proportional gaps before resolving the project's
-tier.
+Once the adoption conditions are satisfied, Banka normalizes the scope it
+receives and fills only proportional gaps before resolving the project's tier.
 
 If a scope document already contains Banka's complexity rubric (State 1), Banka
 reads the recorded per-question answers and states the resulting tier. If scope
@@ -125,7 +125,7 @@ no scope document exists but the project is sufficiently developed to proceed
 (State 3), Banka runs its lightweight scoping intake.
 
 If that lightweight intake instead reveals that the project is materially
-underdeveloped, stop and return to the Stage 0 scope prerequisite rather than
+underdeveloped, stop and return to the Stage 0 scope requirement rather than
 forcing the project through tier selection.
 
 Whichever state resolves successfully, the resulting scope is saved as
@@ -135,14 +135,14 @@ than inside it.
 
 ## Stage 2 — Tier Generation (§3 / §4 / §5)
 
-The tier resolved in Stage 1 determines the file shape: Minimal has one Banka
-state file (`CLAUDE.md`) and no state folder; Core adds four files under `/core/`;
-Standard uses nine files under `/context/`. Each tier may also include a
-minimal `AGENTS.md` Codex entry that points to the existing Banka state without
-duplicating it. Every default written into shared state is governed by §2.6's
-Layer Principle — Agnostic defaults (stack, language, styling) get contrasted,
-never picked for the user; Hard Defaults (error handling, comment policy, the
-registry in §2.6) get stated as settled fact.
+The tier resolved in Stage 1 determines the file shape: Minimal has one
+Banka state file (`CLAUDE.md`) and no state folder; Core adds four files under
+`/core/`; Standard uses nine files under `/context/`. Each tier may also include
+a minimal `AGENTS.md` Codex entry that points to the existing Banka state
+without duplicating it. Every default written into shared state is governed by
+§2.6's Layer Principle — Agnostic defaults (stack, language, styling) get
+contrasted, never picked for the user; Hard Defaults (error handling, comment
+policy, the registry in §2.6) get stated as settled fact.
 
 ## Stage 3 — The Build Loop (skills-kit/)
 

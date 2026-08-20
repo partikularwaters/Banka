@@ -3,8 +3,8 @@
 Use this guide when bringing a project under Banka management.
 
 Banka may be entered from a new project or an existing project. Before adoption,
-determine whether the project already has adequate scope and, for an existing
-project, whether it is ready for Banka.
+determine whether the project already has decision-ready scope and, for an
+existing project, whether readiness evidence already exists for Banka.
 
 Banka knows its companion protocols but does not reproduce their rules. When a
 companion protocol is needed, apply its current canonical version to the project
@@ -16,7 +16,7 @@ and consume its output before continuing Banka adoption.
 Start Banka adoption
         |
         v
-Is scope adequate?
+Is decision-ready scope present?
    |           |
   no          yes
    |           |
@@ -51,7 +51,9 @@ adoption       already established?
                          v
                    Banka operation
 
-A brownfield project may reveal inadequate scope during Docking. If that happens:
+A brownfield project may reveal inadequate scope during Docking.
+If that happens:
+
 Docking
    |
    v
@@ -69,26 +71,26 @@ Ready for Banka
    v
 Banka adoption
 
-## 1. Establish adequate scope
+## 1. Establish decision-ready scope
 
-Banka needs enough reliable scope to understand the intended outcome,
-constraints, boundaries, and relevant decisions.
+Banka needs enough reliable scope — decision-ready scope — to understand the
+intended outcome, constraints, boundaries, and relevant decisions.
 
-If scope is adequate, continue.
+If decision-ready scope is present, continue.
 
 If scope is materially unclear, pause Banka adoption and clarify it before
 continuing.
 
 [Adaptive Scope Mapping Protocol (ASMP)](https://github.com/partikularwaters/adaptive-scope-mapping-protocol)
 is one available route for turning unclear intent into decision-ready scope.
-ASMP is not required when another adequate scope source already exists.
+ASMP is not required when another valid scope source already exists.
 
-Banka consumes adequate scope; it does not require a particular scope filename
-or scoping method.
+Banka consumes decision-ready scope; it does not require a particular scope
+filename or scoping method.
 
-## 2. Establish brownfield readiness when required
+## 2. Establish readiness evidence for existing projects
 
-For a new project with adequate scope, continue to Banka adoption.
+For a new project with decision-ready scope, continue to Banka adoption.
 
 For an existing or brownfield project, determine whether current evidence
 already establishes readiness for Banka.
@@ -115,7 +117,7 @@ already complete.
 
 ## 3. Adopt the project into Banka
 
-Once prerequisite scope and readiness are sufficient, Banka becomes
+Once required scope and readiness are sufficient, Banka becomes
 authoritative for adoption.
 
 Banka should:
@@ -154,7 +156,7 @@ structure.
 
 Banka adoption is complete only when:
 
-- prerequisite scope is adequate;
+- decision-ready scope is present;
 - any required Docking assessment has reached `Ready for Banka`;
 - the appropriate Banka tier and source-of-truth structure exist;
 - applicable runtime instructions and Banka capabilities are available;
@@ -179,9 +181,9 @@ them, but they are not recurring Banka ceremony.
 
 ## Ecosystem boundary
 
-**ASMP scopes. Docking prepares. Banka adopts and operates.**
+**ASMP defines scope. Docking verifies readiness. Banka adopts and operates.**
 
-Banka requires adequate scope, not ASMP. ASMP is an independently usable
+Banka requires decision-ready scope, not ASMP. ASMP is an independently usable
 scoping protocol and one available route when scope needs substantial
 clarification.
 
