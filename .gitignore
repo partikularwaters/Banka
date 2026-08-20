@@ -7,3 +7,6 @@ dev/
 # OS cruft
 .DS_Store
 Thumbs.db
+
+# Generated documents
+*.pdf
