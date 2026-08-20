@@ -5,28 +5,29 @@ projects at the right tier of complexity — agnostic about stack, opinionated
 about quality, and currently workable in Claude Code and Codex.
 
 Banka gives a project two things most AI-assisted builds skip: an adoption
-flow that establishes project readiness and decides how much structure a
-project actually needs *before* any files get generated, and a permanent,
-reusable set of Skills that carry a project through its whole build loop
-afterward — planning, delegation, review, recovery, and session handoff.
+workflow that evaluates the conditions for reliable AI-assisted work *before*
+files are generated, and a permanent, reusable set of Skills that carry a
+project through its build loop afterward — planning, delegation, review,
+recovery, and session handoff.
 
 ## Why "Banka" 🛶
 
 *Banka* — shortened from *bangka*, Tagalog for the traditional Philippine
-outrigger boat — is simple, stable, and built to be steered deliberately rather
-than left to drift. That's the role this framework plays: it doesn't build the
-project for you, it keeps it pointed at a chosen destination through every
-session in between. Scoping sets the heading. The Skills Kit — `charter`,
-`survey`, `dredge`, `moor`, and the rest — is the crew that keeps the vessel on
-course, correcting drift instead of letting each session start over from
-nowhere. The destination is never abstract: a haven, the harbor a project was
-actually scoped to reach, not just wherever momentum happens to leave it.
+outrigger boat — is simple, stable, and built to be steered deliberately
+rather than left to drift. That's the role this framework plays: it doesn't
+build the project for you, it keeps it pointed at a chosen destination through
+every session in between. Decision-ready scope sets the heading. The Skills Kit —
+`charter`, `survey`, `dredge`, `moor`, and the rest — is the crew that keeps
+the vessel on course, correcting drift instead of letting each session start 
+over from nowhere. The destination is never abstract: a haven, the harbor a
+project was actually scoped to reach, not just wherever momentum happens to
+leave it.
 
 ```
-adoption entry  ──►  scope / brownfield prerequisites resolved
+Project entry ──►  adoption conditions evaluated
         |
         v
-scoping intake  ──►  tier resolved: Minimal / Core / Standard
+adoption review  ──►  tier resolved: Minimal / Core / Standard
         |
         v
 tier generation  ──►  Banka project state established
@@ -45,68 +46,97 @@ if anything here or in the system map looks wrong, the protocol doc wins.
 
 ## Entering Banka
 
-You can start with Banka. You do not need to determine in advance whether a
-project needs a separate scoping or brownfield-preparation process.
+You can start with Banka. You do not need to determine in advance how a
+project should enter the adoption process.
 
-Banka first determines the condition of the project, then routes only when
-needed:
+Banka requires two conditions before adoption can begin: decision-ready scope
+and sufficient readiness evidence. If those conditions are not already present,
+the project may need additional clarification or preparation before Banka
+adoption proceeds.
 
 ```
 Start with Banka
       |
       v
-Is scope adequate?
-  |          |
-  no        yes
-  |          |
-  v          |
-Clarify      |
-scope        |
-  |          |
-  +----------+
-      |
-      v
+Does the project have
+decision-ready scope?
+      |              |
+     no             yes
+      |              |
+      v              |
+Clarify scope        |
+(using an appropriate |
+scope method)        |
+      |              |
+      +--------------+
+             |
+             v
 Is this an existing
 or brownfield project?
-  |              |
-  no            yes
-  |              |
-  v              v
-Banka        Is readiness
-adoption     established?
-                 |       |
-                no      yes
-                 |       |
-                 v       |
-          Banka Docking  |
-                 |       |
-          Ready for Banka
-                 |       |
-                 +-------+
-                     |
-                     v
-               Banka adoption
-                     |
-                     v
-               Banka operation
+      |              |
+     no             yes
+      |              |
+      v              v
+Banka adoption   Does sufficient
+begins           readiness evidence exist?
+                       |              |
+                      no             yes
+                       |              |
+                       v              |
+                 Prepare readiness    |
+                 evidence             |
+                 (using an appropriate|
+                 readiness method)    |
+                       |              |
+                       +--------------+
+                              |
+                              v
+                       Banka adoption
+                              |
+                              v
+                       Banka operation
 ```
 
-**ASMP scopes. Docking prepares. Banka adopts and operates.**
+## Conditions for adoption
 
-Banka requires adequate scope, not a particular scoping method. The
-[Adaptive Scope Mapping Protocol (ASMP)](https://github.com/partikularwaters/adaptive-scope-mapping-protocol)
-is one available route when intent is materially unclear.
+Before Banka adopts a project, two conditions must be present.
 
-For an existing project whose readiness has not been established,
-[Banka Docking](https://github.com/partikularwaters/banka-docking-protocol)
-is Banka's canonical preparation protocol. Docking operates against the existing
-project and returns readiness evidence before Banka adoption continues.
-A brownfield project may also reveal inadequate scope during Docking. In that
-case, scope is clarified first, Docking resumes, and Banka adoption begins only
-after the project reaches Ready for Banka.
+### Decision-ready scope
 
-See [BANKA-ADOPTION-GUIDE.md](BANKA-ADOPTION-GUIDE.md) for the full entry and
-handoff flow.
+Banka requires a clear enough destination to structure reliable AI-assisted
+work. The project should have an understood purpose, boundaries, constraints,
+and definition of success.
+
+A specific scoping method is not required. The requirement is that the intended
+outcome is sufficiently clear to guide decisions.
+
+### Readiness evidence
+
+Banka requires enough understanding of the project's current state before
+operating on an existing project. Readiness evidence shows that the relevant
+structure, constraints, risks, and conditions of the project are understood
+well enough for adoption.
+
+A specific preparation method is not required. The requirement is that the
+project's readiness has been sufficiently established.
+
+## Related protocols
+
+The following protocols are optional. Banka does not require them when
+decision-ready scope and sufficient readiness evidence already exist through
+other means.
+
+**ASMP ([Adaptive Scope Mapping Protocol](https://github.com/partikularwaters/adaptive-scope-mapping-protocol))** defines decision-ready scope from
+unclear, evolving, or incomplete intent. It is one method for establishing the
+scope condition needed before Banka adoption.
+
+**Docking ([Banka Docking Protocol](https://github.com/partikularwaters/banka-docking-protocol))** verifies readiness evidence for existing or
+brownfield projects. It is one method for preparing a project whose current
+state has not yet been sufficiently established.
+
+**ASMP defines scope. Docking verifies readiness. Banka adopts and operates.**
+
+These protocols remain independently useful and are not dependencies of Banka.
 
 ## The skills
 
@@ -145,7 +175,12 @@ Install the Banka Skills Kit from <path-to-clone>/skills-kit/ into
 2. Open a Claude Code session and paste the instruction above with the real clone path.
 3. Invoke skills with `/skill-name`, for example `/charter` or `/remember restore`.
 
-**Before installing:** check `~/.claude/commands/` and `~/.claude/skills/` (personal, machine-wide) and, if you're in a specific project, its own `.claude/commands/` and `.claude/skills/` too, for any existing file with the same name as one of this package's nine skills. If you find one, don't delete it unilaterally — back it up and confirm with the user how they want to reconcile it before installing over it.
+**Before installing:** check `~/.claude/commands/` and `~/.claude/skills/`
+(personal, machine-wide) and, if you're in a specific project, its own
+`.claude/commands/` and `.claude/skills/` too, for any existing file with the
+same name as one of this package's nine skills. If you find one, don't delete
+it unilaterally — back it up and confirm with the user how they want to
+reconcile it before installing over it.
 
 Full install details and rationale: [protocol/Banka.md](protocol/Banka.md), Section 7.
 
@@ -241,8 +276,8 @@ Banka stays agnostic about stack and framework, but defers to genuinely strong o
 ## Learn more
 
 - [system-map.md](system-map.md) — the full connective picture of how Banka works.
-- [BANKA-ADOPTION-GUIDE.md](BANKA-ADOPTION-GUIDE.md) — how new and existing projects enter Banka, including scope and brownfield-readiness routing.
-- [protocol/Banka.md](protocol/Banka.md) — the authoritative rules: adoption entry, the complexity rubric, the Layer Principle, all three tiers' exact output, the Skills Kit, and Craft Layer modules.
+- [BANKA-ADOPTION-GUIDE.md](BANKA-ADOPTION-GUIDE.md) — how new and existing projects enter Banka, including adoption conditions and preparation paths.
+- [protocol/Banka.md](protocol/Banka.md) — the authoritative rules: adoption workflow, the complexity rubric, the Layer Principle, all three tiers' exact output, the Skills Kit, and Craft Layer modules.
 - [CONTRIBUTING.md](CONTRIBUTING.md) — contribution guidance, including Banka's transparent AI-assistance commit convention.
 
 ## License
