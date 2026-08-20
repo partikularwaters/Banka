@@ -60,6 +60,7 @@ STAGE 3 — The Build Loop (skills-kit/, exposed per supported runtime)
   survey     -> check plan-alignment, system integrity, prod-ready
       -> dredge    if something is actually broken
       -> watershed if it is a genuine multi-angle judgment call
+  applicable operational perspectives are embedded inside existing skills
   remember save -> close the session
 
   Loop repeats every session. remember restore opens the next one.
@@ -154,6 +155,11 @@ Minimal. A typical session runs charter → optional delegate → build → moor
 survey, with dredge or watershed used when routed there. Remember closes and
 restores sessions after checking disk and version-control reality. Claude Code
 uses `/skill-name`; Codex uses `$skill-name`.
+
+An operational perspective is a temporary accountability frame embedded inside
+an existing Banka skill. The canonical perspectives are Outcome Owner, User,
+Builder, Maintainer, and Risk Owner. Applicable perspectives alter the way a
+skill examines its subject, not Banka's lifecycle or authority boundaries.
 
 ## Stage 4 — Promotion (§6, scale)
 

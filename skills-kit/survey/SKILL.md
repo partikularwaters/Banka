@@ -26,11 +26,38 @@ Read in this order: the implementation plan from the charter skill if one exists
 
 ## Step 2 — Review in Three Layers
 
-**Layer 1 — Does it match the plan?** Every part of the feature description present? Planning decisions reflected? Scope respected — nothing extra added uninvited? Flag anything planned-but-missing or built-but-not-planned.
+Apply the operational perspectives inside the existing three layers; do not add
+a fourth layer or a separate perspective report. Use only the perspectives the
+subject actually triggers.
 
-**Layer 2 — Does it respect the system?** Architecture boundaries (right responsibility in the right place, per the resolved architecture file's System Boundaries). Design system compliance (correct tokens, no hardcoded values — per `ui-tokens.md`/`ui-rules.md`). Code standards (naming, structure, type discipline — per `code-standards.md`). No new pattern introduced where an established one should have been reused (check `ui-registry.md` for UI, existing conventions elsewhere).
+**Layer 1 — Does it match the plan? Outcome Owner and User.** Every part of the
+feature description present? Planning decisions reflected? Scope respected —
+nothing extra added uninvited? Does the implemented end-to-end flow let the
+intended user accomplish the recurring goal the plan named? Flag anything
+planned-but-missing, built-but-not-planned, or technically present but unusable
+in the real workflow.
 
-**Layer 3 — Is it production ready?** Error handling — caught and handled, or silent failure? Edge cases — empty/loading/missing-data states? Obvious bugs a real user would hit?
+**Layer 2 — Does it respect the system? Builder and Maintainer.** Architecture
+boundaries (right responsibility in the right place, per the resolved
+architecture file's System Boundaries). Design system compliance (correct
+tokens, no hardcoded values — per `ui-tokens.md`/`ui-rules.md`). Code standards
+(naming, structure, type discipline — per `code-standards.md`). No new pattern
+introduced where an established one should have been reused (check
+`ui-registry.md` for UI, existing conventions elsewhere). Could a future
+session identify the intent, safely change the implementation, and keep any
+nearby documentation or diagrams accurate, or is correctness hidden in
+conversation memory or accidental complexity?
+
+**Layer 3 — Is it production ready? User and Risk Owner.** Error handling —
+caught and handled, or silent failure? Edge cases — empty/loading/missing-data
+states? Obvious bugs a real user would hit? For every new code path or external
+integration, state one realistic failure scenario and verify whether the user
+can see the failure, the system preserves valid state, and recovery is defined.
+
+**Evidence discipline:** before marking a layer `PASS` or claiming that a risk
+is handled elsewhere, identify the code, test, observed behavior, or declared
+project rule that supports the claim. If the available evidence cannot settle
+it, report it as unverified rather than saying it is probably safe or covered.
 
 **Sensitive-data severity:** if the resolved architecture file declares a security, encryption, or access-isolation invariant for this project, treat violations of *that specific declared invariant* as high priority findings — never assume a domain (e.g. "this handles sensitive data") that the project's own files didn't actually state.
 

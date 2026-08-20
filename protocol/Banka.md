@@ -599,6 +599,20 @@ register skills.
 
 **Provenance, for clarity:** `charter`, `survey`, `dredge`, `remember`, `moor` are the original five. `scale`, `delegate`, `watershed`, and `linis` are Banka-native additions — `scale` operationalizes Section 6's promotion path as an actual runnable skill, `delegate` supports Section 7.5's Delegation Setup, `watershed` provides multi-perspective critique beyond a single survey, and `linis` ("clean," Filipino) removes narrative residue from settled files while preserving operational history and rationale.
 
+**External influences, for attribution:** Banka's original five-skill shape and
+Standard tier's nine-file context layer were inspired by JavaScript Mastery's
+earlier agent-skills workflow and context-file template, created by Adrian
+Hajdin and the JavaScript Mastery team
+([skills](https://github.com/jsmastery-pro/skills),
+[context-driven-dev](https://github.com/jsmastery-pro/context-driven-dev)).
+Those upstream projects continue to evolve independently; Banka does not claim
+that its current skills, file contracts, or lifecycle mirror their current
+implementation. Section 7.1's operational-perspective discipline was informed
+by review patterns demonstrated by
+[garrytan/gstack](https://github.com/garrytan/gstack), without importing its
+router, command surface, state machinery, or execution workflow. These are
+design influences, not dependencies or delegated authorities.
+
 **Every skill that reads project files resolves the project's state from the
 filesystem, never by parsing tier prose:**
 
@@ -617,6 +631,69 @@ state destination stop rather than creating one implicitly.
 The protocol never regenerates skill contents per project. If the Skills Kit is
 not discoverable in the chosen runtime, configure its user-level Claude Code or
 Codex location before the first build session.
+
+---
+
+## SECTION 7.1: OPERATIONAL PERSPECTIVES
+
+An **operational perspective** is a temporary accountability frame embedded
+inside an existing Banka skill. It changes which questions that skill makes
+sure to examine; it does not change which stage owns the work or what artifact
+the skill produces.
+
+The canonical perspectives are:
+
+- **Outcome Owner** — accountable for whether the work achieves its intended
+  purpose. Examines goals, priorities, scope, success, and tradeoffs.
+- **User** — accountable for whether someone can accomplish the recurring goal
+  the system exists to support. Examines workflow, friction, expectations, and
+  visible failure.
+- **Builder** — accountable for creating the system correctly. Examines
+  architecture, data flow, implementation boundaries, tests, and technical
+  completeness.
+- **Maintainer** — accountable for safely inheriting and operating the result
+  later. Examines clarity, documentation, changeability, observability, and
+  hidden complexity.
+- **Risk Owner** — accountable for preventing unacceptable failure. Examines
+  security, data loss, irreversible actions, production impact, external
+  dependencies, and recovery.
+
+### Applicability discipline
+
+A skill applies only the perspectives relevant to its existing purpose and the
+concrete subject in front of it. The skill itself defines those triggers. The
+Outcome Owner may be a default for planning, for example, while the Risk Owner
+activates only when the work crosses a sensitive, irreversible, production, or
+external-dependency boundary. Do not run all five by default merely because the
+perspectives exist.
+
+When a perspective exposes a material decision, route that decision through
+the invoking skill's existing approval or hand-back rule. Do not silently
+expand scope, convert a review finding into a fix, or turn a concern into a new
+invariant. When it produces a factual claim, ground that claim in the available
+scope, project state, code, tests, observed behavior, or named evidence; if the
+claim cannot be verified, label it as unknown rather than presenting inference
+as fact.
+
+A perspective uses the skill's normal output shape. Its decisions belong in
+`charter`'s existing Decisions or Assumptions sections; its findings belong in
+`survey`'s existing review layers; independent perspective reports and their
+consolidation belong in `watershed`'s existing audit. No separate perspective
+artifact is generated or persisted.
+
+### What perspectives are not
+
+- They are not characters, simulated executives, or standing personas.
+- They are not new skills, commands, modes, routers, or lifecycle gates.
+- They do not add project-state files or alter Minimal, Core, or Standard tier
+  generation.
+- They are not Feature Owner or Phase Owner roles. Those phrases may identify
+  what a perspective is accountable for in one invocation, but they do not add
+  canonical perspective types.
+- They are not a Craft Layer module. They are Banka-native operating discipline
+  inside the Skills Kit, not an external domain authority a project installs.
+- They do not make gstack, JavaScript Mastery's skills, or any other source a
+  Banka dependency or replacement workflow.
 
 ---
 

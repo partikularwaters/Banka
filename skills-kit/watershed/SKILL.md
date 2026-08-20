@@ -25,34 +25,34 @@ not invent project-specific invariants.
 
 ## Step 2 — Run five independent audits
 
-Check whether this environment has a subagent- or parallel-task-dispatch tool available (something that can spawn a separate model call and return its result, distinct from just continuing this session). If one exists, use it: dispatch all five personas below as separate calls, run in parallel, each given the subject and context files read in Step 1 plus that persona's paragraph verbatim as its entire instruction. Wait for all five to return before Step 3. Dispatching them one at a time and calling it parallel doesn't count — if the tool can't actually run them concurrently, that's the fallback path below, not this one.
+Check whether this environment has a subagent- or parallel-task-dispatch tool available (something that can spawn a separate model call and return its result, distinct from just continuing this session). If one exists, use it: dispatch all five perspectives below as separate calls, run in parallel, each given the subject and context files read in Step 1 plus that perspective's paragraph verbatim as its entire instruction. Wait for all five to return before Step 3. Dispatching them one at a time and calling it parallel doesn't count — if the tool can't actually run them concurrently, that's the fallback path below, not this one.
 
-If no such tool exists, fall back: adopt each persona fully in turn, in this session, clearly labeled, and do not let one persona's conclusions leak into the next's framing before it's done.
+If no such tool exists, fall back: apply each perspective fully in turn, in this session, clearly labeled, and do not let one perspective's conclusions leak into the next's framing before it's done.
 
 Whichever path runs, Step 3's report states which one plainly — never left for the user to guess.
 
-**A caveat that holds regardless of which path ran:** all five personas are the same underlying model reading the same context, differing only in which paragraph below they were given. That buys isolated framing and stops one lens from anchoring another — genuinely useful — but it is not the independence five different human reviewers would bring, and the report should not imply otherwise.
+**A caveat that holds regardless of which path ran:** all five perspectives are the same underlying model reading the same context, differing only in which paragraph below they were given. That buys isolated framing and stops one lens from anchoring another — genuinely useful — but it is not the independence five different human reviewers would bring, and the report should not imply otherwise.
 
-**1. The Skeptic — Security & Failure Modes**
-Assumes the worst case. Where does this break under bad input, a malicious actor, a race condition, a dependency failing, or a value nobody thought to check? Every failure mode this persona finds gets stated as a concrete scenario, not a vague "could be more robust."
+**1. Outcome Owner — Purpose, Value & Scope**
+Accountable for whether the subject achieves its intended purpose. Is this the right problem, or a proxy? Is the proposed scope the most direct path to the outcome? What should be held, reduced, or expanded, and what would happen if nothing were done? Reject both speculative additions and false minimalism; recommend the smallest scope that fully achieves the named outcome.
 
-**2. The Minimalist — Simplicity & Scope**
-Assumes the proposal is over-built until proven otherwise. What's here that wasn't actually asked for? What abstraction exists for a future need that may never come? Where would a simpler version lose nothing that actually matters right now?
+**2. User — Real-World Usability**
+Accountable for whether a real person can accomplish the recurring goal in the actual operating context. Trace the end-to-end workflow. Where would the person become confused, blocked, misled by technically correct behavior, or unable to recover from a visible failure? Ignore internal elegance unless it changes the user's result.
 
-**3. The User Advocate — Real-World Usability**
-Ignores internal elegance entirely. Would an actual person, in the actual context this gets used, succeed at using this without confusion, without a support request, without giving up? What's technically correct but practically unusable?
+**3. Builder — Architecture & Project-Specific Correctness**
+Accountable for whether the system can be built correctly within this project's declared boundaries. Check architecture, data flow, interfaces, tests, technical completeness, and the project's own invariants and conventions. Identify decisions the proposal leaves for implementation to invent and any place general best practice is being substituted for project-specific truth.
 
-**4. The Maintainer — Future-Session Continuity**
+**4. Maintainer — Future-Session Continuity**
 Assumes a different session — possibly running a different user-selected model,
 possibly months later — has to pick this up with zero memory of today. Is intent
 documented, or only implementation? Would
 `ui-registry.md`/`progress-tracker.md`/naming actually prevent drift, or just
 look like they would?
 
-**5. The Domain Enforcer — Project-Specific Correctness**
-The strictest, most literal-minded persona. Checks purely against this project's own declared invariants, conventions, and prior decisions (its context files) — not general best practice, not the auditor's own taste. Where does this quietly contradict something this project already committed to?
+**5. Risk Owner — Security, Failure & Recovery**
+Accountable for preventing unacceptable failure. Where does this break under bad input, a malicious actor, a race condition, data loss, an irreversible action, a dependency failing, or a value nobody checked? State every material failure as a concrete scenario, identify its blast radius, and determine whether prevention, recovery, or explicit risk acceptance exists.
 
-Each persona produces a short, direct report — findings only, no hedging, no attempt to sound balanced. Disagreement between personas is expected and useful; do not soften a persona's view to make it agree with another's.
+Each perspective produces a short, direct report — findings only, no hedging, no attempt to sound balanced. Disagreement between perspectives is expected and useful; do not soften one perspective's view to make it agree with another's.
 
 ## Step 3 — Consolidate
 
@@ -67,17 +67,17 @@ Adopt a sixth role — **the Consolidator** — genuinely distinct from the five
 [Brief, attributed summary from each of the 5 — not full reports, the headline of each]
 
 ### Where they agree
-[Findings more than one persona independently raised — these carry the most weight]
+[Findings more than one perspective independently raised — these carry the most weight]
 
 ### Where they conflict
-[Named tensions — e.g. the Minimalist wants X removed, the Domain Enforcer says X is
-required by an existing invariant. State the tension plainly; do not silently pick a
-side without saying so.]
+[Named tensions — e.g. the Outcome Owner wants X removed as indirect scope, while
+the Builder says X is required by an existing invariant. State the tension plainly;
+do not silently pick a side without saying so.]
 
 ### Recommendation
 [A clear, prioritized, actionable recommendation — not an average of five opinions,
 an actual judgment call, with the reasoning for it stated openly, including which
-persona's concern it prioritizes over which other one, and why.]
+perspective's concern it prioritizes over which other one, and why.]
 ```
 
 The Consolidator's job is to make a real recommendation, not to present five viewpoints and leave the user to referee them — that would just move the work of judgment onto the user instead of doing it.

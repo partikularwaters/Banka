@@ -43,6 +43,32 @@ Update your understanding immediately if corrected. Do not continue until langua
 
 ## Step 3 — Think Through the Decisions Together
 
+Before surfacing decisions, apply the operational perspectives that are
+relevant to this feature. These are temporary accountability frames, not
+characters or extra workflow stages:
+
+- **Outcome Owner — always:** Is this the right problem, and is the proposed
+  work the most direct route to the intended outcome? If the current scope is
+  questionable, frame the real choice as hold, reduce, or expand. Recommend
+  one, explain why, and wait for agreement before changing scope.
+- **User — when someone completes a recurring workflow:** What must that person
+  be able to accomplish end to end? Where would the plan create friction,
+  confusion, or an invisible failure?
+- **Builder — when the work introduces or changes architecture, data flow, or a
+  technical boundary:** What needs to be decided now so implementation does not
+  invent the design later?
+- **Maintainer — when the result is durable, cross-cutting, or likely to be
+  changed later:** What would a future session need documented or made explicit
+  to modify this safely?
+- **Risk Owner — when the work is sensitive, irreversible, production-facing,
+  or dependent on an external system:** What concrete unacceptable failure is
+  possible, and what prevention, recovery, or explicit acceptance does it need?
+
+Do not dump five mini-reviews into the conversation. Apply only the relevant
+perspectives, then translate anything material they expose into the decisions,
+assumptions, success criteria, or boundaries this skill already produces. A
+perspective never authorizes silent scope expansion or a new invariant.
+
 Surface only the decisions that would meaningfully change what gets built.
 
 ```

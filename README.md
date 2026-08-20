@@ -232,6 +232,18 @@ Use `/skill-name` in Claude Code and `$skill-name` in Codex. The loop repeats
 every session; the remember skill in restore mode opens the next one. The scale
 skill runs orthogonally whenever a project outgrows its current tier.
 
+### Operational perspectives
+
+An operational perspective is a temporary accountability frame embedded inside
+an existing Banka skill. The canonical perspectives are Outcome Owner, User,
+Builder, Maintainer, and Risk Owner. Perspectives are not personas, commands,
+lifecycle gates, generated project files, or persistent project roles. A skill
+applies only the perspectives relevant to its existing purpose and still emits
+its normal output. gstack informed selected review habits, but is not a Banka
+dependency, replacement workflow, or Craft Layer module; see
+[garrytan/gstack](https://github.com/garrytan/gstack) for the canonical source,
+without copying its instructions or command catalog.
+
 Delegated tickets run serially when sessions share one checkout. Parallel work
 requires a separate Git worktree and branch per ticket because a fresh session
 isolates conversation history, not files. Local and hosted models can both
@@ -268,6 +280,10 @@ Banka/
     ├── standard/                  # the nine Standard-tier files
     └── delegation-queue.md        # tier-agnostic, used by delegate
 ```
+
+## Influences and attribution
+
+Banka's original five-skill foundation was inspired by [JavaScript Mastery / Adrian Hajdin's earlier agent-skills workflow](https://github.com/jsmastery-pro/skills), whose five commands were `architect`, `remember`, `review`, `recover`, and `imprint`. Banka's Standard-tier nine-file context layer was inspired by [JavaScript Master's nine-file context template](https://github.com/jsmastery-pro/context-driven-dev). The current JavaScript Mastery skills repository has evolved into a broader workflow, and both upstream projects evolve independently from Banka; Banka does not mirror their current commands or contracts. gstack informed the newer operational-perspective review discipline; [garrytan/gstack](https://github.com/garrytan/gstack) remains an influence, not a dependency or replacement workflow.
 
 ## Optional: Craft Layer modules
 
