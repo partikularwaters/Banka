@@ -1,14 +1,24 @@
 # Banka
 
-A protocol and skills kit for scoping, generating, and building coding-agent
-projects at the right tier of complexity — agnostic about stack, opinionated
-about quality, and currently workable in Claude Code and Codex.
+Banka helps coding agents pick up a project reliably across sessions. It keeps
+the project's purpose, decisions, current state, and working rules in a clear,
+durable structure, so the next session starts from what the project knows—not
+from a guess at what the last conversation meant.
 
-Banka gives a project two things most AI-assisted builds skip: an adoption
-workflow that evaluates the conditions for reliable AI-assisted work *before*
-files are generated, and a permanent, reusable set of Skills that carry a
-project through its build loop afterward — planning, delegation, review,
-recovery, and session handoff.
+It begins with an adoption workflow that checks whether the project is ready
+for reliable AI-assisted work. It then provides reusable skills for the build
+loop: planning, delegation, review, recovery, and session handoff. Banka is
+agnostic about the stack and deliberate about quality.
+
+Small projects stay simple. As a project genuinely needs more room, Banka adds
+structure one tier at a time: Minimal, Core, then Standard. That proportional
+structure is the primary reliability benefit. It can also reduce unnecessary
+context because future sessions have fewer ambiguous places to search, but
+that is a consequence—not a promise of universal token efficiency.
+
+**Release:** Banka 1.0.0. This release version identifies the Banka package;
+the separate state schema identifies the on-disk project format. Banka 1.0.0
+uses state schema 2. See [VERSION](VERSION) and [CHANGELOG.md](CHANGELOG.md).
 
 ## Why "Banka" 🛶
 
@@ -39,10 +49,10 @@ the build loop (skills-kit/, repeats every session)
 promotion, if the project outgrows its tier
 ```
 
-This is the compressed version. For the full picture — one diagram, one paragraph
-per stage, every arrow explained — read [system-map.md](system-map.md) first.
-[protocol/Banka.md](protocol/Banka.md) is the authoritative source underneath both;
-if anything here or in the system map looks wrong, the protocol doc wins.
+This is the compressed version. For the full picture—one diagram, one paragraph
+per stage, every arrow explained—read [system-map.md](system-map.md) first.
+[protocol/Banka.md](protocol/Banka.md) is the exact technical contract; if
+anything here or in the system map differs, the protocol wins.
 
 ## Entering Banka
 
@@ -206,7 +216,8 @@ have not been reintroduced, check the generated Banka block markers, and scan
 for known obsolete terminology.
 
 The Banka source repository is not itself a Banka-enabled application project:
-it intentionally has no project-state `CLAUDE.md`, `/core/`, or `/context/`.
+it intentionally has no project-state `AGENTS.md`, `CLAUDE.md`, `/core/`, or
+`/context/`.
 Read-only skills can inspect an explicitly supplied subject and these repository
 docs; state-writing skills stop rather than treating the repository as Minimal.
 
@@ -258,24 +269,41 @@ This is what Banka generates *inside a project you build* — not this repo's ow
 | Artifact | Path | Written by |
 | --- | --- | --- |
 | `IDEA-SCOPE.md` | project root | Section 1.5 — permanent record of original scope, never edited afterward |
-| `CLAUDE.md` | project root | Sections 3/4/5, sized to tier — the current Banka source of truth and the first file every skill reads |
-| `AGENTS.md` | project root | Sections 3/4/5 — minimal Codex entry shim that points to the current `CLAUDE.md` state; it is not a second source of truth |
+| `AGENTS.md` | project root | Sections 3/4/5 — the canonical, runtime-neutral Banka source of truth. Its one marked schema-2 block declares the tier and routes to any tier files. |
+| `CLAUDE.md` | project root | Claude Code compatibility import only: exactly `@AGENTS.md` plus a newline. It contains no separate project state. |
 | Core files (`overview.md`, `architecture.md`, `design.md`, `progress.md`) | `/core/` | Core-tier generation; restructured by `scale` on promotion |
 | Standard files (nine files) | `/context/` | Standard-tier generation; restructured by `scale` on promotion |
 | `delegation-queue.md` | project root (Minimal/Core) or `/context/` (Standard) | `delegate` |
 | UI patterns | `ui-registry.md` (Standard) / `core/design.md` (Core) / inline (Minimal) | `moor` |
-| Session state | `progress.md`, `progress-tracker.md`, or `CLAUDE.md`'s Session Notes | `moor`, `remember` |
+| Session state | `progress.md`, `progress-tracker.md`, or the marked `AGENTS.md` block's Session Notes | `moor`, `remember` |
+
+### Current state and migration
+
+For technical readers, `AGENTS.md` is the source of truth in every active
+schema-2 Banka project. Its marked block contains `BANKA:START`,
+`BANKA:STATE-SCHEMA: 2`, the declared tier, and `BANKA:END`. Minimal keeps live
+state in that block; Core routes to `/core/`; Standard routes to `/context/`.
+Claude Code follows the exact one-line `CLAUDE.md` import to the same state.
+
+Older CLAUDE-first Banka projects remain readable for compatible read-only
+work. Banka never silently converts them. Migration requires an explicit
+request, a preview of the file-by-file result, confirmation, and a final check
+that one matching schema-2 structure remains. The complete detection matrix
+and migration sequence are in [protocol/Banka.md](protocol/Banka.md#section-3-runtime-authority-and-minimal-state).
 
 ## This repo's own structure
 
 ```
 Banka/
 ├── protocol/Banka.md              # the core handoff protocol
+├── VERSION                        # Banka package release version
+├── CHANGELOG.md                   # retrospective milestones and release notes
 ├── scripts/check-repo-integrity.sh # repository-local packaging smoke check
 ├── system-map.md                  # one-doc orientation, start here
 ├── skills-kit/                    # the nine Skills — install once, use everywhere
 │   └── {charter,survey,dredge,remember,moor,scale,delegate,watershed,linis}/SKILL.md
 └── full-context-templates/
+    ├── project-entry/             # canonical AGENTS.md tier blocks and Claude shim
     ├── core/                      # the four Core-tier files
     ├── standard/                  # the nine Standard-tier files
     └── delegation-queue.md        # tier-agnostic, used by delegate
@@ -294,6 +322,7 @@ Banka stays agnostic about stack and framework, but defers to genuinely strong o
 - [system-map.md](system-map.md) — the full connective picture of how Banka works.
 - [BANKA-ADOPTION-GUIDE.md](BANKA-ADOPTION-GUIDE.md) — how new and existing projects enter Banka, including adoption conditions and preparation paths.
 - [protocol/Banka.md](protocol/Banka.md) — the authoritative rules: adoption workflow, the complexity rubric, the Layer Principle, all three tiers' exact output, the Skills Kit, and Craft Layer modules.
+- [CHANGELOG.md](CHANGELOG.md) — Banka 1.0.0 release metadata and earlier milestones.
 - [CONTRIBUTING.md](CONTRIBUTING.md) — contribution guidance, including Banka's transparent AI-assistance commit convention.
 
 ## License

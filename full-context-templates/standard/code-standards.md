@@ -165,9 +165,9 @@ see Database / Data Access below.
 | `[VAR_NAME]` | `[file/module]` | `[never logged, never committed]` |
 
 **Invariant:** no secret, key, or credential-shaped value is ever written into
-`CLAUDE.md`, `core/progress.md`, `context/progress-tracker.md`, any other context
-file, or version control. The remember skill enforces the same boundary when it
-updates session state.
+the Banka-owned schema-2 block in `AGENTS.md`, `core/progress.md`,
+`context/progress-tracker.md`, any other context file, or version control. The
+remember skill enforces the same boundary when it updates session state.
 
 ---
 

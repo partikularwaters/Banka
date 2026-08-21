@@ -42,9 +42,10 @@ STAGE 1 — Scoping Intake (Protocol §1.5)
     v
 
 STAGE 2 — Tier Generation (Protocol §3 / §4 / §5)
-  Minimal:  one CLAUDE.md state file + AGENTS.md Codex entry, no state folder
-  Core:     CLAUDE.md router + AGENTS.md Codex shim + /core/ (4 files)
-  Standard: CLAUDE.md router + AGENTS.md Codex shim + /context/ (9 files)
+  Minimal:  marked AGENTS.md state block, no state folder
+  Core:     AGENTS.md router + /core/ (4 files)
+  Standard: AGENTS.md router + /context/ (9 files)
+  Claude Code compatibility: CLAUDE.md contains exactly @AGENTS.md
   Section 2.6 (Layer Principle) governs every default written in:
   Agnostic (identity layer) vs. Hard Default (quality layer)
     |
@@ -136,25 +137,30 @@ than inside it.
 
 ## Stage 2 — Tier Generation (§3 / §4 / §5)
 
-The tier resolved in Stage 1 determines the file shape: Minimal has one
-Banka state file (`CLAUDE.md`) and no state folder; Core adds four files under
-`/core/`; Standard uses nine files under `/context/`. Each tier may also include
-a minimal `AGENTS.md` Codex entry that points to the existing Banka state
-without duplicating it. Every default written into shared state is governed by
-§2.6's Layer Principle — Agnostic defaults (stack, language, styling) get
-contrasted, never picked for the user; Hard Defaults (error handling, comment
-policy, the registry in §2.6) get stated as settled fact.
+The tier resolved in Stage 1 determines the file shape. `AGENTS.md` is the
+canonical, runtime-neutral source of truth at every tier. Its one marked
+schema-2 Banka block declares the tier: Minimal keeps live state in the block
+and has no state folder; Core routes to four files under `/core/`; Standard
+routes to nine files under `/context/`. For Claude Code, `CLAUDE.md` is exactly
+the one-line `@AGENTS.md` import, so it does not duplicate state. Every default
+written into shared state is governed by §2.6's Layer Principle—Agnostic
+defaults (stack, language, styling) get contrasted, never picked for the user;
+Hard Defaults (error handling, comment policy, the registry in §2.6) get stated
+as settled fact.
 
 ## Stage 3 — The Build Loop (skills-kit/)
 
 The nine skills are exposed through the supported runtime's discovery location
-and used across every Banka-enabled project regardless of tier. Each resolves
-Standard from `/context/`, Core from `/core/`, and Minimal from `CLAUDE.md`; if
-none exists, it treats the repository as unstructured rather than assuming
-Minimal. A typical session runs charter → optional delegate → build → moor →
-survey, with dredge or watershed used when routed there. Remember closes and
-restores sessions after checking disk and version-control reality. Claude Code
-uses `/skill-name`; Codex uses `$skill-name`.
+and used across every Banka-enabled project regardless of tier. Each first
+resolves the marked schema-2 block in `AGENTS.md`, then follows its declared
+shape to Minimal's inline state, Core's `/core/`, or Standard's `/context/`.
+Recognizable older CLAUDE-first projects may be read in compatibility mode but
+are not rewritten until an explicitly requested, previewed, and confirmed
+migration. Conflicting or incomplete state stops state-dependent work rather
+than inviting a guess. A typical session runs charter → optional delegate →
+build → moor → survey, with dredge or watershed used when routed there. Remember
+closes and restores sessions after checking disk and version-control reality.
+Claude Code uses `/skill-name`; Codex uses `$skill-name`.
 
 An operational perspective is a temporary accountability frame embedded inside
 an existing Banka skill. The canonical perspectives are Outcome Owner, User,
@@ -165,8 +171,10 @@ skill examines its subject, not Banka's lifecycle or authority boundaries.
 
 A project can outgrow its tier. The scale skill promotes exactly one tier at a
 time — Minimal → Core, or Core → Standard, never skipping — only when a real
-threshold is met or explicitly requested, and always shows what moved where
-before anything old gets deleted.
+threshold is met or explicitly requested. It works only from active schema-2
+state, shows what moves where, keeps the matching tier marker, and preserves
+the exact `CLAUDE.md` import before anything old is deleted. Legacy state must
+complete the confirmed migration sequence before promotion.
 
 ## Orthogonal: Craft Layer Modules (§7.6 / §7.7) and linis
 

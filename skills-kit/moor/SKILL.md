@@ -3,11 +3,46 @@ name: moor
 description: After building any UI component or resolving a notable engineering outcome, extract what matters and save it to the correct project file — the UI registry for UI patterns, the session-state file for everything else. So every future session builds on what's already established instead of drifting from it.
 ---
 
-**First, resolve the project's structure:** `/context/` → Standard tier — nine
-files under `/context/`; `/core/` → Core tier — four files under `/core/`;
-`CLAUDE.md` → Minimal tier — state lives inline. If none exists, stop: this is
-not a Banka-enabled project and there is no defined destination to moor into.
-Never create Banka state implicitly.
+## Resolve Banka state first
+
+Before reading or writing project state, inspect `AGENTS.md`, the complete
+contents of `CLAUDE.md`, `/core/`, `/context/`, and the required tier files.
+Active schema 2 requires one complete Banka block in `AGENTS.md` containing
+these exact comments exactly once and in this order: `<!-- BANKA:START -->`,
+`<!-- BANKA:STATE-SCHEMA: 2 -->`, exactly one of
+`<!-- BANKA:TIER: Minimal -->`, `<!-- BANKA:TIER: Core -->`, or
+`<!-- BANKA:TIER: Standard -->`, then `<!-- BANKA:END -->`. The declared tier
+must match the filesystem shape and required files. `CLAUDE.md` must be exactly
+`@AGENTS.md`; if it is missing, schema 2 is still
+active for a runtime that discovers `AGENTS.md` directly, but report that
+Claude Code compatibility is unavailable.
+
+A matching Minimal shape has neither `/core/` nor `/context/`. Core has
+`/core/` and its `overview.md`, `architecture.md`, `design.md`, and
+`progress.md`, with no `/context/`. Standard has `/context/` and its
+`project-overview.md`, `architecture.md`, `build-plan.md`, `code-standards.md`,
+`library-docs.md`, `ui-tokens.md`, `ui-rules.md`, `ui-registry.md`, and
+`progress-tracker.md`, with no `/core/`.
+
+Stop for competing authority, malformed/partial/duplicate or unknown Banka
+markers, a non-exact `CLAUDE.md` beside schema 2, an exact shim with missing
+authority, both state directories, tier mismatch, or missing required tier
+files. Do not choose, repair, or normalize any of these states.
+
+Without valid schema 2, recognize legacy Banka state only when `CLAUDE.md` has
+the `# Project Operating Protocol` heading and exactly one complete legacy tier
+shape, with or without an old AGENTS block pointing to it. Legacy is
+compatibility-read-only, while moor requires a state destination: report the
+classification and stop until an explicitly requested, previewed, and
+confirmed migration completes. Incomplete legacy state or a broken old shim is
+also a stop condition. If neither schema 2 nor recognizable legacy state
+exists, stop because no defined destination exists. Never create Banka state
+implicitly.
+
+For active schema 2, resolve destinations from the declared tier: Standard uses
+the nine files under `/context/`, Core uses the four files under `/core/`, and
+Minimal uses the Banka-owned block in `AGENTS.md`. A Minimal write changes only
+that block and preserves all content outside it.
 
 UI consistency and institutional memory depend on every session capturing what
 it settled in a place a future session — possibly using a different
@@ -26,9 +61,9 @@ If no filepath is given, identify recently created/modified component files auto
 
 ## Step 1 — Determine what's being captured
 
-- **A UI component pattern** (background, border, radius, text roles, spacing, interactive states, shadow, accent usage — not width/height, layout positioning, or responsive variants, which are too context-dependent to be a consistency rule) → goes to the UI registry (Minimal: a Component Registry note inside `CLAUDE.md`'s Project Overview; Core: `core/design.md`; Standard: `context/ui-registry.md`).
-- **A general engineering outcome, decision, or resolved problem** → goes to the session-state file (Minimal: `CLAUDE.md`'s Session Notes; Core: `core/progress.md`; Standard: `context/progress-tracker.md`).
-- **A changed global token, folder structure, or invariant** → update the file that actually owns it directly (Minimal: inline in `CLAUDE.md`; Core: `core/design.md` for tokens, `core/architecture.md` for structure/invariants/conventions; Standard: `ui-tokens.md`, `architecture.md`, `code-standards.md` respectively) — never just log that it changed, actually update the source.
+- **A UI component pattern** (background, border, radius, text roles, spacing, interactive states, shadow, accent usage — not width/height, layout positioning, or responsive variants, which are too context-dependent to be a consistency rule) → goes to the UI registry (Minimal: a Component Registry note inside the Banka-owned `AGENTS.md` block's Project Overview; Core: `core/design.md`; Standard: `context/ui-registry.md`).
+- **A general engineering outcome, decision, or resolved problem** → goes to the session-state file (Minimal: the Banka-owned `AGENTS.md` block's Session Notes; Core: `core/progress.md`; Standard: `context/progress-tracker.md`).
+- **A changed global token, folder structure, or invariant** → update the file that actually owns it directly (Minimal: inside the Banka-owned `AGENTS.md` block; Core: `core/design.md` for tokens, `core/architecture.md` for structure/invariants/conventions; Standard: `ui-tokens.md`, `architecture.md`, `code-standards.md` respectively) — never just log that it changed, actually update the source.
 
 ## Step 2 — Extract only what matters for consistency (UI capture)
 
@@ -61,7 +96,7 @@ Append — never overwrite an existing entry for the same component type; update
 ## Step 4 — Confirm what was captured
 
 ```
-Moored [Component Name] → [CLAUDE.md / core/design.md / context/ui-registry.md]
+Moored [Component Name] → [AGENTS.md Banka block / core/design.md / context/ui-registry.md]
 
 Captured: [brief list]
 

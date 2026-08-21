@@ -117,16 +117,18 @@ already complete.
 
 ## 3. Adopt the project into Banka
 
-Once required scope and readiness are sufficient, Banka becomes
-authoritative for adoption.
+Once required scope and readiness are sufficient, Banka takes responsibility
+for establishing the project's managed structure.
 
 Banka should:
 
 1. consume the available scope and, when applicable, Docking handoff;
 2. inspect existing Banka state before creating or replacing anything;
 3. choose the smallest Banka tier appropriate to the project's actual needs;
-4. establish the required Banka source-of-truth and session-state structure;
-5. establish runtime instructions and make applicable Banka skills discoverable;
+4. establish the required `AGENTS.md` source-of-truth and session-state
+   structure for the selected tier;
+5. make applicable Banka skills discoverable and, where Claude Code is used,
+   add its exact one-line `CLAUDE.md` import to `AGENTS.md`;
 6. preserve relevant existing project knowledge instead of duplicating or
    silently replacing it;
 7. record current state, decisions, risks, owner dependencies, and next work in
@@ -149,8 +151,20 @@ Inspect and preserve valid existing state. Reconcile obsolete or conflicting
 state deliberately. Do not destroy historical project knowledge merely to make
 the repository resemble a fresh Banka installation.
 
-Current Banka remains authoritative for the resulting tier and managed
-structure.
+For an active schema-2 project, the marked block in root `AGENTS.md` is the
+current Banka source of truth. Its tier marker must match the project's
+structure: Minimal keeps live state in the block, Core uses `/core/`, and
+Standard uses `/context/`. `CLAUDE.md`, when present, is only the exact
+`@AGENTS.md` import used by Claude Code; it is not a second state file.
+
+Recognizable older CLAUDE-first Banka structures are compatibility-read-only.
+They may be inspected safely when a read-only operation permits it, but Banka
+does not rewrite, promote, or otherwise mutate them. A migration must be
+explicitly requested, previewed file by file, and confirmed before it runs.
+Conflicting files, malformed markers, two state directories, or a tier that
+does not match its structure require reconciliation rather than a guess. The
+complete classification and migration sequence live in
+[protocol/Banka.md](protocol/Banka.md#section-3-runtime-authority-and-minimal-state).
 
 ## 5. Adoption completion
 
@@ -158,8 +172,11 @@ Banka adoption is complete only when:
 
 - decision-ready scope is present;
 - any required Docking assessment has reached `Ready for Banka`;
-- the appropriate Banka tier and source-of-truth structure exist;
-- applicable runtime instructions and Banka capabilities are available;
+- the appropriate Banka tier and schema-2 `AGENTS.md` source-of-truth
+  structure exist;
+- applicable runtime instructions and Banka capabilities are available, with
+  the exact `CLAUDE.md` import present when Claude Code compatibility is
+  needed;
 - current state, decisions, risks, owner dependencies, and next actions are
   durably recorded;
 - existing project knowledge has been preserved or deliberately reconciled; and

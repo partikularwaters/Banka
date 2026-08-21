@@ -1,4 +1,4 @@
-# Banka v1
+# Banka 1.0.0
 **Scoping-to-Agent Handoff Protocol**
 
 > **TO THE AI AGENT READING THIS:**
@@ -132,9 +132,11 @@ Whichever state applies, proceed to Section 2 only once it resolves.
 **Once scoping state resolves, before generating any tier files:** save it as `IDEA-SCOPE.md` in the project root — copied verbatim if a scope document already existed (State 1 or 2), or written fresh from State 3's captured questions and answers if not. This is the project's permanent origin record, kept alongside whichever tier's files get generated from it, never inside them. The charter and remember skills re-consult it when it exists so future work can recover original intent rather than relying on a tier file's paraphrase. Never overwrite `IDEA-SCOPE.md` once written; it's a record of where the project started, not a working file.
 
 This applies at every tier, including Minimal. `IDEA-SCOPE.md` sits beside the
-live tier state as its immutable input. Minimal means one Banka state file,
-`CLAUDE.md`, with no state folder. A host-entry file such as `AGENTS.md` may
-point to that state but never duplicates it.
+live tier state as its immutable input. `AGENTS.md` is the canonical,
+runtime-neutral root authority at every tier. Minimal keeps all live Banka
+state in its marked `AGENTS.md` block and has no state folder. Core and Standard
+keep root routing in that block and domain state under `/core/` or `/context/`.
+`CLAUDE.md` is only the Claude Code import shim described in Section 3.
 
 ---
 
@@ -170,7 +172,7 @@ Answer yes or no to each:
 ```
 
 **Scoring:**
-- **0 yes → Minimal** (Section 3) is almost certainly sufficient — one Banka state file, `CLAUDE.md`, holding live project state inline with no state folder.
+- **0 yes → Minimal** (Section 3) is almost certainly sufficient — one canonical Banka state block in `AGENTS.md`, holding live project state inline with no state folder.
 - **1–2 yes → Core** (Section 4) is almost certainly sufficient — four focused files, no single-file crowding, no nine-file overhead.
 - **3 yes → borderline.** Lean Core by default — recommend it, but let the user decide. Starting leaner and promoting later (Section 6) costs less than over-building up front.
 - **4–5 yes → Standard** (Section 5) is recommended — the project has enough real complexity that splitting context into nine focused files will save more time than it costs to maintain.
@@ -282,81 +284,169 @@ Proposing a new Hard Default requires stating, explicitly, which of the two test
 
 ---
 
-## SECTION 3: MINIMAL — ONE STATE FILE
+## SECTION 3: RUNTIME AUTHORITY AND MINIMAL STATE
 
-Use this when the rubric points to Minimal (Section 2). It has one Banka state
-file, `CLAUDE.md`, and no state folder. Generate the separate minimal
-`AGENTS.md` Codex entry alongside it; the entry contains no state. This fixed
-shape lets a fresh session find project state without guessing.
-
-### CLAUDE.md (project root — the only state file)
+`AGENTS.md` is Banka's canonical, runtime-neutral root authority. Banka owns
+exactly one marked block in that file and preserves every byte outside the
+block. A schema-2 block has these four markers, each exactly once and in this
+order:
 
 ```markdown
+<!-- BANKA:START -->
+<!-- BANKA:STATE-SCHEMA: 2 -->
+<!-- BANKA:TIER: Minimal -->
+[tier content]
+<!-- BANKA:END -->
+```
+
+The tier value is exactly `Minimal`, `Core`, or `Standard`. The START marker
+opens the block, STATE-SCHEMA declares its contract, TIER declares its storage
+shape, and END closes it. Do not recognize misspellings, alternate comment
+forms, duplicate markers, nested blocks, or unknown schema/tier values as
+schema 2.
+
+When `AGENTS.md` does not exist, the selected project-entry template may create
+it. When it already exists, insert or replace only the one marked Banka block
+after resolving Section 3.1; never replace the whole file. Content before START
+and after END remains in its original order and is not reformatted.
+
+`CLAUDE.md` is the Claude Code import shim at every tier. Its complete
+functional content is exactly this one line (plus the terminating newline):
+
+```markdown
+@AGENTS.md
+```
+
+Do not add headings, routing prose, state, or a second import to the shim.
+Claude Code follows the import to the same root authority that Codex discovers
+directly. This makes each tier one directed chain:
+
+- Minimal: `CLAUDE.md` → `AGENTS.md` (all live state is in the marked block).
+- Core: `CLAUDE.md` → `AGENTS.md` → the four files in `/core/`.
+- Standard: `CLAUDE.md` → `AGENTS.md` → the nine files in `/context/`.
+
+`IDEA-SCOPE.md` remains an immutable origin record, not another live authority.
+
+### 3.1 Detection and compatibility contract
+
+Resolve Banka state before reading or writing it. Check markers, both state
+directories, the declared tier, the required domain files, and the complete
+contents of `CLAUDE.md`; do not infer authority from prose or choose the most
+convenient file.
+
+| Observed state | Classification and required behavior |
+| --- | --- |
+| One valid schema-2 block, its tier matches the filesystem shape, all required files exist, and `CLAUDE.md` is exactly `@AGENTS.md` | Active schema 2. Read and write only through the declared authority chain. |
+| Valid schema-2 `AGENTS.md`, its tier matches the filesystem shape, all required files exist, but `CLAUDE.md` is missing | Active schema 2 for runtimes that discover `AGENTS.md` directly. Codex-capable reads and writes operate normally. Report only that Claude Code compatibility is unavailable until the exact shim is added. |
+| Valid schema-2 `AGENTS.md`, but `CLAUDE.md` exists with any content other than the exact shim (including an empty file) | Competing or broken root integration. Stop; do not choose, merge, overwrite, or write state until an explicitly requested reconciliation is previewed and confirmed. |
+| No valid schema-2 block, but a legacy Banka `CLAUDE.md` authority exists (with or without an old AGENTS block that points to it) | Legacy compatibility-read-only. Read the legacy chain when a read-only operation can do so safely, identify it as legacy, and do not mutate or promote it until migration is explicitly requested, previewed, and confirmed. |
+| `CLAUDE.md` contains exactly `@AGENTS.md`, but `AGENTS.md` is missing or has no valid schema-2 block | Broken import/missing authority. Stop state-dependent work; the shim is not state. |
+| `AGENTS.md` contains a malformed, partial, duplicate, nested, unknown-schema, or unknown-tier Banka marker/block | Conflicting Banka metadata. Stop state-dependent work; do not treat it as unstructured and do not normalize it implicitly. |
+| Both `/core/` and `/context/` exist | Competing state directories. Stop even if one matches the tier marker; never resolve this by directory precedence. |
+| The tier marker and storage shape disagree, or a declared Core/Standard directory or required domain file is missing | Tier mismatch/incomplete state. Stop state-dependent work and do not repair or invent missing content implicitly. |
+| No valid schema-2 block and no recognizable legacy Banka authority | Unstructured/non-Banka repository. Never assume Minimal and never create Banka state implicitly. |
+
+For this matrix, Minimal's matching shape has neither `/core/` nor `/context/`;
+Core has `/core/`, not `/context/`, and its four files from Section 4; Standard
+has `/context/`, not `/core/`, and its nine files from Section 5. Unrelated
+project prose outside the marked `AGENTS.md` block is preserved and is not
+competing Banka state. A second Banka block is a conflict, not an extension.
+
+A legacy `CLAUDE.md` authority is recognizable only when it contains the
+`# Project Operating Protocol` heading and has exactly one complete legacy
+shape: neither state directory for Minimal, `/core/` with all four Core files
+and no `/context/` for Core, or `/context/` with all nine Standard files and no
+`/core/` for Standard. An old marked `AGENTS.md` block may point to that chain,
+but never outranks it. Missing legacy domain files are incomplete legacy state,
+not permission to improvise: stop state-dependent work and allow only explicit
+read-only inspection of content that exists. Evaluate every observation before
+classifying; any conflict or stop condition wins over a read-only or active
+classification.
+
+Compatibility-read-only means no Banka state file, tier marker, state
+directory, delegation queue, or runtime shim is created, changed, moved, or
+deleted. A skill may still inspect an explicit subject when its own contract
+permits read-only operation, but it must report the resolved classification.
+Any operation needing a state destination stops.
+
+### 3.2 Explicit migration sequence
+
+Migration is not adoption-by-detection and has no new skill or command. Use
+this sequence only after the user explicitly requests migration:
+
+1. Inspect `AGENTS.md`, `CLAUDE.md`, `/core/`, `/context/`, and the required
+   domain files without editing; classify the repository with Section 3.1.
+2. Inventory all content outside any Banka block and all legacy Banka state.
+   Surface missing files, duplicate blocks, competing state, dual directories,
+   and tier mismatch before proposing a destination.
+3. Determine the one schema-2 tier from the legacy structure and preserved
+   state. Do not silently change tiers during migration.
+4. Preview the exact file-by-file result: the complete replacement Banka block,
+   every legacy section's destination, the exact one-line `CLAUDE.md`, any
+   directory move or removal, and all content that will remain untouched.
+5. Obtain explicit confirmation of that preview. A request to inspect, use a
+   skill, or continue ordinary project work is not migration confirmation.
+6. Apply only the confirmed transformation: preserve content outside the
+   `AGENTS.md` block, establish one schema-2 block, preserve or move domain
+   state without loss, set the matching tier marker, and replace `CLAUDE.md`
+   with exactly `@AGENTS.md`.
+7. Re-run the full detection matrix. Migration completes only when there is one
+   matching authority chain and no legacy or competing Banka state remains.
+
+If safe equivalence cannot be demonstrated, stop and ask the user to resolve
+the surfaced ambiguity. Never discard, merge, or prefer competing state by
+timestamp, file size, directory precedence, or runtime.
+
+### 3.3 Minimal template
+
+Use this when the rubric points to Minimal. Generate
+`full-context-templates/project-entry/minimal-AGENTS.md` into `AGENTS.md` and
+fill its placeholders under Section 2.5. Minimal has no state folder; all live
+state is inside the marked block. Generate the shared one-line `CLAUDE.md`
+shim alongside it.
+
+```markdown
+<!-- BANKA:START -->
+<!-- BANKA:STATE-SCHEMA: 2 -->
+<!-- BANKA:TIER: Minimal -->
 # Project Operating Protocol
 
 ## Persona
 You are acting as a Senior Technical Lead & Project Manager for this project.
 
 ## Critical context about the user
-[Insert: user's technical background, and any domain sensitivity —
-e.g. "no prior coding background, explain concepts from first principles"
-or "handles sensitive data, treat security invariants as non-negotiable"]
+[Insert the user's technical background and any domain sensitivity.]
 
 ## Project Overview
-**Vision:** [2-3 sentences: core purpose, value proposition, target user]
-**Stack:** [Frameworks, languages, tools]
-**Folder Matrix:** [Directory layout]
-**Absolute Invariants:** [Non-negotiable technical/security constraints]
-**Data Model:** [Concrete data shapes — entities, fields, relationships. Pull this
-  directly from what was scoped in conversation, faithfully, not abbreviated.]
+**Vision:** [Core purpose, value proposition, and target user.]
+**Stack:** [Frameworks, languages, and tools.]
+**Folder Matrix:** [Directory layout.]
+**Absolute Invariants:** [Non-negotiable technical or security constraints.]
+**Data Model:** [Concrete entities, fields, and relationships.]
 
 ## Current Status
 **Current Phase:** Phase 1 — [First milestone name]
 
 **Active Milestones**
-* [ ] Milestone 1: [specific, objective, actionable]
-* [ ] Milestone 2: [specific, objective, actionable]
+- [ ] Milestone 1: [Specific, objective, actionable outcome.]
+- [ ] Milestone 2: [Specific, objective, actionable outcome.]
 
 **Completed Actions**
-* [x] Scope defined and locked in chat session prior to transfer
-* [x] Data model designed
+- [x] Scope defined and locked before transfer.
+- [x] Data model designed.
 
 ## Session Notes
-**Context:** [Compressed summary of everything the scoping conversation
-  established — enough that a fresh coding-agent session needs zero re-explanation]
-**Known Issues / Open Decisions:** [Anything explicitly left open]
-**Next Immediate Step:** [The very first concrete action]
+**Context:** [Enough settled context for a fresh session to continue safely.]
+**Known Issues / Open Decisions:** [Visible open items using Section 2.5's tag.]
+**Next Immediate Step:** [The first concrete action.]
 
 ## Origin
-If `IDEA-SCOPE.md` exists in the project root, it's the original scope document this project was generated from — consult it for original intent behind a decision above. Never overwrite it.
+If `IDEA-SCOPE.md` exists, consult it for original intent. Never overwrite it.
 
 ## Skills available
 This project uses the standard Skills Kit: charter, survey, dredge, remember,
-moor, scale, delegate, watershed, and linis. Availability is runtime-specific:
-- Claude Code: install once under `~/.claude/skills/`; invoke with `/skill-name`.
-- Codex: install once under `~/.agents/skills/`; invoke with `$skill-name`.
-Follow each skill's own instructions exactly; this file does not restate them.
-```
-
-Everything the *generated tier structure's state* needs lives in this one file — `AGENTS.md` is a separate Codex compatibility shim with no state, and `IDEA-SCOPE.md`, if present, is the pre-existing input that generated it, not part of the tier structure itself (see Section 1.5).
-
-### AGENTS.md (Codex entry shim — project root)
-
-Generate this alongside `CLAUDE.md`. It is a minimal host entry, not a second
-source of truth. Banka owns only the marked block; preserve all content outside
-it when generating or promoting a project:
-
-```markdown
-<!-- BANKA:START -->
-## Banka — Codex Entry
-
-This project uses Banka. Its current project state is in `CLAUDE.md`; read it
-before working. If `IDEA-SCOPE.md` exists, consult it for original intent and
-never overwrite it.
-
-Banka skills should be installed once at `~/.agents/skills/`. If they are not
-available, install the Skills Kit there before invoking them; do not create a
-project-local copy of the standard kit.
+moor, scale, delegate, watershed, and linis. Install it once per runtime; do
+not create a project-local copy. Follow each skill's own instructions exactly.
 <!-- BANKA:END -->
 ```
 
@@ -364,12 +454,14 @@ project-local copy of the standard kit.
 
 ## SECTION 4: CORE — FOUR CORE STATE FILES
 
-Use this when the rubric points to Core (Section 2). Four files, one per domain, in a `/core/` folder — enough separation to stop one file from getting crowded, without the nine-way split Standard uses.
+Use this when the rubric points to Core. Generate
+`full-context-templates/project-entry/core-AGENTS.md` into `AGENTS.md`, the
+shared `CLAUDE.md` shim, and the four canonical templates under `/core/`:
 
 ```
 project-root/
-├── CLAUDE.md
 ├── AGENTS.md
+├── CLAUDE.md
 └── core/
     ├── overview.md
     ├── architecture.md
@@ -377,74 +469,52 @@ project-root/
     └── progress.md
 ```
 
-### AGENTS.md (Codex entry shim — project root)
-
-Generate this alongside `CLAUDE.md`. It is a minimal host entry, not a second
-source of truth. Banka owns only the marked block; preserve all content outside
-it when generating or promoting a project:
+The root block is the authority and router; domain state remains in `/core/`:
 
 ```markdown
 <!-- BANKA:START -->
-## Banka — Codex Entry
-
-This project uses Banka. Its current project state is in `CLAUDE.md` and
-`core/`; read the root file and the relevant Core files before working. If
-`IDEA-SCOPE.md` exists, consult it for original intent and never overwrite it.
-
-Banka skills should be installed once at `~/.agents/skills/`. If they are not
-available, install the Skills Kit there before invoking them; do not create a
-project-local copy of the standard kit.
-<!-- BANKA:END -->
-```
-
-### CLAUDE.md (router — project root)
-
-```markdown
+<!-- BANKA:STATE-SCHEMA: 2 -->
+<!-- BANKA:TIER: Core -->
 # Project Operating Protocol
 
 ## Persona
 You are acting as a Senior Technical Lead & Project Manager for this project.
 
 ## Critical context about the user
-[Same as Minimal — user's technical background, domain sensitivity]
+[Insert the user's technical background and any domain sensitivity.]
 
 ## Source of truth
-Read every file in /core/ at the start of a session that touches its domain:
-- core/overview.md — vision and data model
-- core/architecture.md — stack, folder structure, invariants, conventions, library patterns
-- core/design.md — UI tokens, layout rules, component registry
-- core/progress.md — milestones, completed work, session memory
-- IDEA-SCOPE.md, if it exists — the original scope document this project was generated from; consult for original intent, never overwrite
+Read the Core file relevant to the work before acting:
+- `core/overview.md` — vision and data model
+- `core/architecture.md` — stack, structure, invariants, conventions, and library patterns
+- `core/design.md` — UI tokens, layout rules, and component registry
+- `core/progress.md` — milestones, completed work, and session memory
+
+If `IDEA-SCOPE.md` exists, consult it for original intent. Never overwrite it.
 
 ## Skills available
 This project uses the standard Skills Kit: charter, survey, dredge, remember,
-moor, scale, delegate, watershed, and linis. Availability is runtime-specific:
-- Claude Code: install once under `~/.claude/skills/`; invoke with `/skill-name`.
-- Codex: install once under `~/.agents/skills/`; invoke with `$skill-name`.
-Follow each skill's own instructions exactly; this file does not restate them.
+moor, scale, delegate, watershed, and linis. Install it once per runtime; do
+not create a project-local copy. Follow each skill's own instructions exactly.
+<!-- BANKA:END -->
 ```
 
-The four canonical Core templates live under `full-context-templates/core/`:
-`overview.md`, `architecture.md`, `design.md`, and `progress.md`. Read and fill
-those files directly. Do not reconstruct Core files from an inline copy in this
-protocol; the standalone templates are the single source for their exact shape.
-If the templates are not available with the protocol, ask for them before
-continuing rather than improvising replacements from memory.
+The four canonical Core domain templates live under
+`full-context-templates/core/`. Fill those files directly. If they are not
+available, stop rather than reconstructing them from memory.
 
 ---
 
 ## SECTION 5: STANDARD — FULL OUTPUT
 
-Use this when the rubric points to Standard (Section 2). This tier uses **nine separate context files**, each scoped to one concern, plus the same router pattern — unchanged from what this protocol has always called its full output.
-
-The nine templates (`project-overview.md`, `architecture.md`, `build-plan.md`, `code-standards.md`, `library-docs.md`, `ui-tokens.md`, `ui-rules.md`, `ui-registry.md`, `progress-tracker.md`) are provided as a separate attached set — **Full Context Templates** — not retyped here. If they are attached to this conversation, read them directly and fill each one in with this project's real specifics. If they are not attached, tell the user to upload the Full Context Templates set alongside this protocol before continuing — do not improvise new versions of these files from memory, since their exact structure is what keeps them interoperable with the moor and survey skills.
-
-All nine files go in a `/context/` folder in the project root:
+Use this when the rubric points to Standard. Generate
+`full-context-templates/project-entry/standard-AGENTS.md` into `AGENTS.md`, the
+shared `CLAUDE.md` shim, and the nine canonical templates under `/context/`:
 
 ```
 project-root/
-├── CLAUDE.md
 ├── AGENTS.md
+├── CLAUDE.md
 └── context/
     ├── project-overview.md
     ├── architecture.md
@@ -457,85 +527,97 @@ project-root/
     └── progress-tracker.md
 ```
 
-### AGENTS.md (Codex entry shim — project root)
-
-Generate this alongside `CLAUDE.md`. It is a minimal host entry, not a second
-source of truth. Banka owns only the marked block; preserve all content outside
-it when generating or promoting a project:
+The root block is the authority and router; domain state remains in
+`/context/`:
 
 ```markdown
 <!-- BANKA:START -->
-## Banka — Codex Entry
-
-This project uses Banka. Its current project state is in `CLAUDE.md` and
-`context/`; read the root file and the relevant Standard files before working.
-If `IDEA-SCOPE.md` exists, consult it for original intent and never overwrite
-it.
-
-Banka skills should be installed once at `~/.agents/skills/`. If they are not
-available, install the Skills Kit there before invoking them; do not create a
-project-local copy of the standard kit.
-<!-- BANKA:END -->
-```
-
-### CLAUDE.md (router — project root, Standard version)
-
-```markdown
+<!-- BANKA:STATE-SCHEMA: 2 -->
+<!-- BANKA:TIER: Standard -->
 # Project Operating Protocol
 
 ## Persona
 You are acting as a Senior Technical Lead & Project Manager for this project.
 
 ## Critical context about the user
-[Same as Minimal/Core — user's technical background, domain sensitivity]
+[Insert the user's technical background and any domain sensitivity.]
 
 ## Source of truth
-Read every file in /context/ at the start of a session that touches its domain:
-- context/project-overview.md — what's being built, for whom, why
-- context/architecture.md — stack, folder structure, data flows, invariants
-- context/build-plan.md — phased feature roadmap
-- context/code-standards.md — conventions the agent must follow
-- context/library-docs.md — project-specific third-party library patterns
-- context/ui-tokens.md, context/ui-rules.md — design system
-- context/ui-registry.md — living catalog of built components (read before building any new one)
-- context/progress-tracker.md — current status, decisions log, session notes
-- IDEA-SCOPE.md, if it exists — the original scope document this project was generated from; consult for original intent, never overwrite
+Read the Standard file relevant to the work before acting:
+- `context/project-overview.md` — purpose, users, scope, and data model
+- `context/architecture.md` — stack, structure, data flows, and invariants
+- `context/build-plan.md` — phased feature roadmap
+- `context/code-standards.md` — checkable implementation conventions
+- `context/library-docs.md` — project-specific third-party library patterns
+- `context/ui-tokens.md` and `context/ui-rules.md` — design system
+- `context/ui-registry.md` — living catalog of built components
+- `context/progress-tracker.md` — current status, decisions, and session memory
+
+If `IDEA-SCOPE.md` exists, consult it for original intent. Never overwrite it.
 
 ## Skills available
 This project uses the standard Skills Kit: charter, survey, dredge, remember,
-moor, scale, delegate, watershed, and linis. Availability is runtime-specific:
-- Claude Code: install once under `~/.claude/skills/`; invoke with `/skill-name`.
-- Codex: install once under `~/.agents/skills/`; invoke with `$skill-name`.
-Follow each skill's own instructions exactly. The moor skill writes UI patterns
-to `context/ui-registry.md` and general outcomes to
-`context/progress-tracker.md`; the remember skill updates session state in
+moor, scale, delegate, watershed, and linis. Install it once per runtime; do
+not create a project-local copy. Follow each skill's own instructions exactly.
+The moor skill writes UI patterns to `context/ui-registry.md` and general
+outcomes to `context/progress-tracker.md`; remember updates session state in
 `context/progress-tracker.md`.
+<!-- BANKA:END -->
 ```
 
-Keep CLAUDE.md itself short (well under 200 lines) — it's a router pointing at the context files, not a restatement of their content. Long CLAUDE.md files measurably degrade instruction-following; the context files are where detail belongs.
+The canonical Standard domain templates live under
+`full-context-templates/standard/`. Fill those files directly. If they are not
+available, stop rather than improvising replacements.
 
 ---
 
 ## SECTION 6: PROMOTION PATH — MINIMAL → CORE → STANDARD
 
-A project can outgrow its current tier. Do not do this automatically — only when explicitly asked, or when a tier's own threshold is actually met. **Always promote exactly one tier at a time.** Never skip Minimal directly to Standard, even if it looks like both thresholds are already met — promote to Core first, confirm it's correct, then separately re-check whether Core → Standard is also warranted. Skipping is how a project ends up over-built on a single threshold trip that only actually justified the next step up.
+A project can outgrow its current tier. Do not promote automatically: act only
+when explicitly asked or when the current tier's threshold is actually met,
+and always promote exactly one tier at a time. Before editing, require an active
+schema-2 chain under Section 3.1; legacy state must complete the confirmed
+migration sequence first.
 
 ### Minimal → Core
 
 Triggered when either:
-1. `CLAUDE.md`'s inline project content exceeds roughly 1,500 words (~9,000 characters) — it's becoming hard to scan as a router.
-2. Any one domain (overview, architecture, design, progress) has grown enough real content that it's crowding out the others inside the single file.
 
-Split `CLAUDE.md`'s inline sections into the four `/core/` files (Project Overview → `core/overview.md`; the architecture/stack/invariants portion → `core/architecture.md`; any UI content → `core/design.md`; Current Status + Session Notes → `core/progress.md`), create the `/core/` folder, and rewrite `CLAUDE.md` to the Core router (Section 4). Update only the marked Banka block in `AGENTS.md` so it points to `CLAUDE.md` and `/core/`; preserve everything outside the block and surface conflicts. Show the user exactly what moved where before finalizing.
+1. The inline project content in the marked `AGENTS.md` block exceeds roughly
+   1,500 words (~9,000 characters).
+2. Any one domain (overview, architecture, design, or progress) has enough real
+   content to crowd out the others in that block.
+
+Preview the mapping, then split the marked block's project state into the four
+`/core/` files: overview and data model to `core/overview.md`; stack, structure,
+and invariants to `core/architecture.md`; UI content to `core/design.md`; status
+and session notes to `core/progress.md`. Replace only the marked Banka block
+with the Core router from Section 4, changing exactly
+`<!-- BANKA:TIER: Minimal -->` to `<!-- BANKA:TIER: Core -->`. Preserve all
+content outside the block, keep `CLAUDE.md` exactly `@AGENTS.md`, and show what
+moved where before finalizing.
 
 ### Core → Standard
 
 Triggered when any of:
-1. The four `/core/` files combined exceed roughly 4,000 words (~25,000 characters).
-2. The project has split into a genuinely distinct architectural environment (e.g. a companion mobile app or standalone service alongside the original).
-3. `core/design.md`'s Component Registry exceeds roughly 15 distinct reusable UI patterns.
 
-Split the four `/core/` files into the nine Standard files (`core/overview.md` → `project-overview.md`; `core/architecture.md` → mostly `architecture.md`, with conventions splitting out to `code-standards.md` and any library patterns to `library-docs.md`; `core/design.md` → `ui-tokens.md` + `ui-rules.md` + `ui-registry.md`; `core/progress.md` → `build-plan.md` + `progress-tracker.md`), move them into `/context/`, and rewrite `CLAUDE.md` to the Standard router (Section 5). Update only the marked Banka block in `AGENTS.md` so it points to `CLAUDE.md` and `/context/`; preserve everything outside the block and surface conflicts. Show the user exactly what moved where before finalizing.
+1. The four `/core/` files combined exceed roughly 4,000 words (~25,000
+   characters).
+2. The project has split into a genuinely distinct architectural environment.
+3. `core/design.md`'s Component Registry exceeds roughly 15 distinct reusable
+   UI patterns.
+
+Preview the mapping, then split the four `/core/` files into the nine Standard
+files: `core/overview.md` to `project-overview.md`; `core/architecture.md`
+mostly to `architecture.md`, with conventions to `code-standards.md` and
+library patterns to `library-docs.md`; `core/design.md` to `ui-tokens.md`,
+`ui-rules.md`, and `ui-registry.md`; `core/progress.md` to `build-plan.md` and
+`progress-tracker.md`. Move the resulting files into `/context/` and remove the
+superseded `/core/` authority only after equivalence is verified. Replace only
+the marked Banka block with the Standard router from Section 5, changing
+exactly `<!-- BANKA:TIER: Core -->` to `<!-- BANKA:TIER: Standard -->`.
+Preserve all content outside the block, keep `CLAUDE.md` exactly `@AGENTS.md`,
+and show what moved where before finalizing.
 
 ---
 
@@ -594,8 +676,8 @@ entry contains a readable `SKILL.md`.
 In Codex, explicitly invoke a Banka skill with `$` (for example `$charter`,
 `$survey`, or `$remember save`). A host may also show enabled skills in its
 slash-command list, but Banka does not rely on a slash-command argument
-contract. `AGENTS.md` is the project-entry shim only; it does not install or
-register skills.
+contract. `AGENTS.md` is the canonical project authority; it does not install
+or register skills.
 
 **Provenance, for clarity:** `charter`, `survey`, `dredge`, `remember`, `moor` are the original five. `scale`, `delegate`, `watershed`, and `linis` are Banka-native additions — `scale` operationalizes Section 6's promotion path as an actual runnable skill, `delegate` supports Section 7.5's Delegation Setup, `watershed` provides multi-perspective critique beyond a single survey, and `linis` ("clean," Filipino) removes narrative residue from settled files while preserving operational history and rationale.
 
@@ -613,20 +695,14 @@ by review patterns demonstrated by
 router, command surface, state machinery, or execution workflow. These are
 design influences, not dependencies or delegated authorities.
 
-**Every skill that reads project files resolves the project's state from the
-filesystem, never by parsing tier prose:**
-
-```
-/context/ exists  → Standard — read the relevant files under /context/
-/core/ exists     → Core     — read the relevant files under /core/
-CLAUDE.md exists  → Minimal  — live state is inline in CLAUDE.md
-none exists       → Unstructured/non-Banka repository — never assume Minimal
-```
-
-This filesystem check avoids repeatedly interpreting router prose. Skills that
-can operate read-only from an explicit subject may continue in an unstructured
-repository while stating that no Banka state exists. Skills that require a
-state destination stop rather than creating one implicitly.
+**Every skill that reads project files resolves state with Section 3.1's full
+detection matrix.** The schema-2 marker declares the tier; the filesystem shape
+must corroborate it. Directory presence alone never selects a tier, and
+`CLAUDE.md` alone is either the exact import shim, a legacy compatibility-read
+source, or a conflict — never schema-2 Minimal state. Skills that can operate
+read-only from an explicit subject may continue where Section 3.1 permits while
+stating the resolved classification. Skills that require a state destination
+stop rather than creating one implicitly.
 
 The protocol never regenerates skill contents per project. If the Skills Kit is
 not discoverable in the chosen runtime, configure its user-level Claude Code or
@@ -719,10 +795,10 @@ If yes, in addition to whichever tier's files were generated:
 
 1. **Ensure `delegation-queue.md` exists** in the project root (Minimal or Core tier) or `/context/` (Standard tier) — use the standard template. It starts empty; the delegate skill populates it later, during actual building, not during this handoff.
 
-2. **Add a delegated-ticket block to `CLAUDE.md`**, regardless of tier, so
-any session knows how to behave when it receives a ticket rather than
-open-ended project direction. Fill in the exact queue path for the resolved
-tier: `delegation-queue.md` for Minimal/Core or
+2. **Add a delegated-ticket block inside the marked `AGENTS.md` block**,
+regardless of tier, so every runtime receives it from the canonical authority.
+Never add it to the one-line `CLAUDE.md` shim. Fill in the exact queue path for
+the resolved tier: `delegation-queue.md` for Minimal/Core or
 `context/delegation-queue.md` for Standard.
 
 ```markdown
@@ -782,7 +858,7 @@ it gets its own numbered subsection:
   at an abandoned package is worse than no module.]
 
 **wiring:** [the exact file, per tier, that gets the one-line "defer to X"
-  note once installed — Minimal: inline in CLAUDE.md; Core: the specific
+  note once installed — Minimal: inline in AGENTS.md; Core: the specific
   core/*.md file; Standard: the specific context/*.md file. All three must
   be named; a module that only specifies the Standard-tier file isn't
   finished.]
@@ -823,7 +899,7 @@ one-time, works across all your projects.
 ```
 
 **wiring:** once installed, add one line to:
-- Minimal tier: `CLAUDE.md`'s Project Overview section
+- Minimal tier: the marked `AGENTS.md` block's Project Overview section
 - Core tier: `core/architecture.md`
 - Standard tier: `context/code-standards.md`
 
@@ -852,8 +928,12 @@ has already confirmed earlier in *this* conversation before re-asking).
 2. **The exact first message for the selected runtime.** The project-state
 instruction is the same; skill invocation syntax differs:
 
+For Codex, begin with `Read AGENTS.md [and the relevant files in /core/ or
+/context/, if applicable] in this project.` For Claude Code, begin with `Read
+CLAUDE.md, which imports AGENTS.md, [and the relevant files in /core/ or
+/context/, if applicable] in this project.` Then use the same continuation:
+
 ```
-Read CLAUDE.md [and everything in /core/ or /context/, if applicable] in this project.
 Confirm you've adopted the Senior Tech Lead/PM persona and understand the
 available Skills. Then tell me the single next step according to
 [the Current Status section / core/progress.md / context/progress-tracker.md],

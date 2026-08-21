@@ -17,11 +17,44 @@ Before running anything, be clear with the user: is this code, a plan/proposal, 
 ## Step 1 — Read what's needed
 
 Read the explicitly supplied subject, or the most recent relevant work in this
-session if no subject was supplied, and resolve project context: `/context/` for
-Standard, `/core/` for Core, or `CLAUDE.md` for Minimal. If none exists, this is
-an unstructured/non-Banka repository, not Minimal. Use the supplied subject and
-relevant repository documentation, state the missing Banka structure, and do
-not invent project-specific invariants.
+session if no subject was supplied. Before reading project state, inspect
+`AGENTS.md`, the complete contents of `CLAUDE.md`, `/core/`, `/context/`, and
+the required tier files. Active schema 2 requires one complete Banka block in
+`AGENTS.md` containing these exact comments exactly once and in this order:
+`<!-- BANKA:START -->`, `<!-- BANKA:STATE-SCHEMA: 2 -->`, exactly one of
+`<!-- BANKA:TIER: Minimal -->`, `<!-- BANKA:TIER: Core -->`, or
+`<!-- BANKA:TIER: Standard -->`, then `<!-- BANKA:END -->`. The declared tier
+must match the filesystem shape and required files. `CLAUDE.md` must be exactly
+`@AGENTS.md`; if it is missing, schema 2 is still active for a runtime that
+discovers `AGENTS.md` directly, but report that Claude Code compatibility is
+unavailable.
+
+A matching Minimal shape has neither `/core/` nor `/context/`. Core has
+`/core/` and its `overview.md`, `architecture.md`, `design.md`, and
+`progress.md`, with no `/context/`. Standard has `/context/` and its
+`project-overview.md`, `architecture.md`, `build-plan.md`, `code-standards.md`,
+`library-docs.md`, `ui-tokens.md`, `ui-rules.md`, `ui-registry.md`, and
+`progress-tracker.md`, with no `/core/`.
+
+Stop state-dependent work for competing authority, malformed/partial/duplicate
+or unknown Banka markers, a non-exact `CLAUDE.md` beside schema 2, an exact shim
+with missing authority, both state directories, tier mismatch, or missing
+required tier files. Do not choose, repair, or normalize any of these states.
+
+Without valid schema 2, recognize legacy Banka state only when `CLAUDE.md` has
+the `# Project Operating Protocol` heading and exactly one complete legacy tier
+shape, with or without an old AGENTS block pointing to it. Legacy is
+compatibility-read-only: report that classification and read its chain when
+safe for the audit, but do not change Banka state. Incomplete legacy state or a
+broken old shim is a stop condition. If neither schema 2 nor recognizable
+legacy state exists, treat the repository as unstructured/non-Banka, not
+Minimal.
+
+For active or safely readable legacy state, use `/context/` for Standard,
+`/core/` for Core, and the Banka-owned `AGENTS.md` block for schema-2 Minimal or
+legacy `CLAUDE.md` for legacy Minimal. For an unstructured repository, use the
+supplied subject and relevant repository documentation, state that no Banka
+state was found, and do not invent project-specific invariants.
 
 ## Step 2 — Run five independent audits
 

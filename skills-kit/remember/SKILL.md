@@ -5,12 +5,46 @@ description: Save what matters at the end of a session so the next session picks
 
 AI has no memory between sessions. Every new session starts blank. This skill fixes that — but the fix is the file on disk, never this conversation's own recollection of it, since another session may have touched the project since this conversation last looked.
 
-**First, resolve the project's structure:** `/context/` → Standard tier —
-session state lives in `context/progress-tracker.md`; `/core/` → Core tier —
-session state lives in `core/progress.md`; `CLAUDE.md` → Minimal tier — session
-state lives in its Current Status and Session Notes sections. If none exists,
-stop: this repository is not Banka-enabled and has no defined session-state
-destination. Never create one implicitly.
+## Resolve Banka state first
+
+Before reading or writing project state, inspect `AGENTS.md`, the complete
+contents of `CLAUDE.md`, `/core/`, `/context/`, and the required tier files.
+Active schema 2 requires one complete Banka block in `AGENTS.md` containing
+these exact comments exactly once and in this order: `<!-- BANKA:START -->`,
+`<!-- BANKA:STATE-SCHEMA: 2 -->`, exactly one of
+`<!-- BANKA:TIER: Minimal -->`, `<!-- BANKA:TIER: Core -->`, or
+`<!-- BANKA:TIER: Standard -->`, then `<!-- BANKA:END -->`. The declared tier
+must match the filesystem shape and required files. `CLAUDE.md` must be exactly
+`@AGENTS.md`; if it is missing, schema 2 is still
+active for a runtime that discovers `AGENTS.md` directly, but report that
+Claude Code compatibility is unavailable.
+
+A matching Minimal shape has neither `/core/` nor `/context/`. Core has
+`/core/` and its `overview.md`, `architecture.md`, `design.md`, and
+`progress.md`, with no `/context/`. Standard has `/context/` and its
+`project-overview.md`, `architecture.md`, `build-plan.md`, `code-standards.md`,
+`library-docs.md`, `ui-tokens.md`, `ui-rules.md`, `ui-registry.md`, and
+`progress-tracker.md`, with no `/core/`.
+
+Stop state-dependent work for competing authority, malformed/partial/duplicate
+or unknown Banka markers, a non-exact `CLAUDE.md` beside schema 2, an exact shim
+with missing authority, both state directories, tier mismatch, or missing
+required tier files. Do not choose, repair, or normalize any of these states.
+
+Without valid schema 2, recognize legacy Banka state only when `CLAUDE.md` has
+the `# Project Operating Protocol` heading and exactly one complete legacy tier
+shape, with or without an old AGENTS block pointing to it. Legacy is
+compatibility-read-only: restore mode may inspect and report its chain, but save
+mode must stop because it writes state. No Banka state may change until an
+explicitly requested, previewed, and confirmed migration completes. Incomplete
+legacy state or a broken old shim is a stop condition.
+
+For active schema 2, Standard session state lives in
+`context/progress-tracker.md`, Core session state in `core/progress.md`, and
+Minimal session state in the Current Status and Session Notes sections of the
+Banka-owned `AGENTS.md` block. If neither schema 2 nor recognizable legacy
+state exists, stop because no defined session-state destination exists. Never
+create one implicitly.
 
 ## Security Boundary
 
@@ -48,8 +82,9 @@ Do not capture: implementation detail visible in the code itself, anything alrea
 Run a final pass for anything secret-shaped before writing. Update the resolved
 file by section; never replace it with a standalone memory document:
 
-- **Minimal — `CLAUDE.md`:** update Current Status, Completed Actions, Known
-  Issues / Open Decisions, Session Notes, and Next Immediate Step.
+- **Minimal — Banka-owned `AGENTS.md` block:** update Current Status, Completed
+  Actions, Known Issues / Open Decisions, Session Notes, and Next Immediate
+  Step. Preserve all content outside the marked block.
 - **Core — `core/progress.md`:** update Current Phase, Active Milestones,
   Completed Actions, Known Issues, Session Memory Bank, and Next Immediate Step.
 - **Standard — `context/progress-tracker.md`:** update Completed, In Progress,
@@ -73,12 +108,15 @@ If version control is in use, run its equivalent of `git log --oneline -10` and 
 
 ### Step 2 — Read everything available
 
-Read the resolved session-state file first (`CLAUDE.md`'s Current Status and
-Session Notes, `core/progress.md`, or `context/progress-tracker.md`). Under Core
-or Standard, also read every other file listed in `CLAUDE.md`'s Source of truth
-section. At every tier, read `IDEA-SCOPE.md` when it exists. Also read the exact
-tier-resolved queue when present: root `delegation-queue.md` for Minimal/Core,
-or `context/delegation-queue.md` for Standard. Do not scan beyond these declared
+Read the resolved session-state file first (the Banka-owned `AGENTS.md` block's
+Current Status and Session Notes, `core/progress.md`, or
+`context/progress-tracker.md`). Under active schema-2 Core or Standard, also
+read every other file listed in `AGENTS.md`'s Source of truth section. Under
+readable legacy Core or Standard, read the files listed in legacy `CLAUDE.md`
+instead and identify the restore as legacy. At every tier, read
+`IDEA-SCOPE.md` when it exists. Also read the exact tier-resolved queue when
+present: root `delegation-queue.md` for Minimal/Core, or
+`context/delegation-queue.md` for Standard. Do not scan beyond these declared
 sources.
 
 Never repeat or surface raw secrets from any source, even in restored context — summarize in redacted form only.

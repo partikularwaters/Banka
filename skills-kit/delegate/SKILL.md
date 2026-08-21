@@ -98,15 +98,42 @@ add new dependencies without flagging first"]
 
 ## Step 3 — Write the tier-resolved queue
 
-Resolve the project before writing: `/context/` →
-`context/delegation-queue.md`; `/core/` or `CLAUDE.md` → root
-`delegation-queue.md`. If none exists, stop: this is not yet a Banka-enabled
-project, so no queue destination is defined. Create the resolved file if it
-doesn't exist. Append tickets — never silently overwrite a queue that already
-has unstarted or in-progress items without telling the user what's being
-replaced.
+Resolve the project with the schema-2 authority and tier contract before
+writing. `AGENTS.md` must contain one valid schema-2 Banka block with these
+comments exactly once and in this order:
 
-**Ticket numbers are append-only.** Never renumber or reuse a number already used in this file — not across separate delegate runs, and not when a merge collapses two candidates into one. A stable number is what lets a session-opening prompt point at "Ticket N" unambiguously (see the queue's own sample prompts); a number that can shift meaning defeats that.
+```markdown
+<!-- BANKA:START -->
+<!-- BANKA:STATE-SCHEMA: 2 -->
+<!-- BANKA:TIER: Minimal -->
+<!-- BANKA:END -->
+```
+
+The third comment is exactly one of `<!-- BANKA:TIER: Minimal -->`,
+`<!-- BANKA:TIER: Core -->`, or `<!-- BANKA:TIER: Standard -->`. Its declared
+tier must match the verified filesystem shape, and any present `CLAUDE.md` must
+be exactly `@AGENTS.md`.
+
+A matching Minimal shape has neither `/core/` nor `/context/`. Core has
+`/core/` and its `overview.md`, `architecture.md`, `design.md`, and
+`progress.md`, with no `/context/`. Standard has `/context/` and its
+`project-overview.md`, `architecture.md`, `build-plan.md`, `code-standards.md`,
+`library-docs.md`, `ui-tokens.md`, `ui-rules.md`, `ui-registry.md`, and
+`progress-tracker.md`, with no `/core/`.
+
+Minimal and Core resolve to root
+`delegation-queue.md`; Standard resolves to `context/delegation-queue.md`.
+
+Legacy `CLAUDE.md` authority is compatibility-read-only: it may be inspected,
+but Delegate must not create or change a queue until the explicit, previewed,
+and confirmed migration has completed. Stop rather than choosing a destination
+when root authority is missing or broken, Banka metadata competes or is
+malformed, both `/core/` and `/context/` exist, or the tier and storage shape
+disagree. Create the resolved queue only for active schema 2. Append tickets —
+never silently overwrite a queue that already has unstarted or in-progress
+items without telling the user what's being replaced.
+
+**Ticket numbers are append-only.** Never renumber or reuse a number already used in this file — not across separate delegate runs, and not when a merge collapses two candidates into one. A stable number is what lets a session-opening handoff point at "Ticket N" unambiguously; a number that can shift meaning defeats that.
 
 For a merged ticket, the one-line spec summary in the checklist below must name both folded-in behaviors, not just the more prominent one — that line is often the only thing a future skim reads without opening the full spec.
 
@@ -131,33 +158,64 @@ Generated from: [feature/plan name] — [date]
 
 ## Step 4 — Confirm and hand off
 
-Tell the user plainly what happens next — this skill does not open new sessions itself:
+After successfully writing the queue, return the queue result followed by one
+complete, ready-to-paste handoff block for every Junior-safe ticket, in
+dependency order. Use this one reusable shape exactly; substitute each
+bracketed field from the resolved project and its full ticket spec:
 
+```text
+Work in [exact project path].
+
+You are executing Ticket [N] from the delegation queue:
+[exact queue path]
+
+Use a model meeting Ticket [N]'s [required capability] requirement; the owner
+controls that selection outside this handoff. Read the queue introduction,
+execution rules, and Ticket [N] only. Do not read or begin another ticket.
+
+Dependency state: [satisfied dependency state, including any accepted
+prerequisite outcome].
+
+The coordinator session hands ownership of the shared checkout to this session
+for Ticket [N]. No other implementation session is authorized to edit this
+checkout until this ticket reports completion and returns ownership.
+
+The accepted dirty baseline is: [exact accepted dirty files and their source,
+or "none"]. These changes are accepted dependencies, not evidence of
+concurrency. Dirty files, one worktree, absence of .git/index.lock, and
+process inspection do not prove or disprove concurrent editing. Stop for an
+unexplained changed path; do not stop for the accepted dirty baseline above.
+
+Files to touch: [exact Files to touch field from Ticket N].
+
+Files not to touch: [exact Files not to touch field from Ticket N].
+
+Done when: [exact Done when field from Ticket N].
+
+Verification: [exact Verification field from Ticket N].
+
+Do not: [exact Do not field from Ticket N].
+
+When finished, run every verification command in Ticket [N] and report:
+1. files changed;
+2. completion against each Done when condition;
+3. verification commands and results;
+4. any unexpected drift, ambiguity, or remaining risk;
+5. that checkout ownership is returned to the coordinator session.
+
+Do not start another ticket. Do not create or switch worktrees unless explicitly
+assigned. Do not expand beyond the resolved ticket. Stop only for unexplained
+drift, missing authority, an unmet dependency, or a material ambiguity the
+ticket does not resolve.
 ```
-Delegation queue written: [N] tickets ready for a fresh session,
-[M] items kept here because [tier reasoning].
 
-For each ready ticket: open a fresh session using this host's normal
-new-session mechanism, then point it at its ticket in the tier-resolved queue —
-see that file's own sample prompts for the exact wording. Use a lighter model
-only when this host offers one and the user has selected it; the same or a
-stronger model may execute any Junior-safe ticket. Do not carry this
-conversation's history into that session — a fresh session is the point.
-
-At session start, confirm that the active model/mode meets the ticket's
-`Required capability`. If the host does not expose that information, ask the
-user to confirm it before starting. Never execute Senior-required work in a
-Junior-only mode.
-
-Unless the user has explicitly assigned separate Git worktrees and branches,
-run tickets serially in a shared checkout. A fresh session alone does not make
-parallel filesystem edits safe.
-
-After each ticket completes, return to a senior-capability session and invoke
-the survey skill on the result before marking it done.
-```
-
-Sample prompts for opening each kind of new session — one for a Junior-safe ticket, one for a Senior-required item — are kept in the delegation queue template, not restated here, so there's one copy to keep current instead of two.
+For one ready ticket, return one block. For zero, say that all work remains
+Senior-required and return no empty handoff prompt. This skill never creates
+sessions, selects models, or creates worktrees. In a shared checkout, tickets
+run serially; parallel execution requires a separately assigned Git worktree
+and branch for each session. After each ticket returns, a senior-capability
+coordinator invokes Survey before marking it complete and before another ticket
+edits the same shared checkout.
 
 ---
 

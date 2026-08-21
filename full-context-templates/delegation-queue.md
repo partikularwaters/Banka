@@ -4,17 +4,36 @@
 
 This file is empty until the delegate skill is invoked against an approved charter plan. See the `delegate` skill for how tickets get written here.
 
-**Rule for any session reading this file:** if you are picking up a delegated
-ticket, execute *only* the ticket you were given. Confirm that the active
-model/mode meets its `Required capability`; if the host does not expose that
-information, ask the user to confirm it before starting. Do not read other
-unstarted tickets or touch files outside what the ticket lists. If anything is
-ambiguous or missing a value, stop and report the gap instead of guessing.
+**Rule for any session reading this file:** resolve queue placement from a valid
+schema-2 `AGENTS.md` authority whose comments occur exactly once and in this
+order:
 
-**Execution isolation:** in one checkout, run tickets serially and survey each
-before another session edits the same working directory. Parallel execution
-requires a separate Git worktree and branch per ticket. A fresh session isolates
-conversation history; only a separate worktree isolates working files.
+```markdown
+<!-- BANKA:START -->
+<!-- BANKA:STATE-SCHEMA: 2 -->
+<!-- BANKA:TIER: Minimal -->
+<!-- BANKA:END -->
+```
+
+The third comment is exactly one of `<!-- BANKA:TIER: Minimal -->`,
+`<!-- BANKA:TIER: Core -->`, or `<!-- BANKA:TIER: Standard -->`; it must match
+the tier shape. Resolve to root
+`delegation-queue.md` for Minimal/Core or `context/delegation-queue.md` for
+Standard. A legacy `CLAUDE.md` project is compatibility-read-only, so do not
+write a queue until its explicit, previewed, and confirmed migration completes.
+If you are picking up a delegated ticket, execute *only* the ticket you were
+given. Confirm that the active model/mode meets its `Required capability`; if
+the host does not expose that information, ask the user to confirm it before
+starting. Do not read other unstarted tickets or touch files outside what the
+ticket lists. Stop only for unexplained drift, missing authority, an unmet
+dependency, or a material ambiguity the ticket does not resolve.
+
+**Execution isolation:** in one checkout, run tickets serially. After each
+ticket returns, a senior-capability coordinator invokes Survey before marking it
+complete and before another ticket edits the same shared checkout. Parallel
+execution requires a separate Git worktree and branch per ticket. A fresh
+session isolates conversation history; only a separate worktree isolates
+working files.
 
 ---
 
@@ -32,51 +51,62 @@ _Move tickets here once the survey skill has passed them, with the date and a on
 
 ---
 
-## Sample prompts for opening the next session
+## Ready-to-paste handoff for each Junior-safe ticket
 
-Copy whichever applies when starting a fresh session to work an item from this queue.
+The delegate skill emits one complete block in this exact shape for every
+ready ticket, in dependency order. It replaces every bracketed field with the
+resolved project and ticket details; users do not assemble a prompt from this
+template.
 
-**Junior-safe ticket (fresh session, user-selected model):**
 ```
-Read CLAUDE.md [and everything in /core/ or /context/, if applicable] in
-this project. You're picking up a delegated ticket — per the "If you are
-executing a delegated ticket" section in CLAUDE.md, open [the project-root
-delegation-queue.md for Minimal/Core, or context/delegation-queue.md for
-Standard] and read Ticket [N] under Full ticket specs. That ticket is your
-entire scope.
+Work in [exact project path].
 
-Confirm that this session's active model/mode meets the ticket's Required
-capability. A same or stronger model may execute a Junior-safe ticket. If the
-host does not expose the active model/mode, ask me to confirm it before starting.
+You are executing Ticket [N] from the delegation queue:
+[exact queue path]
 
-Confirm that no other session is editing this checkout. If this ticket is part
-of parallel execution, confirm that this session has its own Git worktree and
-branch before changing files.
+Use a model meeting Ticket [N]'s [required capability] requirement; the owner
+controls that selection outside this handoff. Read the queue introduction,
+execution rules, and Ticket [N] only. Do not read or begin another ticket.
 
-Do not read or start any other ticket in the queue. Do not touch files
-outside what Ticket [N] lists. If anything in it is ambiguous or needs a
-value that isn't supplied, stop and report the gap — do not guess and
-proceed. When done, report completion against its "Done when" condition
-specifically, not just "it works."
+Dependency state: [satisfied dependency state, including any accepted
+prerequisite outcome].
+
+The coordinator session hands ownership of the shared checkout to this session
+for Ticket [N]. No other implementation session is authorized to edit this
+checkout until this ticket reports completion and returns ownership.
+
+The accepted dirty baseline is: [exact accepted dirty files and their source,
+or "none"]. These changes are accepted dependencies, not evidence of
+concurrency. Dirty files, one worktree, absence of .git/index.lock, and
+process inspection do not prove or disprove concurrent editing. Stop for an
+unexplained changed path; do not stop for the accepted dirty baseline above.
+
+Files to touch: [exact Files to touch field from Ticket N].
+
+Files not to touch: [exact Files not to touch field from Ticket N].
+
+Done when: [exact Done when field from Ticket N].
+
+Verification: [exact Verification field from Ticket N].
+
+Do not: [exact Do not field from Ticket N].
+
+When finished, run every verification command in Ticket [N] and report:
+1. files changed;
+2. completion against each Done when condition;
+3. verification commands and results;
+4. any unexpected drift, ambiguity, or remaining risk;
+5. that checkout ownership is returned to the coordinator session.
+
+Do not start another ticket. Do not create or switch worktrees unless explicitly
+assigned. Do not expand beyond the resolved ticket. Stop only for unexplained
+drift, missing authority, an unmet dependency, or a material ambiguity the
+ticket does not resolve.
 ```
 
-**Senior-required item (senior-capability session):**
-```
-Invoke the remember skill in restore mode first — I want full current project
-context, not just this one item. Confirm that this is not a Junior-only session;
-if the active capability cannot be determined, ask me before starting.
-
-This item was kept Senior-required in the tier-resolved delegation queue rather
-than delegated, because: [the one-line reason the delegate skill gave].
-
-It's part of the plan approved through the charter skill for [feature name]. Relevant
-section of that plan:
-
-[paste the specific plan section this item covers]
-
-This wasn't written as a self-contained ticket — Senior-required items
-aren't, by design. Treat it as open-ended within that plan's scope:
-resolve judgment calls as they come up rather than expecting everything
-pre-decided. Confirm you understand the item and its "why it's
-Senior-required" reason before starting.
-```
+For one ready ticket, Delegate returns one block. For zero, it explains that
+all work remains Senior-required and emits no empty prompt. The shared-checkout
+rule remains serial execution; parallel execution requires a separate Git
+worktree and branch per ticket. After each ticket returns, a senior-capability
+coordinator invokes Survey before marking it complete and before another ticket
+edits the same shared checkout.

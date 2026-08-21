@@ -4,7 +4,7 @@ description: Clean up narrative residue in settled files after a milestone witho
 argument-hint: [optional — specific settled file(s); defaults to files changed in the current completed milestone]
 ---
 
-*Linis* — Filipino for "clean." Code and context files accumulate the residue of how they were built: a name here, a date there, a line quoting what someone said mid-session, a comment narrating an experiment instead of stating its settled result. None of that is wrong to have *during* a build — some of it is exactly what `remember` and the session-state file (`CLAUDE.md`'s Session Notes, `core/progress.md`, or `context/progress-tracker.md`, depending on tier) are supposed to capture while work is active. But once a version ships or a milestone closes, that residue stops being useful context and starts being clutter a future session has to read past to find what actually matters.
+*Linis* — Filipino for "clean." Code and context files accumulate the residue of how they were built: a name here, a date there, a line quoting what someone said mid-session, a comment narrating an experiment instead of stating its settled result. None of that is wrong to have *during* a build — some of it is exactly what `remember` and the session-state file (the Minimal Banka block in `AGENTS.md`, `core/progress.md`, or `context/progress-tracker.md`, depending on tier) are supposed to capture while work is active. But once a version ships or a milestone closes, that residue stops being useful context and starts being clutter a future session has to read past to find what actually matters.
 
 This skill does not touch correctness — it never changes what code does. It only changes how it's described.
 
@@ -17,10 +17,47 @@ session-state file and version-control diff. Do not expand this to a repo-wide
 cleanup unless the user explicitly requests that scope. If the user specifies a
 narrower scope, respect it.
 
-Resolve project structure before reading state: `/context/` → Standard,
-`/core/` → Core, `CLAUDE.md` → Minimal. If none exists, treat the repository as
+Before reading project state, inspect `AGENTS.md`, the complete contents of
+`CLAUDE.md`, `/core/`, `/context/`, and the required tier files. Active schema 2
+requires one complete Banka block in `AGENTS.md` containing these exact comments
+exactly once and in this order: `<!-- BANKA:START -->`,
+`<!-- BANKA:STATE-SCHEMA: 2 -->`, exactly one of
+`<!-- BANKA:TIER: Minimal -->`, `<!-- BANKA:TIER: Core -->`, or
+`<!-- BANKA:TIER: Standard -->`, then `<!-- BANKA:END -->`. The declared tier
+must match the filesystem shape and required files. `CLAUDE.md`
+must be exactly `@AGENTS.md`; if it is missing, schema 2 is still active for a
+runtime that discovers `AGENTS.md` directly, but report that Claude Code
+compatibility is unavailable.
+
+A matching Minimal shape has neither `/core/` nor `/context/`. Core has
+`/core/` and its `overview.md`, `architecture.md`, `design.md`, and
+`progress.md`, with no `/context/`. Standard has `/context/` and its
+`project-overview.md`, `architecture.md`, `build-plan.md`, `code-standards.md`,
+`library-docs.md`, `ui-tokens.md`, `ui-rules.md`, `ui-registry.md`, and
+`progress-tracker.md`, with no `/core/`.
+
+Stop state-dependent work for competing authority, malformed/partial/duplicate
+or unknown Banka markers, a non-exact `CLAUDE.md` beside schema 2, an exact shim
+with missing authority, both state directories, tier mismatch, or missing
+required tier files. Do not choose, repair, or normalize any of these states.
+
+Without valid schema 2, recognize legacy Banka state only when `CLAUDE.md` has
+the `# Project Operating Protocol` heading and exactly one complete legacy tier
+shape, with or without an old AGENTS block pointing to it. Legacy is
+compatibility-read-only: report that classification and inspect its state only
+to resolve scope and prepare the cleanup proposal. Applying a confirmed cleanup
+must not change a legacy Banka state file, tier marker, state directory, queue,
+or runtime shim; if the proposal would do so, stop until an explicitly
+requested, previewed, and confirmed migration completes. Incomplete legacy
+state or a broken old shim is a stop condition.
+
+For active schema 2, Standard state is in `/context/`, Core state is in
+`/core/`, and Minimal state is in the Banka-owned `AGENTS.md` block. If neither
+schema 2 nor recognizable legacy state exists, treat the repository as
 unstructured rather than assuming Minimal; use the supplied milestone/diff to
-resolve scope and do not create Banka state files.
+resolve scope and do not create Banka state files. If a confirmed Minimal
+cleanup changes `AGENTS.md`, edit only its Banka-owned block and preserve all
+content outside the block.
 
 **Never run this against active, in-progress work** — check the session-state file first; if the scope includes something still marked in-progress, ask before touching it. Cleanup is for what's settled, not what's still being decided.
 
