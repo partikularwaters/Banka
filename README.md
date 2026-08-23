@@ -20,6 +20,8 @@ that is a consequence—not a promise of universal token efficiency.
 the separate state schema identifies the on-disk project format. Banka 1.1.0
 uses state schema 2. See [VERSION](VERSION) and [CHANGELOG.md](CHANGELOG.md).
 
+**New here?** Jump straight to [Installing the Skills Kit](#installing-the-skills-kit) to get started.
+
 ## Why "Banka" 🛶
 
 *Banka* — shortened from *bangka*, Tagalog for the traditional Philippine
