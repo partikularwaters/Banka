@@ -110,10 +110,8 @@ first and then return to Docking. Do not bypass the remaining Docking workflow
 by proceeding directly from scope clarification to Banka.
 
 Resume Banka adoption only when Docking establishes `Ready for Banka` and the
-owner chooses to continue.
-
-`Ready for Banka` means Banka may begin adoption. It does not mean adoption is
-already complete.
+owner chooses to continue — reaching that status permits adoption to begin; it
+does not mean adoption is complete ([protocol/Banka.md](protocol/Banka.md#section-0-project-assessment) §0.4).
 
 ## 3. Adopt the project into Banka
 
@@ -168,10 +166,10 @@ complete classification and migration sequence live in
 
 ## 5. Adoption completion
 
-Banka adoption is complete only when:
+Section 0's entry conditions (decision-ready scope, and `Ready for Banka` when
+Docking was required) must already hold before adoption starts — this list
+covers completion, not entry. Banka adoption is complete only when:
 
-- decision-ready scope is present;
-- any required Docking assessment has reached `Ready for Banka`;
 - the appropriate Banka tier and schema-2 `AGENTS.md` source-of-truth
   structure exist;
 - applicable runtime instructions and Banka capabilities are available, with

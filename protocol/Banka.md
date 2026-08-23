@@ -64,10 +64,9 @@ scope clarification and then return to Docking. Do not proceed directly from
 scope clarification to Banka adoption.
 
 Banka adoption may resume when Docking establishes `Ready for Banka` and the
-owner chooses to continue.
-
-`Ready for Banka` establishes readiness to begin Banka adoption. It does not
-establish that Banka adoption is complete.
+owner chooses to continue. Readiness evidence and the `Ready for Banka` status
+are Docking's own terms, precisely defined in its own protocol; Banka only
+requires that the evidence exist, however it was established.
 
 ### 0.3 Protocol authority
 
@@ -366,16 +365,21 @@ contents of `CLAUDE.md`; do not infer authority from prose or choose the most
 convenient file.
 
 This detection matrix exists to satisfy one standing requirement: the **Cold
-Agent Test**. A capable agent entering a Banka-managed project with no prior
-conversation must be able to determine, from disk alone, whether Banka is
-active, the active tier, where original scope and current state live, what
-governs the work, what remains unresolved, the next valid action, and whether
-recorded state still agrees with repository reality. Section 8's handoff
-message and the `remember` skill's restore mode are where this gets exercised
-at runtime; this section is where it gets enforced structurally. Check any
-change to this protocol, a project-entry template, or a state-resolving skill
-against this test before it ships — a structurally valid change that a cold
-session still can't navigate has not actually succeeded.
+Agent Test** — a capable agent entering a Banka-managed project with no prior
+conversation must be able to recover, from disk alone:
+
+- whether Banka is active, and the active tier;
+- where original scope and current state live;
+- what governs the work, and what remains unresolved;
+- the next valid action;
+- whether recorded state still agrees with repository reality.
+
+Section 8's handoff message and the `remember` skill's restore mode are where
+this gets exercised at runtime; this section is where it gets enforced
+structurally. Check any change to this protocol, a project-entry template, or
+a state-resolving skill against this test before it ships — a structurally
+valid change that a cold session still can't navigate has not actually
+succeeded.
 
 | Observed state | Classification and required behavior |
 | --- | --- |

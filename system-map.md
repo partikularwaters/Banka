@@ -105,15 +105,14 @@ Protocol (ASMP) is one available route for producing decision-ready scope;
 another valid scope source is equally acceptable.
 
 Existing or brownfield projects have an additional readiness evidence
-requirement. When current evidence does not already establish readiness, Banka
-routes the project through the current Banka Docking Protocol. Docking may
-itself identify scope that is unclear or not decision-ready; when that happens,
+requirement — Docking's own term, precisely defined in its own protocol. When
+current evidence does not already establish readiness, Banka routes the
+project through the current Banka Docking Protocol. Docking may itself
+identify scope that is unclear or not decision-ready; when that happens,
 complete the required scope clarification and then return to Docking. Banka
 adoption resumes only after Docking establishes `Ready for Banka` and the owner
-chooses to continue.
-
-`Ready for Banka` means the prerequisites for Banka adoption have been
-established. It does not mean Banka adoption is already complete.
+chooses to continue — reaching that status permits adoption to begin; it does
+not mean adoption is complete (Protocol §0.4).
 
 ## Stage 1 — Scoping Intake (§1.5)
 
@@ -162,10 +161,10 @@ build → moor → survey, with dredge or watershed used when routed there. Reme
 closes and restores sessions after checking disk and version-control reality.
 Claude Code uses `/skill-name`; Codex uses `$skill-name`.
 
-An operational perspective is a temporary accountability frame embedded inside
-an existing Banka skill. The canonical perspectives are Outcome Owner, User,
-Builder, Maintainer, and Risk Owner. Applicable perspectives alter the way a
-skill examines its subject, not Banka's lifecycle or authority boundaries.
+Protocol §7.1 defines an operational perspective as a temporary accountability
+frame embedded inside an existing Banka skill — Outcome Owner, User, Builder,
+Maintainer, and Risk Owner. Applicable perspectives alter the way a skill
+examines its subject, not Banka's lifecycle or authority boundaries.
 
 ## Stage 4 — Promotion (§6, scale)
 

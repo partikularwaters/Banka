@@ -114,8 +114,8 @@ Before Banka adopts a project, two conditions must be present.
 ### Decision-ready scope
 
 Banka requires a clear enough destination to structure reliable AI-assisted
-work. The project should have an understood purpose, boundaries, constraints,
-and definition of success.
+work: a stated purpose, users, a staged feature scope, constraints, and a
+definition of done — the exact checklist [protocol/Banka.md](protocol/Banka.md#section-15-scoping-intake) §1.5 runs against.
 
 A specific scoping method is not required. The requirement is that the intended
 outcome is sufficiently clear to guide decisions.
@@ -123,9 +123,10 @@ outcome is sufficiently clear to guide decisions.
 ### Readiness evidence
 
 Banka requires enough understanding of the project's current state before
-operating on an existing project. Readiness evidence shows that the relevant
-structure, constraints, risks, and conditions of the project are understood
-well enough for adoption.
+operating on an existing project. Readiness evidence and the `Ready for Banka`
+status are Banka Docking's own terms, not Banka's — Docking's protocol defines
+both precisely; Banka only requires that the evidence exist, however it was
+established.
 
 A specific preparation method is not required. The requirement is that the
 project's readiness has been sufficiently established.
@@ -174,46 +175,48 @@ path for the runtime you use.
 
 ### Claude Code
 
-Ask Claude Code to install the kit:
+Paste this into a fresh Claude Code session — no pre-cloning needed, the agent
+does it:
 
 ```
-Install the Banka Skills Kit from <path-to-clone>/skills-kit/ into
-~/.claude/skills/ — one folder per skill, copying each SKILL.md as-is.
+Clone https://github.com/partikularwaters/Banka.git to a temporary directory,
+then install its Skills Kit: copy each skills-kit/*/SKILL.md into
+~/.claude/skills/<skill-name>/SKILL.md as-is. Before installing, check
+~/.claude/commands/, ~/.claude/skills/, and, if this is a specific project,
+its own .claude/commands/ and .claude/skills/, for any existing file using
+one of these nine names: charter, delegate, dredge, linis, moor, remember,
+scale, survey, watershed. If you find one, don't delete it unilaterally —
+back it up and ask me how to reconcile it before installing over it.
 ```
 
-1. Clone this repo: `git clone https://github.com/partikularwaters/Banka.git`
-2. Open a Claude Code session and paste the instruction above with the real clone path.
-3. Invoke skills with `/skill-name`, for example `/charter` or `/remember restore`.
-
-**Before installing:** check `~/.claude/commands/` and `~/.claude/skills/`
-(personal, machine-wide) and, if you're in a specific project, its own
-`.claude/commands/` and `.claude/skills/` too, for any existing file with the
-same name as one of this package's nine skills. If you find one, don't delete
-it unilaterally — back it up and confirm with the user how they want to
-reconcile it before installing over it.
+Invoke skills with `/skill-name`, for example `/charter` or `/remember restore`.
 
 Full install details and rationale: [protocol/Banka.md](protocol/Banka.md), Section 7.
 
 ### Codex
 
-Install the nine skills once for the current user by linking each canonical
-directory under `skills-kit/` into `~/.agents/skills/`. Codex then exposes the
-same Banka skills in every repository. Invoke them with `$skill-name`, for
-example `$charter` or `$remember restore`.
+Paste this into a fresh Codex session — no pre-cloning needed, the agent does
+it:
 
-Before installing, check `~/.agents/skills/` and the projects you use for an
-existing Banka skill with the same name. Migrate or remove old project-local
-copies only after confirming they are not customized: Codex can show duplicate
-same-named skills and does not merge them.
+```
+Clone https://github.com/partikularwaters/Banka.git to a temporary directory,
+then install its Skills Kit for the current user: link (or, if the checkout
+doesn't preserve symlinks, copy) each of these nine skills-kit/<skill>
+directories into ~/.agents/skills/<skill>/: charter, delegate, dredge, linis,
+moor, remember, scale, survey, watershed. Before installing, check
+~/.agents/skills/ and the projects I use for an existing Banka skill with the
+same name — Codex can show duplicate same-named skills and does not merge
+them, so migrate or remove an old project-local copy only after confirming
+it isn't customized. Confirm every installed entry contains a readable
+SKILL.md.
+```
 
-If an archive or checkout does not preserve symlinks, copy each complete skill
-directory instead. Confirm every entry contains a readable `SKILL.md`; the
-directory under `skills-kit/` remains authoritative.
+Invoke skills with `$skill-name`, for example `$charter` or `$remember restore`.
 
-Run `scripts/check-repo-integrity.sh` from this repository to verify all nine
-canonical `SKILL.md` files and names, confirm repository-local Banka duplicates
-have not been reintroduced, check the generated Banka block markers, and scan
-for known obsolete terminology.
+Run `scripts/check-repo-integrity.sh` from the cloned checkout to verify all
+nine canonical `SKILL.md` files and names, confirm repository-local Banka
+duplicates have not been reintroduced, check the generated Banka block
+markers, and scan for known obsolete terminology.
 
 The Banka source repository is not itself a Banka-enabled application project:
 it intentionally has no project-state `AGENTS.md`, `CLAUDE.md`, `/core/`, or
@@ -245,7 +248,8 @@ skill runs orthogonally whenever a project outgrows its current tier.
 
 ### Operational perspectives
 
-An operational perspective is a temporary accountability frame embedded inside
+[Protocol §7.1](protocol/Banka.md#section-71-operational-perspectives) defines
+an operational perspective as a temporary accountability frame embedded inside
 an existing Banka skill. The canonical perspectives are Outcome Owner, User,
 Builder, Maintainer, and Risk Owner. Perspectives are not personas, commands,
 lifecycle gates, generated project files, or persistent project roles. A skill
