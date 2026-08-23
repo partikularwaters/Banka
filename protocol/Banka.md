@@ -1,4 +1,4 @@
-# Banka 1.0.0
+# Banka 1.1.0
 **Scoping-to-Agent Handoff Protocol**
 
 > **TO THE AI AGENT READING THIS:**
@@ -21,6 +21,9 @@ A handful of terms get used before the section that formally defines them. Quick
 | **Fill-In Discipline** | The five binding rules for how content gets written into a project's generated files. | Section 2.5 |
 | **Craft Layer** | A quality-layer domain (e.g. animation) where a strong outside authority exists — Agnostic until a project opts in, Hard Default after. | Section 7.6 (the standard), Section 7.7 (the reference instance) |
 | **Skills Kit** | The nine permanent Skills (`charter`, `survey`, `dredge`, `remember`, `moor`, `scale`, `delegate`, `watershed`, `linis`) — installed once per machine, used across every project. | Section 7 |
+| **Context Contract** | A skill's explicit context boundary — what it requires, what's conditional, what it excludes by default, what it outputs, and what it may write. | Section 2.7 |
+| **One Home per Fact** | Every durable rule or fact has exactly one canonical definition; other files may reference or operationalize it, never redefine it. | Section 2.8 |
+| **Cold Agent Test** | Whether a fresh agent with no prior conversation can recover Banka's active state, scope, rules, and next action from disk alone. | Section 3.1 |
 
 ---
 
@@ -284,6 +287,34 @@ Proposing a new Hard Default requires stating, explicitly, which of the two test
 
 ---
 
+## SECTION 2.7: CONTEXT CONTRACTS
+
+Every skill in Section 7's Skills Kit already operates against an implicit boundary — what it reads before acting, what it writes, what it deliberately leaves alone. A Context Contract makes that boundary explicit and readable at a glance. It formalizes a skill's existing behavior; it does not change what the skill does.
+
+A Context Contract is a short block near the top of a skill's `SKILL.md`, after its frontmatter, using up to five categories:
+
+- **Required** — context the skill must load to do its job at all.
+- **Conditional** — context loaded only when the specific task triggers it; state the trigger, not just the possibility.
+- **Excluded by default** — context the skill should not load merely because it exists in the project. This is a default, not a prohibition: a skill may still obtain excluded context when the operation genuinely requires evidence for it.
+- **Outputs** — what the skill produces.
+- **Write authority** — what, if anything, the skill may modify, and under what condition.
+
+Omit a category when it is genuinely not applicable to that skill — a skill with no write authority states that plainly rather than listing an empty section. A contract must describe the skill's existing behavior; verify it against the skill's own steps before writing it, since a Context Contract that quietly changes what a skill does has failed its own purpose.
+
+A contract entry points at where a detail is already defined rather than restating it. If a skill's own state-resolution section already spells out a tier-by-tier file mapping, the contract references that section instead of reproducing the mapping a second time — Section 2.8 governs why.
+
+---
+
+## SECTION 2.8: ONE HOME PER FACT
+
+Every durable Banka rule or project fact has exactly one canonical home — the file where it is actually defined. Every other file may reference it, operationalize it, verify it, or summarize it in passing, but must not independently redefine it. A second definition of the same fact is drift waiting to happen, not redundancy for safety.
+
+This is not a new practice; it is already enforced mechanically. `scripts/check-repo-integrity.sh` verifies each project-entry `AGENTS.md` template is byte-identical to the tier block this protocol defines in Sections 3.3, 4, and 5 — the protocol is canonical, the templates are checked copies, never an independent source. The same script verifies the `delegate` skill's ready-to-paste handoff block is byte-identical to `full-context-templates/delegation-queue.md`'s copy of it, for the same reason.
+
+Where a fact must appear in more than one file for a skill to remain self-contained and portable — each skill's own state-resolution preamble in Section 7's Skills Kit is the clearest case — exact duplication of the load-bearing facts is checked by the repository's integrity tooling rather than left to manual consistency or rewritten into a single shared block. This is a deliberate, checked exception to "one home," not a gap in the principle: skill portability is itself a Banka invariant (Section 7), and a runtime include or generation step would trade one problem for another. Do not deduplicate a self-contained skill's required content merely to reduce line count.
+
+---
+
 ## SECTION 3: RUNTIME AUTHORITY AND MINIMAL STATE
 
 `AGENTS.md` is Banka's canonical, runtime-neutral root authority. Banka owns
@@ -333,6 +364,18 @@ Resolve Banka state before reading or writing it. Check markers, both state
 directories, the declared tier, the required domain files, and the complete
 contents of `CLAUDE.md`; do not infer authority from prose or choose the most
 convenient file.
+
+This detection matrix exists to satisfy one standing requirement: the **Cold
+Agent Test**. A capable agent entering a Banka-managed project with no prior
+conversation must be able to determine, from disk alone, whether Banka is
+active, the active tier, where original scope and current state live, what
+governs the work, what remains unresolved, the next valid action, and whether
+recorded state still agrees with repository reality. Section 8's handoff
+message and the `remember` skill's restore mode are where this gets exercised
+at runtime; this section is where it gets enforced structurally. Check any
+change to this protocol, a project-entry template, or a state-resolving skill
+against this test before it ships — a structurally valid change that a cold
+session still can't navigate has not actually succeeded.
 
 | Observed state | Classification and required behavior |
 | --- | --- |
@@ -391,7 +434,10 @@ this sequence only after the user explicitly requests migration:
    state without loss, set the matching tier marker, and replace `CLAUDE.md`
    with exactly `@AGENTS.md`.
 7. Re-run the full detection matrix. Migration completes only when there is one
-   matching authority chain and no legacy or competing Banka state remains.
+   matching authority chain and no legacy or competing Banka state remains,
+   and the migrated result passes the Cold Agent Test (Section 3.1): a fresh
+   session must recover tier, scope, state, and next action without any
+   memory of the migration itself.
 
 If safe equivalence cannot be demonstrated, stop and ask the user to resolve
 the surfaced ambiguity. Never discard, merge, or prefer competing state by
@@ -577,7 +623,10 @@ A project can outgrow its current tier. Do not promote automatically: act only
 when explicitly asked or when the current tier's threshold is actually met,
 and always promote exactly one tier at a time. Before editing, require an active
 schema-2 chain under Section 3.1; legacy state must complete the confirmed
-migration sequence first.
+migration sequence first. Every promotion below must leave the project passing
+the Cold Agent Test (Section 3.1) — a fresh session opening the promoted
+project should recover tier, scope, state, and next action exactly as
+reliably as before the promotion.
 
 ### Minimal → Core
 
@@ -623,7 +672,7 @@ and show what moved where before finalizing.
 
 ## SECTION 7: THE SKILLS KIT (one source, runtime-specific discovery)
 
-The nine Skills — `charter`, `survey`, `dredge`, `remember`, `moor`, `scale`, `delegate`, `watershed`, `linis` — never change per project. They are provided as a separate, standalone package: **Skills Kit**.
+The nine Skills — `charter`, `survey`, `dredge`, `remember`, `moor`, `scale`, `delegate`, `watershed`, `linis` — never change per project. They are provided as a separate, standalone package: **Skills Kit**. Each skill's `SKILL.md` states its Context Contract (Section 2.7) near the top, after its frontmatter — a compact statement of what it requires, what's conditional, what it excludes by default, what it outputs, and what it may write.
 
 ### Claude Code discovery
 
