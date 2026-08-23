@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.1.0 — 2026-08-23
+
+Makes disciplines the framework already practiced explicit, informed by
+principles identified in an audit of ICM (github.com/RinDig/icm-architect).
+No tier, skill, required project file, or runtime dependency was added; this
+release reinforces the existing architecture rather than extending it.
+
+- Adds a Context Contract standard (protocol Section 2.7) and a matching
+  Context Contract section — Required, Conditional, Excluded by default,
+  Outputs, Write authority — to every skill in the Skills Kit.
+- States the One Home per Fact authority principle explicitly (Section 2.8),
+  citing the repository's existing byte-identical integrity checks as the
+  mechanism that already enforces it.
+- Names the Cold Agent Test as a cross-referenced review lens (Section 3.1),
+  wired as an explicit completion condition into the migration sequence
+  (Section 3.2) and the promotion path (Section 6).
+- Adds a Framework Change-Impact Map to `system-map.md` — a maintenance-only
+  dependency table for editing Banka itself.
+- Adds a structural integrity check requiring exactly one Context Contract
+  section per skill.
+
 ## 1.0.0 — 2026-08-21
 
 Formal Banka 1.0.0 release metadata. This is a repository milestone recorded
