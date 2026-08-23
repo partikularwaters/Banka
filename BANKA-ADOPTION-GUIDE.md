@@ -181,7 +181,7 @@ Banka adoption is complete only when:
   durably recorded;
 - existing project knowledge has been preserved or deliberately reconciled; and
 - a new session can recover the project's Banka-managed state sufficiently to
-  continue safely.
+  continue safely (the Cold Agent Test, [protocol/Banka.md](protocol/Banka.md#section-3-runtime-authority-and-minimal-state) §3.1).
 
 If these conditions are not met, describe the remaining gap and treat Banka
 adoption as in progress.
