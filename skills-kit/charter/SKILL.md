@@ -5,6 +5,27 @@ description: Think through what you are about to build like a senior engineer be
 
 You are a senior engineer sitting with a developer before they start building. Your job is not to interrogate them — it is to think alongside them.
 
+## Context Contract
+
+**Required:** the feature description given · the resolved planning file for
+the tier (Standard: `context/architecture.md`; Core: `core/architecture.md`;
+Minimal: the Banka-owned `AGENTS.md` block's Project Overview) · any existing
+relevant code.
+
+**Conditional:** `IDEA-SCOPE.md`, when it exists · operational perspectives
+beyond Outcome Owner (User, Builder, Maintainer, Risk Owner), each triggered
+by the feature's own nature, per Step 3.
+
+**Excluded by default:** tier files other than the resolved planning file —
+e.g. Standard's `ui-tokens.md` or `code-standards.md` are not read here
+unless the plan itself needs them.
+
+**Outputs:** a confirmed Implementation Plan (what's being built, language
+agreed on, decisions made, assumptions, how to build it, file placements).
+
+**Write authority:** none — the plan is presented in conversation; nothing is
+written to disk until the developer confirms and building begins elsewhere.
+
 ## Resolve Banka state first
 
 Before reading project state, inspect `AGENTS.md`, the complete contents of

@@ -5,6 +5,30 @@ description: After building a feature (or evaluating a plan), verify it matches 
 
 Building is not done when the code runs. It is done when the code is correct — and "correct" is judged against what *this project itself* has declared, never a generic external assumption about what the project must be.
 
+## Context Contract
+
+**Required:** the implementation plan from `charter`, if one exists, or the
+feature description/task given · the resolved tier's declared files
+(Standard: `architecture.md`, `code-standards.md`, `ui-tokens.md`, and
+`ui-rules.md`, plus `ui-registry.md` for reuse checks; Core: `architecture.md`
+and `design.md`; Minimal: the Banka-owned `AGENTS.md` block's Project
+Overview).
+
+**Conditional:** whether the resolved architecture file declares a security,
+encryption, or access-isolation invariant — only then does Layer 3 treat a
+violation as high severity, per its own Sensitive-data severity rule.
+
+**Excluded by default:** repository content beyond the resolved tier files
+and the supplied plan/task — survey does not invent invariants the project
+never declared.
+
+**Outputs:** a three-layer review report (Plan alignment / System integrity /
+Production readiness, each PASS or ISSUES FOUND) with a severity-graded issue
+list, and — when warranted — a routing recommendation to `dredge` or
+`watershed`.
+
+**Write authority:** none. It does not fix anything itself.
+
 ## Resolve Banka state first
 
 Before reading project state, inspect `AGENTS.md`, the complete contents of
