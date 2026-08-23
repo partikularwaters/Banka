@@ -182,3 +182,21 @@ Two mechanisms can engage at any point in Stage 3: a Craft Layer module is
 Agnostic until a project opts in, then Hard Default for that domain only.
 Linis removes narrative residue from settled files while preserving operational
 history, provenance, compatibility facts, and load-bearing rationale.
+
+## Framework Change-Impact Map
+
+A maintenance aid for editing Banka itself, not a new authority. It names
+where to look when a framework concept changes — it does not restate what
+that concept currently is, so it can't drift into a second definition
+(Protocol §2.8). Verify each row against the repository before relying on
+it; several rows are already enforced by `scripts/check-repo-integrity.sh`.
+
+| Framework concept | Inspect when changed |
+| --- | --- |
+| State schema markers | `protocol/Banka.md` §3, all three project-entry templates, every skill's state-resolution block, the integrity script's marker/count checks |
+| Tier shape and required files | `protocol/Banka.md` §3–§5, project-entry templates, `full-context-templates/core/` and `/standard/`, `scale`, every skill's tier-shape description, the integrity script's required-file checks |
+| Skill roster | `protocol/Banka.md` §7, `README.md`'s skill table, this file's Stage 3, the integrity script's skills list |
+| Delegation handoff block | `delegate/SKILL.md`, `full-context-templates/delegation-queue.md`, the integrity script's byte-identical check |
+| Operational perspectives | `protocol/Banka.md` §7.1, `charter`/`survey`/`watershed` SKILL.md, the integrity script's persona-ban and label checks |
+| `CLAUDE.md` shim | `protocol/Banka.md` §3, `full-context-templates/project-entry/CLAUDE.md`, the integrity script's shim check |
+| Release version | `protocol/Banka.md`'s title line, `README.md`, `CHANGELOG.md`, `VERSION`, the integrity script's version checks |
