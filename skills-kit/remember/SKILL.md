@@ -5,6 +5,27 @@ description: Save what matters at the end of a session so the next session picks
 
 AI has no memory between sessions. Every new session starts blank. This skill fixes that — but the fix is the file on disk, never this conversation's own recollection of it, since another session may have touched the project since this conversation last looked.
 
+## Context Contract
+
+**Required:** the resolved session-state file (tier-dependent — see "Resolve
+Banka state first" below) · current git log/status, checked before trusting
+this conversation · AGENTS.md/CLAUDE.md and the tier's required files, to
+resolve state.
+
+**Conditional:** IDEA-SCOPE.md and the rest of the tier's Source-of-truth
+files, restore mode, when they exist · the resolved delegation queue, when
+present · a legacy CLAUDE.md chain, read-only, restore mode only.
+
+**Excluded by default:** any file outside the tier's declared Source of
+truth · raw secret values, in any form, at any point.
+
+**Outputs:** save mode — an updated session-state file, plus a one-line
+confirmation · restore mode — a conversational restore summary.
+
+**Write authority:** save mode only — the resolved session-state file, by
+section, plus whichever file owns a globally-scoped fact a captured decision
+changes. Restore mode: none.
+
 ## Resolve Banka state first
 
 Before reading or writing project state, inspect `AGENTS.md`, the complete

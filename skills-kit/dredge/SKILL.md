@@ -5,6 +5,23 @@ description: When something goes wrong during a build, diagnose what type of fai
 
 Not every problem is a bug. Not every bug needs debugging. Diagnose the failure first, then prescribe the response — two separate steps, never swapped.
 
+## Context Contract
+
+**Required:** the user's failure description · once diagnosed, the
+implicated file/function.
+
+**Conditional:** Banka state, only in the Hard Reset path, to check whether
+remember restore applies afterward · wider codebase context, only if a first
+fix fails and re-diagnosis is needed.
+
+**Excluded by default:** the codebase beyond what the diagnosis implicates ·
+no upfront state-resolution matrix — dredge doesn't run one.
+
+**Outputs:** a diagnosed failure mode with reasoning, plus a mode-specific
+proposal, held for confirmation.
+
+**Write authority:** none.
+
 ## Step 1 — Describe What Went Wrong
 
 ```
