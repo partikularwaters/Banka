@@ -9,6 +9,27 @@ that produced the plan. Model capability and session separation are different:
 a Junior-safe ticket may run on the same, a lighter, or a stronger model, while
 Senior-required work must run in the user-selected senior-capability mode.
 
+## Context Contract
+
+**Required:** an approved implementation plan from `charter` — Step 0 stops
+without one · the resolved architecture file, to check Absolute Invariants
+and security/compliance boundaries when classifying each item's tier.
+
+**Conditional:** the existing delegation queue, when it already has
+unstarted or in-progress tickets — read before appending, never silently
+overwritten.
+
+**Excluded by default:** anything outside the approved plan's scope — this
+skill splits an already-approved plan, it does not re-plan.
+
+**Outputs:** the written queue (ready/kept-back lists plus full ticket
+specs), and one ready-to-paste handoff block per Junior-safe ticket, in
+dependency order.
+
+**Write authority:** the tier-resolved `delegation-queue.md` only — append
+tickets with stable, never-reused numbers; never touch the code the tickets
+describe.
+
 Fresh-session isolation covers conversation context, not working files. Banka's
 safe default is **serial execution in one checkout**: finish and survey one
 ticket before another session edits the same working directory. Parallel ticket

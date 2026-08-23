@@ -3,6 +3,26 @@ name: moor
 description: After building any UI component or resolving a notable engineering outcome, extract what matters and save it to the correct project file — the UI registry for UI patterns, the session-state file for everything else. So every future session builds on what's already established instead of drifting from it.
 ---
 
+## Context Contract
+
+**Required:** the component file(s) or engineering outcome being captured ·
+the resolved destination file for the tier and capture type (see Step 1).
+
+**Conditional:** every existing UI component file in the project — audit
+mode only, to build the whole-codebase baseline.
+
+**Excluded by default:** width/height, layout mechanics, positioning,
+animation/transition timing, and responsive breakpoint variants — Step 2
+lists these as deliberately not extracted.
+
+**Outputs:** a registry or session-state entry (single-capture mode), or a
+proposed baseline plus a deviation list (audit mode) — audit mode's baseline
+is written only after developer confirmation.
+
+**Write authority:** the one resolved destination file for the capture type
+(UI registry or session-state file, by tier), append/update in place — never
+a file outside that resolved destination.
+
 ## Resolve Banka state first
 
 Before reading or writing project state, inspect `AGENTS.md`, the complete

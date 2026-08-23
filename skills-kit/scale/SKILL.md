@@ -6,6 +6,24 @@ argument-hint: (usually no argument needed)
 
 CRITICAL: Do not execute a promotion unless the user explicitly requested this command, OR one of the current tier's thresholds is actually met (see below). **Always promote exactly one tier at a time** — even if it looks like both tiers' thresholds are already met, promote to the next tier up, confirm it's correct, then separately re-check whether a second promotion is also warranted. Never jump from Minimal straight to Standard in one pass.
 
+## Context Contract
+
+**Required:** the current tier's complete state (the Banka-owned `AGENTS.md`
+block, or every `/core/` or `/context/` file) · the relevant threshold
+figures (word/character counts, registry entry count).
+
+**Excluded by default:** the next tier beyond the one promotion step being
+performed — scale never previews a Core→Standard split while executing
+Minimal→Core.
+
+**Outputs:** the proposed destination files in full, and the proposed
+replacement `AGENTS.md` block, shown before anything is finalized.
+
+**Write authority:** the marked `AGENTS.md` block, plus the tier's target
+directory and files — only after the user confirms the shown mapping, and
+only for the single tier step being promoted. A promoted project must still
+pass the Cold Agent Test (Protocol §3.1) once the write completes.
+
 ## Resolve Banka state first
 
 Before reading or writing project state, inspect `AGENTS.md`, the complete
