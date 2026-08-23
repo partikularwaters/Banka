@@ -22,6 +22,9 @@ for skill in "${skills[@]}"; do
 
   declared_name=$(sed -n 's/^name: //p' "$source_dir/SKILL.md" | head -n 1)
   test "$declared_name" = "$skill" || fail "skills-kit/$skill declares name: $declared_name"
+
+  context_contract_count=$(grep -Fxc '## Context Contract' "$source_dir/SKILL.md" || true)
+  test "$context_contract_count" -eq 1 || fail "Expected exactly one '## Context Contract' heading in skills-kit/$skill/SKILL.md, found $context_contract_count"
 done
 
 skill_file_count=$(find "$repo_root/skills-kit" -mindepth 2 -maxdepth 2 -name SKILL.md -type f | wc -l | tr -d ' ')
