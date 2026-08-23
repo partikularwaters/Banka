@@ -8,6 +8,27 @@ A single reviewer, however careful, has one perspective. Some decisions are wort
 
 This skill does not replace survey (which checks against *this project's own declared rules*) or dredge (which diagnoses a specific known failure). It's for the case where the question is genuinely open — a plan not yet committed to, a piece of code with no obvious single "correct" answer, an architectural fork where reasonable engineers would land in different places.
 
+## Context Contract
+
+**Required:** the explicitly supplied subject (code, plan, or idea) — or, if
+none was given, the most recent relevant work in this session · the resolved
+tier's declared files (Standard: `/context/`; Core: `/core/`; Minimal: the
+Banka-owned `AGENTS.md` block).
+
+**Conditional:** a subagent/parallel-dispatch tool, when available, to run
+the five perspectives concurrently rather than sequentially in-session.
+
+**Excluded by default:** project-specific invariants this skill would have
+to invent for an unstructured, non-Banka repository — it states that no
+Banka state was found instead.
+
+**Outputs:** a consolidated audit (per-perspective findings, points of
+agreement, named tensions, one prioritized recommendation) — never five
+unresolved opinions handed to the user to referee.
+
+**Write authority:** none. The audit is presented and the skill stops; it
+never implements its own recommendation.
+
 ---
 
 ## Step 0 — Confirm what's being audited and why

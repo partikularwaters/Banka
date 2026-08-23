@@ -8,6 +8,25 @@ argument-hint: [optional — specific settled file(s); defaults to files changed
 
 This skill does not touch correctness — it never changes what code does. It only changes how it's described.
 
+## Context Contract
+
+**Required:** files changed in the current completed milestone, resolved
+from the session-state file and the version-control diff.
+
+**Conditional:** a repo-wide scope, only if the user explicitly requests it
+· a narrower user-specified scope, respected in place of the default.
+
+**Excluded by default:** files still under active work — this skill never
+runs against unsettled code, by design, regardless of requested scope.
+
+**Outputs:** every proposed cleanup, listed for approval before any file is
+touched.
+
+**Write authority:** only the confirmed settled file(s) in scope, and only
+narrative/descriptive content — operational history, provenance,
+compatibility facts, and load-bearing rationale are preserved, never
+removed.
+
 ---
 
 ## Step 0 — Determine scope
