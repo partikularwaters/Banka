@@ -314,6 +314,48 @@ Where a fact must appear in more than one file for a skill to remain self-contai
 
 ---
 
+## SECTION 2.9: SESSION-STATE BLOAT PREVENTION AND CORRECTION
+
+A project's session-state destination (the Banka-owned `AGENTS.md` block for Minimal, `core/progress.md` for Core, `context/progress-tracker.md` for Standard) is an ever-appending log with no built-in bound. Sustained development will eventually bloat it. The fix has two tracks: prevent what can be prevented at write time, correct what still accumulates on a real threshold.
+
+**Terminology note:** this section's "promotion check" moves a durable fact out of session-state into its owning file. This is unrelated to `scale`'s tier-level promotion (Minimal→Core→Standard) — same word, two different mechanisms. Name which one explicitly wherever it could be ambiguous.
+
+### Track A — Prevention (write-time: every `remember` save, and at initial tier-generation for a brownfield project; `moor` applies checks 1 and 3 only)
+
+1. **Promotion check.** Before logging a decision, ask whether it is a durable, standing fact — an architecture choice, an invariant, a convention, a library pattern. If so, write it into the file that owns it (Section 2.6's registry, the tier's Source of truth), not into session-state. Applies at initial generation too: a brownfield project's captured context should be sorted into owning files at adoption time, not dumped wholesale into the initial session-state log.
+2. **Supersession check** (`remember` only). If a new decision reverses an earlier one still recorded, mark the earlier entry `[SUPERSEDED — see <new decision>]` in place. Never leave a reversed decision silently orphaned — a cold session reading it as current is worse than the section being long.
+3. **Write-shape check.** If a decision's rationale runs past a sentence or two, write a one-line entry plus a link to a detail file (Track B's overflow structure), rather than an inline paragraph. Applies from the first write, not retroactively.
+4. **Thread-tagging check** (`remember` only). Session Notes entries are tagged by the distinct line of work they belong to (a sub-heading is enough), never written as one flat, interleaved narrative — genuinely concurrent threads must be separable later without reconstruction. A third concurrently open thread gets a soft prompt ("worth a check — all three genuinely still active?"); a fourth requires a stated one-line reason on record before it is tagged. Neither ever blocks — this is a Soft Suggestion (Section 2.6), not a Hard Default, since reasonable concurrent-work capacity is not identity-independent or checkable the way error handling is.
+
+### Track B — Correction (`remember` only; automatic check every save, action only when a real threshold is crossed or explicitly requested, always previewed before applying)
+
+1. **Session Notes ≥ ~2,000 words** (provisional, revise once real usage data exists — Section 2.5's Rule 4). Evaluate each tagged thread independently: a thread with a genuine settled boundary is archive-eligible and moves to `overflow/session-notes/`; a thread with no settled boundary stays live regardless of size. If no thread has a settled boundary, do not force a split — flag the section as oversized with no clean cut point and stop, consistent with `linis`'s rule to never act against unsettled work.
+2. **Any overflow file ≥ ~2,000 words** (same provisional figure). Start the next sequentially numbered file in the same subfolder (`01-session-notes.md` → `02-session-notes.md`, or the decisions equivalent). Never split a file's content mid-file.
+3. **Decisions section ≥ ~1,500 words** (provisional, matching `scale`'s own Minimal→Core figure — the same "this now deserves its own file" signal). Recommend a dedicated decisions file, previewed and confirmed like any `scale` promotion, but this is a within-tier action `remember` performs directly — it is not a `scale` tier promotion.
+
+### Resulting structure
+
+```
+context/                              (Standard; Core: core/, same shape)
+├── progress-tracker.md
+│     Decisions section  — compressed one-liners + links; superseded
+│                          entries marked in place until swept
+│     Session Notes      — current, thread-tagged arc(s) only
+│     Overflow Index     — file | type | covers (a routing table, not
+│                          decision content — never conflate with the
+│                          Decisions section itself)
+└── overflow/
+    ├── session-notes/
+    │     01-session-notes.md, 02-...  (own Contents header each)
+    └── decisions/
+          01-decisions-detail.md, 02-...  (linked detail; full record
+          of swept superseded entries)
+```
+
+The `overflow/` folder and Overflow Index section are created the first time any threshold above actually fires — never pre-declared empty in a new project's generated files.
+
+---
+
 ## SECTION 3: RUNTIME AUTHORITY AND MINIMAL STATE
 
 `AGENTS.md` is Banka's canonical, runtime-neutral root authority. Banka owns
