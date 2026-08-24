@@ -103,9 +103,13 @@ relevant to this feature. These are temporary accountability frames, not
 characters or extra workflow stages:
 
 - **Outcome Owner — always:** Is this the right problem, and is the proposed
-  work the most direct route to the intended outcome? If the current scope is
-  questionable, frame the real choice as hold, reduce, or expand. Recommend
-  one, explain why, and wait for agreement before changing scope.
+  work the most direct route to the intended outcome? Also check whether the
+  request actually bundles two or more genuinely unrelated threads of work
+  that should be scoped as separate plans rather than one — a deliberately
+  authored plan has no excuse for combining unrelated concerns the way live
+  coding sometimes does. If the current scope is questionable, frame the real
+  choice as hold, reduce, expand, or split into separate plans. Recommend one,
+  explain why, and wait for agreement before changing scope.
 - **User — when someone completes a recurring workflow:** What must that person
   be able to accomplish end to end? Where would the plan create friction,
   confusion, or an invisible failure?

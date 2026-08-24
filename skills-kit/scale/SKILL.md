@@ -6,6 +6,12 @@ argument-hint: (usually no argument needed)
 
 CRITICAL: Do not execute a promotion unless the user explicitly requested this command, OR one of the current tier's thresholds is actually met (see below). **Always promote exactly one tier at a time** — even if it looks like both tiers' thresholds are already met, promote to the next tier up, confirm it's correct, then separately re-check whether a second promotion is also warranted. Never jump from Minimal straight to Standard in one pass.
 
+**Note:** this skill's "promotion" is tier-level (Minimal→Core→Standard) only.
+Protocol §2.9 defines a separate, within-tier "promotion check" — moving a
+durable fact from session-state to its owning file — that `remember` and
+`moor` perform directly. It is not a tier promotion and this skill has no
+role in it.
+
 ## Context Contract
 
 **Required:** the current tier's complete state (the Banka-owned `AGENTS.md`
