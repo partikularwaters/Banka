@@ -199,3 +199,4 @@ it; several rows are already enforced by `scripts/check-repo-integrity.sh`.
 | Operational perspectives | `protocol/Banka.md` §7.1, `charter`/`survey`/`watershed` SKILL.md, the integrity script's persona-ban and label checks |
 | `CLAUDE.md` shim | `protocol/Banka.md` §3, `full-context-templates/project-entry/CLAUDE.md`, the integrity script's shim check |
 | Release version | `protocol/Banka.md`'s title line, `README.md`, `CHANGELOG.md`, `VERSION`, the integrity script's version checks |
+| Session-state bloat mechanism | `protocol/Banka.md` §2.9, `remember`/`moor` SKILL.md, `charter`'s Outcome Owner check, `scale`'s disambiguation note, the tier's `overflow/` folder shape |
