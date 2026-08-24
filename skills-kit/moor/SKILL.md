@@ -85,6 +85,11 @@ If no filepath is given, identify recently created/modified component files auto
 - **A general engineering outcome, decision, or resolved problem** → goes to the session-state file (Minimal: the Banka-owned `AGENTS.md` block's Session Notes; Core: `core/progress.md`; Standard: `context/progress-tracker.md`).
 - **A changed global token, folder structure, or invariant** → update the file that actually owns it directly (Minimal: inside the Banka-owned `AGENTS.md` block; Core: `core/design.md` for tokens, `core/architecture.md` for structure/invariants/conventions; Standard: `ui-tokens.md`, `architecture.md`, `code-standards.md` respectively) — never just log that it changed, actually update the source.
 
+The bullet above is Protocol §2.9's promotion check, applied to this skill's
+own captures. Its write-shape check applies too: if a captured outcome's
+rationale runs past a sentence or two, write it as a one-line entry plus a
+link to a detail file, not an inline paragraph.
+
 ## Step 2 — Extract only what matters for consistency (UI capture)
 
 **Extract:** background, border, border color/width, border radius, text color roles, text size/weight, spacing/padding/gap, interactive states (hover/focus/active), shadow, accent usage.

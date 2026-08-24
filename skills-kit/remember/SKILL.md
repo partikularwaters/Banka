@@ -24,7 +24,8 @@ confirmation · restore mode — a conversational restore summary.
 
 **Write authority:** save mode only — the resolved session-state file, by
 section, plus whichever file owns a globally-scoped fact a captured decision
-changes. Restore mode: none.
+changes, plus the tier's `overflow/` files and Overflow Index when Track B's
+thresholds warrant it (Protocol §2.9). Restore mode: none.
 
 ## Resolve Banka state first
 
@@ -116,6 +117,16 @@ other domain-owned fact, update the file that owns that fact rather than logging
 the change only in session state. Preserve unrelated sections and prior durable
 entries. Show a concise summary of proposed section changes before writing if
 existing content would be replaced rather than appended or status-updated.
+
+### Bloat prevention and correction (Protocol §2.9)
+
+Before writing, run Track A's four checks — promotion, supersession,
+write-shape, thread-tagging — exactly as defined in Protocol §2.9; do not
+restate their definitions here, apply them. After writing, run Track B's
+automatic threshold check (Session Notes, overflow files, Decisions section)
+and act only when a real threshold is crossed or explicitly requested, always
+previewing before applying. Superseded and archived content moves to the
+tier's `overflow/` folder, created only the first time a threshold fires.
 
 Confirm after writing: `Session state saved. Next session: invoke the remember skill in restore mode.`
 
