@@ -118,15 +118,15 @@ the change only in session state. Preserve unrelated sections and prior durable
 entries. Show a concise summary of proposed section changes before writing if
 existing content would be replaced rather than appended or status-updated.
 
-### Bloat prevention and correction (Protocol §2.9)
+### Bloat prevention and correction
 
-Before writing, run Track A's four checks — promotion, supersession,
-write-shape, thread-tagging — exactly as defined in Protocol §2.9; do not
-restate their definitions here, apply them. After writing, run Track B's
-automatic threshold check (Session Notes, overflow files, Decisions section)
-and act only when a real threshold is crossed or explicitly requested, always
-previewing before applying. Superseded and archived content moves to the
-tier's `overflow/` folder, created only the first time a threshold fires.
+The resolved session-state file's own template includes a "Keeping this
+section lean" note under Decisions/Session Notes (Core: Session Memory
+Bank) stating the promotion, supersession, write-shape, and thread-tagging
+checks, plus when to move content to `overflow/`. Apply those rules before
+writing. If an older project's file predates this note, add it once
+(matching the current template's wording) before continuing — do not skip
+the checks just because the note hasn't been added yet.
 
 Confirm after writing: `Session state saved. Next session: invoke the remember skill in restore mode.`
 

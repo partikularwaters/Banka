@@ -354,6 +354,8 @@ context/                              (Standard; Core: core/, same shape)
 
 The `overflow/` folder and Overflow Index section are created the first time any threshold above actually fires — never pre-declared empty in a new project's generated files.
 
+Downstream projects never receive this document directly — the compact, self-contained version of these rules lives in each tier's session-state template (its own "Keeping this section lean" note), which `remember` and `moor` read and apply. This section is the canonical full definition, maintained here for anyone editing Banka itself.
+
 ---
 
 ## SECTION 3: RUNTIME AUTHORITY AND MINIMAL STATE
@@ -531,6 +533,15 @@ You are acting as a Senior Technical Lead & Project Manager for this project.
 **Context:** [Enough settled context for a fresh session to continue safely.]
 **Known Issues / Open Decisions:** [Visible open items using Section 2.5's tag.]
 **Next Immediate Step:** [The first concrete action.]
+
+**Keeping this section lean:** promote durable, standing facts into this
+block's own Project Overview, not here; mark a reversed decision
+`[SUPERSEDED — see <new decision>]` rather than leaving it looking current;
+tag narrative by the distinct line of work it belongs to, not one flat story
+(3rd concurrent thread: pause and confirm; 4th: state why in writing). If
+this section grows large, that's very likely also tripping scale's own
+Minimal→Core threshold — promote via scale rather than introducing overflow
+files in a tier defined by having no state folder at all.
 
 ## Origin
 If `IDEA-SCOPE.md` exists, consult it for original intent. Never overwrite it.

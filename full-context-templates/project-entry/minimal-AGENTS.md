@@ -32,6 +32,15 @@ You are acting as a Senior Technical Lead & Project Manager for this project.
 **Known Issues / Open Decisions:** [Visible open items using Section 2.5's tag.]
 **Next Immediate Step:** [The first concrete action.]
 
+**Keeping this section lean:** promote durable, standing facts into this
+block's own Project Overview, not here; mark a reversed decision
+`[SUPERSEDED — see <new decision>]` rather than leaving it looking current;
+tag narrative by the distinct line of work it belongs to, not one flat story
+(3rd concurrent thread: pause and confirm; 4th: state why in writing). If
+this section grows large, that's very likely also tripping scale's own
+Minimal→Core threshold — promote via scale rather than introducing overflow
+files in a tier defined by having no state folder at all.
+
 ## Origin
 If `IDEA-SCOPE.md` exists, consult it for original intent. Never overwrite it.
 
