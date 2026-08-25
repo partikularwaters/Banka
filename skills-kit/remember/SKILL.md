@@ -24,8 +24,8 @@ confirmation · restore mode — a conversational restore summary.
 
 **Write authority:** save mode only — the resolved session-state file, by
 section, plus whichever file owns a globally-scoped fact a captured decision
-changes, plus the tier's `overflow/` files and Overflow Index when Track B's
-thresholds warrant it (Protocol §2.9). Restore mode: none.
+changes, plus the tier's `overflow/` files and Overflow Index when the size
+thresholds above are crossed. Restore mode: none.
 
 ## Resolve Banka state first
 
@@ -120,13 +120,34 @@ existing content would be replaced rather than appended or status-updated.
 
 ### Bloat prevention and correction
 
-The resolved session-state file's own template includes a "Keeping this
-section lean" note under Decisions/Session Notes (Core: Session Memory
-Bank) stating the promotion, supersession, write-shape, and thread-tagging
-checks, plus when to move content to `overflow/`. Apply those rules before
-writing. If an older project's file predates this note, add it once
-(matching the current template's wording) before continuing — do not skip
-the checks just because the note hasn't been added yet.
+Before writing: promote durable, standing facts (architecture, invariants,
+conventions) to the file that owns them, never log them here. If a new
+decision reverses an earlier one, mark the earlier entry
+`[SUPERSEDED — see <new decision>]` in place. If a decision's rationale
+runs past a sentence or two, write a one-line entry plus a link to
+`overflow/decisions/`, not an inline paragraph. Tag Session Notes entries by
+the distinct line of work they belong to, not one flat narrative — a third
+concurrently open thread gets a soft prompt to confirm it's genuinely
+active; a fourth needs a stated one-line reason in writing before it's
+tagged. Neither ever blocks.
+
+After writing, check (provisional figures, revise once real usage data
+exists): Session Notes crossing ~2,000 words — evaluate each tagged thread
+independently, archive only a thread with a genuine settled boundary to
+`overflow/session-notes/`, never force a split against one that's still
+open; an overflow file itself crossing ~2,000 words — start the next
+sequentially numbered file in the same subfolder; the Decisions section
+crossing ~1,500 words — recommend a dedicated decisions file. Always
+preview before applying, act only when a real threshold is crossed or
+explicitly requested. Each overflow file gets its own short Contents note
+at the top; the live file's Overflow Index (file, type, what it covers)
+tracks all of them and is created the first time any of this fires.
+
+If the resolved session-state file predates this convention, the rules
+above still apply from this point forward — write the guidance above into
+the file yourself (under Decisions Made / Session Notes, or Core's Session
+Memory Bank) so the next session sees it too, rather than applying it only
+in your own head this one time.
 
 Confirm after writing: `Session state saved. Next session: invoke the remember skill in restore mode.`
 

@@ -43,9 +43,23 @@ invariants, conventions) to the file that owns them, not here. If a new
 decision reverses an earlier one, mark the earlier entry
 `[SUPERSEDED — see <new decision>]` in place — never leave it looking
 current. If a decision's rationale runs past a sentence or two, write a
-one-line entry plus a link to `overflow/decisions/`, not an inline paragraph.
-If this section crosses ~1,500 words, recommend a dedicated decisions file
-rather than letting it keep growing (see the Overflow Index, once created).
+one-line entry plus a link to `overflow/decisions/01-decisions-detail.md`
+(the next sequentially numbered file in that folder, once `01-...` itself
+crosses ~2,000 words), not an inline paragraph.
+
+If this section crosses ~1,500 words, or when a superseded entry above gets
+swept out in full, move the excess into `overflow/decisions/` (creating the
+folder if it doesn't exist yet) and add or update this Overflow Index — one
+shared table covering both decisions and session-notes overflow, added the
+first time either is needed:
+
+## Overflow Index
+| File | Type | Covers |
+| --- | --- | --- |
+| `overflow/decisions/01-decisions-detail.md` | decision detail | [what it covers] |
+
+Each overflow file carries its own short Contents note at its own top,
+naming what it covers, so it can be found without reading it in full.
 
 - **[Date]** — [Decision made and why]
 - **[Date]** — [Decision made and why]
@@ -59,9 +73,15 @@ rather than letting it keep growing (see the Overflow Index, once created).
 belong to (a sub-heading is enough), not one flat narrative — a third
 concurrently open thread is worth a pause to confirm all are genuinely
 active; a fourth needs a stated one-line reason in writing before it's
-tagged. If this section crosses ~2,000 words, archive whichever tagged
-thread has genuinely concluded to `overflow/session-notes/` — never force a
-split against a thread that's still open.
+tagged.
+
+If this section crosses ~2,000 words, archive whichever tagged thread has
+genuinely concluded to `overflow/session-notes/01-session-notes.md` (the
+next sequentially numbered file in that folder, once `01-...` itself
+crosses ~2,000 words) — never force a split against a thread that's still
+open. Add or update the same Overflow Index used by Decisions Made (see
+above), and give the new overflow file its own short Contents note at its
+top, naming the arc it covers.
 
 **[Date]**
 - [What was done]
