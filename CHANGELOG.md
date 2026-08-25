@@ -1,5 +1,38 @@
 # Changelog
 
+## 1.2.0 — 2026-08-24
+
+Adds session-state bloat prevention and correction, driven by field
+feedback from a Standard-tier project whose `progress-tracker.md` grew to
+320KB/869 lines over six weeks.
+
+- Adds Protocol §2.9: a two-track mechanism — write-time prevention
+  (promotion, supersession, write-shape, and thread-tagging checks) and
+  threshold-triggered correction (per-thread settledness evaluation,
+  sequential overflow-file splitting, a Decisions-section ceiling).
+  Thresholds are provisional starting values per Fill-In Discipline Rule 4.
+- Adds an `overflow/` folder convention (Standard: `context/overflow/`;
+  Core: `core/overflow/`) and an Overflow Index, both created lazily —
+  never pre-declared in a new project's generated files.
+- Extends `remember` (full mechanism) and `moor` (promotion and write-shape
+  only) to operationalize §2.9; extends `charter`'s Outcome Owner check to
+  catch a plan bundling unrelated threads before it reaches `delegate`;
+  adds a disambiguation note to `scale` distinguishing its tier-level
+  promotion from §2.9's within-tier promotion check.
+- Fixes a self-containment gap found via real-world testing: the initial
+  downstream-facing rules referenced `protocol/Banka.md`, which never
+  travels with a Banka-managed project. The compact operational rules now
+  live in each tier's own session-state template, and `remember`/`moor`
+  read from there directly rather than citing an unreachable document.
+- A follow-up review found that fix itself incomplete (missing
+  overflow-file mechanics in the templates, an unresolvable self-heal
+  instruction, and a write-authority conflict in `moor`) — all three
+  closed, and `scripts/check-cold-downstream.sh` added to simulate an
+  actual cold install (installed skills plus rendered tier output only,
+  nothing else from this repo) so this class of bug is caught mechanically
+  going forward.
+- Adds a Framework Change-Impact Map to `system-map.md`.
+
 ## 1.1.0 — 2026-08-23
 
 Makes disciplines the framework already practiced explicit, informed by
