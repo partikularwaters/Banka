@@ -4,10 +4,6 @@
 # Private internal working notes — never shipped, never pushed
 dev/
 RELEASE-GOVERNANCE.md
-banka-agent-runtime-authority-handoff.md
-banka-agent-runtime-authority-work-queue.md
-banka-gstack-integration-plan.canvas.tsx
-banka-gstack-integration-handoff.md
 
 # OS cruft
 .DS_Store
