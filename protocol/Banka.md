@@ -883,18 +883,21 @@ artifact is generated or persisted.
 
 This module is orthogonal to tier choice — it is a workflow choice, not a
 complexity signal. It separates approved work into Junior-safe tickets for
-fresh-session execution and Senior-required work for a user-selected
-senior-capability session. A Junior-safe ticket may run on the same, a lighter,
-or a stronger model. Model choice is explicit and user-controlled; ticket risk
-and completeness determine the tier.
+fresh-session execution, Senior-required work that either stays with the
+current session or gets a fresh-session handoff, decided per ticket when it's
+ready, and Owner-required work only the project owner can do. A Junior-safe
+ticket may run on the same, a lighter, or a stronger model. Model choice is
+explicit and user-controlled; ticket risk and completeness determine the tier.
 
 **Ask explicitly, don't assume:**
 
 ```
 Do you want to set this project up for delegation — approved Junior-safe
-tickets executed in fresh sessions, while Senior-required work stays in a
-senior-capability session? You may select a lighter model for Junior-safe work
-when the host offers one, but it is not required.
+tickets executed in fresh sessions, Senior-required work that either stays
+with the current session or gets a fresh-session handoff (decided per ticket
+when it's ready), and Owner-required work flagged for you directly? You may
+select a lighter model for Junior-safe work when the host offers one, but it
+is not required.
 ```
 
 If yes, in addition to whichever tier's files were generated:
@@ -913,9 +916,12 @@ the resolved tier: `delegation-queue.md` for Minimal/Core or
 Check [resolved queue path]. If you were handed a specific ticket rather than
 open-ended direction, your scope is that ticket only:
 
-- Confirm that the active model/mode meets the ticket's `Required capability`.
-  A same or stronger model may execute a Junior-safe ticket. If the host does
-  not expose model/mode information, ask the user to confirm before starting.
+- If the ticket is Junior-safe or Senior-required: confirm that the active
+  model/mode meets the ticket's `Required capability`. A same or stronger
+  model may execute a Junior-safe ticket. If the host does not expose
+  model/mode information, ask the user to confirm before starting.
+- If the ticket is Owner-required: there is no model/mode to confirm — it
+  goes to the project owner directly, not to an AI session.
 - Do not read or start other unstarted tickets in the queue.
 - Do not touch files outside what the ticket lists.
 - If anything in the ticket is ambiguous, or requires a value/decision the
@@ -927,9 +933,13 @@ open-ended direction, your scope is that ticket only:
 3. **Remind the user of the mechanics** (this is a workflow reminder, not a
 file — say it plainly, don't bury it): plan and approve with the charter skill
 in a senior-capability session → invoke the delegate skill to write tickets →
-open a genuinely fresh session per Junior-safe ticket using the user-selected
-model → confirm the session meets the ticket's required capability → invoke the
-survey skill in a senior-capability session before marking the ticket done.
+for each Junior-safe ticket, and each Senior-required ticket handed off rather
+than kept with the current session, open a genuinely fresh session using the
+user-selected model and confirm it meets the ticket's required capability →
+invoke the survey skill in a senior-capability session before marking any
+AI-executed ticket done. An Owner-required ticket has no session or model
+involved — it goes to the project owner directly, marked complete in the
+queue once done.
 
 4. **State the execution-isolation boundary:** a fresh session isolates
 conversation context, not files. Run delegated tickets serially when they share

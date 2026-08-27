@@ -54,8 +54,9 @@ STAGE 2 — Tier Generation (Protocol §3 / §4 / §5)
 
 STAGE 3 — The Build Loop (skills-kit/, exposed per supported runtime)
   charter    -> plan, wait for approval (reads IDEA-SCOPE.md too)
-  delegate   -> optional: split an approved plan into Junior-safe tickets
-                for fresh-session execution; model choice stays user-controlled
+  delegate   -> optional: split an approved plan into Junior-safe, Senior-
+                required, and Owner-required items; model choice stays
+                user-controlled
   [build]
   moor       -> capture a UI pattern or engineering outcome
   survey     -> check plan-alignment, system integrity, prod-ready
@@ -196,6 +197,7 @@ it; several rows are already enforced by `scripts/check-repo-integrity.sh`.
 | Tier shape and required files | `protocol/Banka.md` §3–§5, project-entry templates, `full-context-templates/core/` and `/standard/`, `scale`, every skill's tier-shape description, the integrity script's required-file checks |
 | Skill roster | `protocol/Banka.md` §7, `README.md`'s skill table, this file's Stage 3, the integrity script's skills list |
 | Delegation handoff block | `delegate/SKILL.md`, `full-context-templates/delegation-queue.md`, the integrity script's byte-identical check |
+| Delegation tier model | `protocol/Banka.md` §7.5, `delegate/SKILL.md`, `full-context-templates/delegation-queue.md`, `README.md`'s skill table and build loop, this file's Stage 3 |
 | Operational perspectives | `protocol/Banka.md` §7.1, `charter`/`survey`/`watershed` SKILL.md, the integrity script's persona-ban and label checks |
 | `CLAUDE.md` shim | `protocol/Banka.md` §3, `full-context-templates/project-entry/CLAUDE.md`, the integrity script's shim check |
 | Release version | `protocol/Banka.md`'s title line, `README.md`, `CHANGELOG.md`, `VERSION`, the integrity script's version checks |

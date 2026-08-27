@@ -159,7 +159,7 @@ discovery location and used across every Banka project regardless of tier:
 | Skill | What it does |
 | --- | --- |
 | `charter` | Thinks through what's about to get built like a senior engineer would, before any code — surfaces decisions, produces a plan you confirm first. |
-| `delegate` | Splits an approved plan into Junior-safe tickets for fresh-session execution and keeps judgment-heavy work Senior-required. Model choice remains explicit and user-controlled. |
+| `delegate` | Splits an approved plan into Junior-safe tickets, Senior-required work (current session or fresh-session handoff, decided per ticket), and Owner-required work only the project owner can do. Model choice remains explicit and user-controlled. |
 | `dredge` | Diagnoses a build failure before responding to it — targeted fix, hard reset, or genuine rethink are different problems. |
 | `moor` | Captures a UI pattern or engineering outcome once it's settled, so the next session builds on it instead of drifting. |
 | `remember` | Saves session state on close, restores it on open — always checking disk/git reality first, never trusting this conversation's own memory. |
@@ -231,7 +231,8 @@ docs; state-writing skills stop rather than treating the repository as Minimal.
 ```
 charter → plan, wait for approval (reads IDEA-SCOPE.md too)
    |
-delegate → optional: split approved work into Junior-safe tickets
+delegate → optional: split approved work into Junior-safe, Senior-required,
+   and Owner-required items
    |
 [build]
    |
