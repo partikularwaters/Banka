@@ -206,8 +206,6 @@ for handoff_file in "$repo_root/skills-kit/delegate/SKILL.md" "$repo_root/full-c
   require_literal 'Dependency state:' "$handoff_file"
   require_literal 'Files to touch:' "$handoff_file"
   require_literal 'Files not to touch:' "$handoff_file"
-  require_literal 'Done when:' "$handoff_file"
-  require_literal 'Verification:' "$handoff_file"
   require_literal 'Do not:' "$handoff_file"
   require_literal 'accepted dirty baseline' "$handoff_file"
   require_literal 'coordinator session hands ownership' "$handoff_file"

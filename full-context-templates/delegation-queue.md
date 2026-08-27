@@ -40,8 +40,16 @@ working files.
 ## Ready for fresh-session execution (Junior-safe)
 _Empty. Populated by the delegate skill._
 
-## Kept with the current session (Senior-required)
+## Senior-required
+_Empty. Populated by the delegate skill. Execution mode (current session or
+fresh-session handoff) is decided per ticket at Step 4 time, not fixed here._
+
+## Owner action required
 _Empty. Populated by the delegate skill._
+
+## Execution Sequence
+_Empty. Populated by the delegate skill — one row per ticket across all
+three tiers, ordered so every ticket's dependencies appear before it._
 
 ## Full ticket specs
 _Empty. Populated by the delegate skill._
@@ -51,12 +59,14 @@ _Move tickets here once the survey skill has passed them, with the date and a on
 
 ---
 
-## Ready-to-paste handoff for each Junior-safe ticket
+## Ready-to-paste handoff (Junior-safe, and Senior-required on request)
 
 The delegate skill emits one complete block in this exact shape for every
-ready ticket, in dependency order. It replaces every bracketed field with the
-resolved project and ticket details; users do not assemble a prompt from this
-template.
+ready Junior-safe ticket, in dependency order, and — this is the same
+template, not a separate one — for a Senior-required ticket when the
+coordinator asks for a handoff instead of executing it directly. It replaces
+every bracketed field with the resolved project and ticket details; users do
+not assemble a prompt from this template.
 
 ```
 Work in [exact project path].
@@ -85,11 +95,10 @@ Files to touch: [exact Files to touch field from Ticket N].
 
 Files not to touch: [exact Files not to touch field from Ticket N].
 
-Done when: [exact Done when field from Ticket N].
-
-Verification: [exact Verification field from Ticket N].
-
 Do not: [exact Do not field from Ticket N].
+
+Read Ticket [N]'s full spec in the queue before starting — it carries the
+exact Done when condition this handoff does not repeat.
 
 When finished, run every verification command in Ticket [N] and report:
 1. files changed;
@@ -104,9 +113,32 @@ drift, missing authority, an unmet dependency, or a material ambiguity the
 ticket does not resolve.
 ```
 
-For one ready ticket, Delegate returns one block. For zero, it explains that
-all work remains Senior-required and emits no empty prompt. The shared-checkout
-rule remains serial execution; parallel execution requires a separate Git
-worktree and branch per ticket. After each ticket returns, a senior-capability
-coordinator invokes Survey before marking it complete and before another ticket
-edits the same shared checkout.
+## Owner-required checklist
+
+For Owner-required tickets, the delegate skill emits this shape instead — no
+session capability applies, so it goes to the owner directly, not into a
+fresh-session prompt:
+
+```
+Owner action required — Ticket [N]: [short name]
+
+Task: [exact Task field from Ticket N].
+
+Depends on: [exact Depends on field from Ticket N, resolved to current
+state — e.g. "Ticket 3, completed 2026-08-24" or "none"].
+
+Done when: [exact Done when field from Ticket N].
+
+Do not: [exact Do not field from Ticket N, if any].
+
+Mark this complete in the delegation queue once done, so any ticket
+depending on it can proceed.
+```
+
+For one ready ticket, Delegate returns one handoff block. For zero, it
+explains what work remains — Senior-required, Owner-required, or both — and
+emits no empty prompt. The shared-checkout rule remains serial execution;
+parallel execution requires a separate Git worktree and branch per ticket.
+After each ticket returns, a senior-capability coordinator invokes Survey
+before marking it complete and before another ticket edits the same shared
+checkout.
