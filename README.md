@@ -16,8 +16,8 @@ structure is the primary reliability benefit. It can also reduce unnecessary
 context because future sessions have fewer ambiguous places to search, but
 that is a consequence—not a promise of universal token efficiency.
 
-**Release:** Banka 1.2.0. This release version identifies the Banka package;
-the separate state schema identifies the on-disk project format. Banka 1.2.0
+**Release:** Banka 1.3.0. This release version identifies the Banka package;
+the separate state schema identifies the on-disk project format. Banka 1.3.0
 uses state schema 2. See [VERSION](VERSION) and [CHANGELOG.md](CHANGELOG.md).
 
 **New here?** Jump straight to [Installing the Skills Kit](#installing-the-skills-kit) to get started.

@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.3.0 — 2026-08-26
+
+Adds a third delegation tier and brings the public-facing docs and protocol
+§7.5 into line with it.
+
+- `delegate` now recognizes Owner-required alongside Junior-safe and
+  Senior-required — work needing the owner's own credentials/account access,
+  an owner-only decision, or an action category no AI session should perform
+  regardless of capability. Senior-required tickets get a full contract
+  instead of a one-line reason; Owner-required gets a lighter contract and a
+  plain checklist instead of a session handoff.
+- Every ticket template gains a structured `Depends on` field, enabling a
+  unified Execution Sequence table ordering all three tiers by dependency.
+- The Junior-safe handoff block is trimmed to its genuine defense-in-depth
+  fields; Senior-required execution mode (current session or fresh-session
+  handoff) is now a per-ticket question asked at hand-off time, not a fixed
+  assumption, reusing the same handoff template rather than duplicating it.
+- Fixes protocol §7.5's scripted setup prompt, which previously asserted
+  Senior-required work always stays in a senior-capability session — no
+  longer true once the handoff choice exists. Aligns README's skill table
+  and build-loop diagram, system-map's build-loop diagram, and its Framework
+  Change-Impact Map to the three-tier model.
+
 ## 1.2.0 — 2026-08-24
 
 Adds session-state bloat prevention and correction, driven by field
