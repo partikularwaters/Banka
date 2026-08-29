@@ -18,7 +18,9 @@ fix fails and re-diagnosis is needed.
 no upfront state-resolution matrix — dredge doesn't run one.
 
 **Outputs:** a diagnosed failure mode with reasoning, plus a mode-specific
-proposal, held for confirmation.
+proposal held for confirmation — or, when reproduction itself can't be
+confirmed, an `[OPEN — needs verification]` flag and a stop instead of a
+proposal.
 
 **Write authority:** none.
 
@@ -34,8 +36,6 @@ Describe what is wrong. Be specific:
 The number of fix attempts matters — it distinguishes a fresh problem from a session that's already gone wrong.
 
 ## Step 2 — Identify the Failure Mode
-
-Confirm reproduction before classifying further — Mode 0 comes first for a reason.
 
 **Mode 0 — Cannot reproduce.** The report describes a real interaction, but a genuine attempt to trigger it — following the same steps — does not produce the described behavior. → Not yet confirmed as any of the three modes below; diagnose the gap itself first. **Response: Reproduction diagnosis (Step 3D).**
 

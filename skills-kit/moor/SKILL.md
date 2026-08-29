@@ -9,7 +9,10 @@ description: After building any UI component or resolving a notable engineering 
 the resolved destination file for the tier and capture type (see Step 1).
 
 **Conditional:** every existing UI component file in the project — audit
-mode only, to build the whole-codebase baseline.
+mode only, to build the whole-codebase baseline · evidence that `survey`
+has passed this build, before capturing a UI pattern or an
+invariant/token change (not a general outcome/decision capture) — audit
+mode is exempt.
 
 **Excluded by default:** width/height, layout mechanics, positioning,
 animation/transition timing, and responsive breakpoint variants — Step 2
@@ -85,6 +88,18 @@ If no filepath is given, identify recently created/modified component files auto
 - **A general engineering outcome, decision, or resolved problem** → goes to the session-state file (Minimal: the Banka-owned `AGENTS.md` block's Session Notes; Core: `core/progress.md`; Standard: `context/progress-tracker.md`).
 - **A changed global token, folder structure, or invariant** → update the file that actually owns it directly (Minimal: inside the Banka-owned `AGENTS.md` block; Core: `core/design.md` for tokens, `core/architecture.md` for structure/invariants/conventions; Standard: `ui-tokens.md`, `architecture.md`, `code-standards.md` respectively) — never just log that it changed, actually update the source.
 
+A UI pattern or invariant/token capture becomes what future work is
+checked against — the registry for one, charter's invariant cross-check
+for the other. Capturing either before verification risks enshrining
+something wrong as settled. Confirm `survey` has passed this build —
+cleanly, or with findings resolved or explicitly accepted as intentional,
+not just run. Check the conversation
+for evidence; if unclear, stop and ask rather than assume either way. A
+general outcome/decision capture (the second bullet) is unaffected — a
+log entry, not reference material, with its own graceful path for being
+wrong later (`[SUPERSEDED — see <new decision>]`). Audit mode is exempt —
+see below.
+
 The bullet above is this skill's own promotion check. If a captured
 outcome's rationale runs past a sentence or two, that's a decision-detail
 write outside this skill's own write authority — capture only a one-line
@@ -135,7 +150,7 @@ Flag anything inconsistent or surprising found during extraction.
 
 ## Audit Mode
 
-Scans the whole codebase, finds conflicts, establishes a clean baseline before any further single-component capturing happens.
+Scans the whole codebase, finds conflicts, establishes a clean baseline before any further single-component capturing happens. Exempt from Step 1's survey-first precondition — this catalogs an already-shipped codebase's existing patterns, not fresh, unverified work.
 
 1. **Scan** every UI component file. Build a complete picture of current visual patterns in use.
 2. **Identify conflicts** — for each property, list every variation found (with file references) and a recommendation on which to standardize on. Flag every hardcoded value found.
