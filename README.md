@@ -16,8 +16,8 @@ structure is the primary reliability benefit. It can also reduce unnecessary
 context because future sessions have fewer ambiguous places to search, but
 that is a consequence—not a promise of universal token efficiency.
 
-**Release:** Banka 1.3.0. This release version identifies the Banka package;
-the separate state schema identifies the on-disk project format. Banka 1.3.0
+**Release:** Banka 2.0.0. This release version identifies the Banka package;
+the separate state schema identifies the on-disk project format. Banka 2.0.0
 uses state schema 2. See [VERSION](VERSION) and [CHANGELOG.md](CHANGELOG.md).
 
 **New here?** Jump straight to [Getting started](#getting-started) to begin.
@@ -174,7 +174,8 @@ Each skill's full behavior lives in its own `SKILL.md` under [skills-kit/](skill
 
 New to Banka? [Install the Skills Kit](#installing-the-skills-kit) once per
 machine, then [adopt a project](#adopting-a-project) to bring Banka into a
-specific repo.
+specific repo. Already using Banka? Follow [Updating Banka](#updating-banka)
+instead of adopting the project again.
 
 ## Installing the Skills Kit
 
@@ -188,7 +189,11 @@ does it:
 
 ```
 Clone https://github.com/partikularwaters/Banka.git to a temporary directory,
-then install its Skills Kit: copy each skills-kit/*/SKILL.md into
+fetch tags, and check out the newest annotated stable vMAJOR.MINOR.PATCH tag
+by semantic-version order. Verify that the tag is annotated and its commit's
+VERSION matches the tag, and do not use newer unreleased commits from the
+default branch. If no valid stable tag exists, stop instead of falling back to
+the default branch. Then install its Skills Kit: copy each skills-kit/*/SKILL.md into
 ~/.claude/skills/<skill-name>/SKILL.md as-is. Before installing, check
 ~/.claude/commands/, ~/.claude/skills/, and, if this is a specific project,
 its own .claude/commands/ and .claude/skills/, for any existing file using
@@ -207,11 +212,17 @@ Paste this into a fresh Codex session — no pre-cloning needed, the agent does
 it:
 
 ```
-Clone https://github.com/partikularwaters/Banka.git to a temporary directory,
-then install its Skills Kit for the current user: link (or, if the checkout
-doesn't preserve symlinks, copy) each of these nine skills-kit/<skill>
-directories into ~/.agents/skills/<skill>/: charter, delegate, dredge, linis,
-moor, remember, scale, survey, watershed. Before installing, check
+Clone https://github.com/partikularwaters/Banka.git to a persistent directory
+owned by the current user, fetch tags, and check out the newest annotated stable
+vMAJOR.MINOR.PATCH tag by semantic-version order. Verify that the tag is
+annotated and its commit's VERSION matches the tag, and do not use newer
+unreleased commits from the default branch. If no valid stable tag exists, stop
+instead of falling back to the default branch. Then install its Skills Kit for the
+current user: link each of these nine skills-kit/<skill> directories into
+~/.agents/skills/<skill>/: charter, delegate, dredge, linis, moor, remember,
+scale, survey, watershed. If a persistent checkout or symlinks cannot be used,
+copy from a temporary checkout instead; never link to a temporary directory.
+Before installing, check
 ~/.agents/skills/ and the projects I use for an existing Banka skill with the
 same name — Codex can show duplicate same-named skills and does not merge
 them, so migrate or remove an old project-local copy only after confirming
@@ -239,9 +250,52 @@ your project's directory:
 
 ```
 Clone https://github.com/partikularwaters/Banka.git to a temporary directory,
-then read its protocol/Banka.md in full and follow its instructions exactly,
-starting with the "TO THE AI AGENT READING THIS" banner. Apply it to this
-project.
+fetch tags, and check out the newest annotated stable vMAJOR.MINOR.PATCH tag
+by semantic-version order. Verify that the tag is annotated and its commit's
+VERSION matches the tag, and do not use newer unreleased commits from the
+default branch. If no valid stable tag exists, stop instead of falling back to
+the default branch. Then read protocol/Banka.md in full and follow its instructions
+exactly, starting with the "TO THE AI AGENT READING THIS" banner. Apply it to
+this project.
+```
+
+## Updating Banka
+
+Use this for a project Banka already manages. It updates the machine-level
+Skills Kit and assesses project state separately; it does not re-adopt or
+silently restructure the project. The canonical safety and verification rules
+live in [the protocol's update procedure](protocol/Banka.md#updating-an-existing-banka-managed-project).
+
+Paste this into a fresh session working in the managed project's directory:
+
+```
+Update this existing Banka-managed project to the newest stable Banka release.
+
+Clone https://github.com/partikularwaters/Banka.git to a safe location, fetch
+tags, and check out the newest annotated stable vMAJOR.MINOR.PATCH tag by
+semantic-version order. Verify that the tag is annotated and its commit's
+VERSION matches the tag, and do not use newer unreleased commits from the
+default branch. If no valid stable tag exists, stop instead of falling back to
+the default branch. Read that release's VERSION, CHANGELOG.md, and the complete
+"Updating an existing Banka-managed project" procedure in protocol/Banka.md.
+Treat this as an update, not adoption, tier promotion, or implicit migration.
+
+Before changing anything, inspect this project's AGENTS.md, complete CLAUDE.md,
+/core/, /context/, required tier files, and the runtime's installed Banka
+skills. Classify each installed skill as a standard copy, symlink, customized
+or conflicting entry, duplicate project-local entry, or missing. If the
+project's current Banka release cannot be established from durable evidence,
+label the baseline unknown and compare its actual contents to the target
+release instead of guessing.
+
+First report the target release, compatibility and workflow impact, state-schema
+impact, skill differences, required project-state changes, and an exact
+file-by-file preview that names everything left untouched. Preserve the tier,
+project-specific state and history, content outside the marked Banka block, and
+customized skills. Do not replace skills, mutate project state, change tiers,
+or migrate legacy authority until I explicitly confirm the preview. After
+confirmation, apply only the approved changes and run the protocol's full
+verification and Cold Agent Test.
 ```
 
 ## The build loop

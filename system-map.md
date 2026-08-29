@@ -80,6 +80,17 @@ STAGE 4 — Promotion (Protocol §6, skill: scale)
   triggered by real thresholds, never guessed or skipped.
 
 
+Orthogonal after adoption — Release Update (Protocol §7):
+
+  annotated stable tag -> inspect Skills Kit and project state separately
+      -> report compatibility/schema impact and exact preview
+      -> owner confirms
+      -> refresh standard skills and apply only release-required state changes
+      -> verify discovery, authority chain, and Cold Agent Test
+
+  Updating is not re-adoption, tier promotion, or implicit schema migration.
+
+
 Orthogonal, not a stage — can attach at any point in Stage 3:
 
   Craft Layer Modules (Protocol §7.6 manifest, §7.7 reference)
@@ -163,7 +174,7 @@ Recognizable older CLAUDE-first projects may be read in compatibility mode but
 are not rewritten until an explicitly requested, previewed, and confirmed
 migration. Conflicting or incomplete state stops state-dependent work rather
 than inviting a guess. A typical session runs charter → optional delegate →
-build → moor → survey, with dredge or watershed used when routed there. Remember
+build → survey → moor, with dredge or watershed used when routed there. Remember
 closes and restores sessions after checking disk and version-control reality.
 Claude Code uses `/skill-name`; Codex uses `$skill-name`.
 
@@ -180,6 +191,16 @@ threshold is met or explicitly requested. It works only from active schema-2
 state, shows what moves where, keeps the matching tier marker, and preserves
 the exact `CLAUDE.md` import before anything old is deleted. Legacy state must
 complete the confirmed migration sequence before promotion.
+
+## Existing-project release updates (§7)
+
+An update starts from an annotated stable release tag and treats the
+machine-level Skills Kit separately from managed project state. It inspects
+both, reports compatibility and state-schema impact, previews every mutation,
+and waits for confirmation. Standard skills are then refreshed and project
+state changes only when the release requires it. The process finishes by
+verifying runtime discovery, Section 3.1's authority chain, and the Cold Agent
+Test; it never substitutes for adoption, promotion, or legacy migration.
 
 ## Orthogonal: Craft Layer Modules (§7.6 / §7.7) and linis
 
@@ -206,5 +227,6 @@ it; several rows are already enforced by `scripts/check-repo-integrity.sh`.
 | Operational perspectives | `protocol/Banka.md` §7.1, `charter`/`survey`/`watershed` SKILL.md, the integrity script's persona-ban and label checks |
 | `CLAUDE.md` shim | `protocol/Banka.md` §3, `full-context-templates/project-entry/CLAUDE.md`, the integrity script's shim check |
 | Release version | `protocol/Banka.md`'s title line, `README.md`, `CHANGELOG.md`, `VERSION`, the integrity script's version checks |
+| Existing-project release update | `protocol/Banka.md` §7's update procedure, `README.md`'s install/adopt/update prompts, `BANKA-ADOPTION-GUIDE.md` §6, release compatibility/action/schema notes in `CHANGELOG.md`, annotated release tags, the integrity script's update-path checks |
 | Session-state bloat mechanism | `protocol/Banka.md` §2.9, `remember`/`moor` SKILL.md, `charter`'s Outcome Owner check, `scale`'s disambiguation note, the tier's `overflow/` folder shape |
 | Downstream self-containment | `scripts/check-cold-downstream.sh`, any skill or template that could reference protocol-only content |

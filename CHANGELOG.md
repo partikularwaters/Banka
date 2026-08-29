@@ -1,5 +1,57 @@
 # Changelog
 
+## 2.0.0 — 2026-08-30
+
+**Compatibility impact:** Major. The Skills Kit install, project-adoption,
+and new update prompts now pin to the newest annotated stable release tag
+instead of an unrestricted default-branch clone, and stop rather than fall
+back when no valid tag exists — an incompatible change to Banka's existing
+onboarding contract, not an additive one.
+**Required consumer action:** none for already-adopted projects — nothing
+about their state, skills, or workflow changes unless they explicitly run the
+new update procedure. Anyone installing, adopting, or updating via the README
+prompts must wait until the `v2.0.0` annotated tag exists on `origin`;
+pushing it is a separate, explicitly owner-authorized step after this release
+commit lands.
+**Project-state migration:** none. No generated template, tier shape, or
+schema-2 marker changes.
+**State-schema impact:** none — state schema stays 2. The incompatible
+change is in skill/workflow behavior, not in stored project authority.
+
+- Adds an "Updating an existing Banka-managed project" procedure to protocol
+  §7: independently assesses the machine-level Skills Kit and managed
+  project state, pins to an annotated stable release tag, previews every
+  change, and requires explicit confirmation before touching anything.
+- New README "Updating Banka" pasteable prompt; "Getting started" now routes
+  already-adopted projects there instead of re-running adoption.
+- The Skills Kit install and project-adoption prompts (Claude Code and
+  Codex) now resolve to the newest annotated stable `vMAJOR.MINOR.PATCH` tag
+  rather than an unrestricted default-branch clone, and stop instead of
+  falling back when no valid tag exists.
+- Fixes the Codex install prompt's temporary-directory symlink risk: a
+  symlink must target a persistent checkout; a temporary checkout must be
+  copied, never linked.
+- `check-repo-integrity.sh` gains matching mechanical checks: the update
+  prompt exists and points at the canonical protocol section, all four
+  install/adopt/update prompts carry the stable-tag and
+  no-unreleased-`main` language, and an installed Codex skill may be a
+  verified copy as well as a symlink.
+- `dredge` gains Mode 0 (cannot reproduce): a three-check reproduction
+  diagnosis that runs before any of the other three failure modes apply,
+  ending in re-classification or an `[OPEN — needs verification]` flag.
+- `moor`'s registry and invariant/token captures now require `survey` to
+  have passed this build first (cleanly, or with findings resolved or
+  explicitly accepted as intentional) — general outcome/decision captures
+  and audit mode are unaffected.
+- Documentation currency pass across README, system-map, and the protocol:
+  corrects the build-loop order to survey → moor throughout (a leftover
+  instance still described moor → survey), adds "Getting started" and
+  "Adopting a project" sections, and consolidates attribution to one place
+  (README) instead of restating it in the protocol.
+- Beginning with this release, every new changelog entry states
+  compatibility impact, required consumer action, project-state migration,
+  and state-schema impact as four separate judgments.
+
 ## 1.3.0 — 2026-08-26
 
 Adds a third delegation tier and brings the public-facing docs and protocol

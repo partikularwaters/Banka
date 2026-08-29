@@ -1,4 +1,4 @@
-# Banka 1.3.0
+# Banka 2.0.0
 **Scoping-to-Agent Handoff Protocol**
 
 > **TO THE AI AGENT READING THIS:**
@@ -748,7 +748,11 @@ Install once at `~/.claude/skills/` for personal, machine-wide use:
 └── linis/SKILL.md
 ```
 
-Clone or download this repo, then ask Claude Code directly:
+Clone or download this repo, fetch tags, and check out the newest annotated
+stable `vMAJOR.MINOR.PATCH` tag by semantic-version order — verify it is
+annotated and its commit's `VERSION` matches the tag, and never install from
+newer, unreleased default-branch commits. If no valid stable tag exists, stop
+instead of installing from the default branch. Then ask Claude Code directly:
 
 ```
 Install the Banka Skills Kit from <path-to-clone>/skills-kit/ into
@@ -766,18 +770,27 @@ decide whether to remove, rename, or keep it before installing over it.
 
 ### Codex discovery
 
+Clone this package to a persistent directory owned by the current user, fetch
+tags, and check out the newest annotated stable `vMAJOR.MINOR.PATCH` tag by
+semantic-version order — verify it is annotated and its commit's `VERSION`
+matches the tag, and never install from newer, unreleased default-branch
+commits. If no valid stable tag exists, stop instead of installing from the
+default branch.
+
 Install the standard Banka kit once at the Codex user-level location,
 `~/.agents/skills/`. Link each directory from this package's `skills-kit/` into
 that location; a symlink is preferred so `skills-kit/` remains the only source
-of truth. Before linking, check the user-level directory and existing projects
+of truth. A symlink must target this persistent checkout, never a temporary
+clone. Before linking, check the user-level directory and existing projects
 for a Banka skill with the same name — Codex can show duplicate same-named
 skills and does not merge them.
 
 Do not install the standard Banka kit under a project's `.agents/skills/`.
 Repository-local discovery is reserved for skills that genuinely belong only to
-that repository. If symlinks cannot be preserved on the machine, copy each
-complete skill directory into `~/.agents/skills/` instead and confirm every
-entry contains a readable `SKILL.md`.
+that repository. If a persistent checkout or symlinks cannot be used, copy each
+complete skill directory into `~/.agents/skills/` from a temporary checkout
+instead — never link to a temporary directory — and confirm every entry
+contains a readable `SKILL.md`.
 
 In Codex, explicitly invoke a Banka skill with `$` (for example `$charter`,
 `$survey`, or `$remember save`). A host may also show enabled skills in its
@@ -799,6 +812,74 @@ stop rather than creating one implicitly.
 The protocol never regenerates skill contents per project. If the Skills Kit is
 not discoverable in the chosen runtime, configure its user-level Claude Code or
 Codex location before the first build session.
+
+### Updating an existing Banka-managed project
+
+An update is not adoption, tier promotion, or state-schema migration. It moves
+an already managed project and its machine-level Skills Kit to a newer stable
+Banka release while preserving the project's own authority and history.
+
+Use only an annotated stable release tag matching `vMAJOR.MINOR.PATCH`. Fetch
+tags, choose the highest matching tag by semantic-version order, verify that it
+is annotated, and confirm that the tagged commit's `VERSION` equals the tag
+without its leading `v`. Check out that tag before reading the protocol or
+copying skills. Never update from later, unreleased commits on the default
+branch. If no valid stable tag exists or any verification fails, stop and
+report it; never fall back to the default branch.
+
+The update has two independently assessed surfaces:
+
+- **Machine-level Skills Kit.** Inspect the selected runtime's user-level skill
+  locations and classify each Banka skill as a standard copy, a symlink, a
+  customized or conflicting entry, a duplicate project-local entry, or missing.
+  A Codex symlink must target a persistent checkout, never a temporary clone.
+  A temporary checkout is safe only when the skills are copied. Do not replace
+  a customized or conflicting entry without showing the difference and getting
+  a specific decision from the user. Inspect a persistent source checkout's Git
+  status before moving it to another tag; never discard local changes to make an
+  update fit. Use a new clean persistent checkout when its provenance or working
+  tree is unsafe.
+- **Managed project state.** Resolve `AGENTS.md`, the complete `CLAUDE.md`, both
+  possible state directories, and the tier's required files through Section
+  3.1. Preserve the tier, all project-specific content, all history, and all
+  content outside the marked Banka block. A release update changes project
+  state only when that release explicitly requires it.
+
+Run the update in this order:
+
+1. Read the target release's `VERSION` and all applicable `CHANGELOG.md`
+   entries. Determine the current release when durable evidence exists, such as
+   a persistent source checkout or an exact match to released skill contents.
+   Banka-managed project state does not carry a release-version marker; if the
+   baseline cannot be established, label it unknown and compare the actual
+   installed skills and project state to the target instead of guessing.
+2. Inspect both update surfaces without editing. If Section 3.1 classifies the
+   project as conflicting, incomplete, or legacy, report that state. Legacy
+   schema migration remains the separate, previewed, and confirmed sequence in
+   Section 3.2; an update request alone is not migration confirmation.
+3. Report the target release, compatibility impact, required workflow changes,
+   state-schema impact, skill differences, and every required project-state
+   change. Preview the exact file-by-file result and everything that will remain
+   untouched.
+4. Obtain explicit confirmation of that preview. A request to inspect, check
+   for updates, or continue ordinary work is not permission to replace skills
+   or mutate project state.
+5. Apply only the confirmed changes. Refresh standard Skills Kit copies from
+   the tagged release, or update a persistent Codex source checkout to the tag
+   and verify every symlink. Apply only release-required project-state changes;
+   do not re-adopt the project, change its tier, or rewrite its accumulated
+   knowledge to resemble a fresh template.
+6. Verify the tagged Banka checkout with `scripts/check-repo-integrity.sh`,
+   verify skill discovery and the absence of unintended duplicates, re-run
+   Section 3.1 against the project, and perform the Cold Agent Test. Report the
+   release now in use, the state schema, what changed, what remained untouched,
+   and any customized item deliberately left unresolved.
+
+Beginning with the release that introduces this procedure, every new changelog
+entry states four things: compatibility impact, required consumer action,
+project-state migration, and state-schema impact. These are separate judgments:
+a major Banka release can retain the same state schema when the incompatible
+change is in skill behavior rather than stored project authority.
 
 ---
 

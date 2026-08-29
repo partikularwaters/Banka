@@ -112,6 +112,29 @@ test "$(exact_line_count "# Banka $release_version" "$repo_root/protocol/Banka.m
 require_literal "Banka $release_version" "$repo_root/README.md"
 require_literal "## $release_version" "$repo_root/CHANGELOG.md"
 require_literal 'project-entry/' "$repo_root/README.md"
+require_literal '### Updating an existing Banka-managed project' "$repo_root/protocol/Banka.md"
+require_literal '## Updating Banka' "$repo_root/README.md"
+require_literal 'protocol/Banka.md#updating-an-existing-banka-managed-project' "$repo_root/README.md"
+require_literal 'protocol/Banka.md#updating-an-existing-banka-managed-project' "$repo_root/BANKA-ADOPTION-GUIDE.md"
+require_literal 'Existing-project release update' "$repo_root/system-map.md"
+
+stable_tag_instruction_count=$(grep -Fc 'newest annotated stable' "$repo_root/README.md" || true)
+test "$stable_tag_instruction_count" -eq 4 || \
+  fail "Expected stable-release selection in all four README prompts, found $stable_tag_instruction_count"
+semver_order_count=$(grep -Fc 'semantic-version order' "$repo_root/README.md" || true)
+test "$semver_order_count" -eq 4 || \
+  fail "Expected semantic-version ordering in all four README prompts, found $semver_order_count"
+unreleased_branch_warning_count=$(grep -Fic 'unreleased commits' "$repo_root/README.md" || true)
+test "$unreleased_branch_warning_count" -eq 4 || \
+  fail "Expected the unreleased-branch warning in all four README prompts, found $unreleased_branch_warning_count"
+missing_tag_stop_count=$(grep -Fic 'If no valid stable tag exists' "$repo_root/README.md" || true)
+test "$missing_tag_stop_count" -eq 4 || \
+  fail "Expected the missing-tag stop condition in all four README prompts, found $missing_tag_stop_count"
+
+if rg -n -U 'temporary directory,\nthen install its Skills Kit for the current user: link' "$repo_root/README.md" >/dev/null; then
+  fail "Codex installation must never symlink Banka skills from a temporary checkout"
+fi
+require_literal 'never link to a temporary directory' "$repo_root/README.md"
 
 integrity_tmp_dir=$(mktemp -d)
 trap 'rm -rf "$integrity_tmp_dir"' EXIT
@@ -228,12 +251,18 @@ if test -d "$user_skills_dir"; then
   for skill in "${skills[@]}"; do
     installed_skill="$user_skills_dir/$skill"
     if test -e "$installed_skill" || test -L "$installed_skill"; then
-      test -L "$installed_skill" || fail "$installed_skill must be a symlink to the canonical Banka skill"
-      installed_target=$(cd "$installed_skill" && pwd -P) || fail "$installed_skill does not resolve"
       canonical_target=$(cd "$repo_root/skills-kit/$skill" && pwd -P)
-      test "$installed_target" = "$canonical_target" || \
-        fail "$installed_skill resolves outside skills-kit/$skill"
-      echo "Verified installed Banka skill link: $installed_skill"
+      if test -L "$installed_skill"; then
+        installed_target=$(cd "$installed_skill" && pwd -P) || fail "$installed_skill does not resolve"
+        test "$installed_target" = "$canonical_target" || \
+          fail "$installed_skill resolves outside skills-kit/$skill"
+        echo "Verified installed Banka skill link: $installed_skill"
+      else
+        test -d "$installed_skill" || fail "$installed_skill is neither a skill directory nor a symlink"
+        diff -qr "$canonical_target" "$installed_skill" >/dev/null || \
+          fail "$installed_skill is not an exact copy of skills-kit/$skill"
+        echo "Verified installed Banka skill copy: $installed_skill"
+      fi
     else
       echo "Installed Banka skill link not present (repository package remains valid): $installed_skill"
     fi
