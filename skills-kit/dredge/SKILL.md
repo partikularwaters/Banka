@@ -35,6 +35,10 @@ The number of fix attempts matters — it distinguishes a fresh problem from a s
 
 ## Step 2 — Identify the Failure Mode
 
+Confirm reproduction before classifying further — Mode 0 comes first for a reason.
+
+**Mode 0 — Cannot reproduce.** The report describes a real interaction, but a genuine attempt to trigger it — following the same steps — does not produce the described behavior. → Not yet confirmed as any of the three modes below; diagnose the gap itself first. **Response: Reproduction diagnosis (Step 3D).**
+
 **Mode 1 — A specific thing is broken.** Isolated, rest of the project works, first/second attempt, error is clear and specific. → Normal bug, root cause is findable. **Response: Targeted fix (Step 3A).**
 
 **Mode 2 — The session has gone wrong.** Multiple fix attempts made things worse, code is tangled with fixes patching fixes, it's no longer clear what the original problem was. → The session itself is polluted; more prompting compounds the damage. **Response: Hard reset (Step 3B).**
@@ -58,6 +62,18 @@ Acknowledge plainly this isn't a failure, it's the correct response to a pollute
 Name the wrong assumption explicitly: what was assumed vs. what's actually true. Propose the correct approach, what gets discarded, what can be kept. Do not start rebuilding immediately — present the analysis and wait for the developer to agree.
 
 **If, after this diagnosis, more than one plausible correct approach remains** — not just "the old approach was wrong" but genuine disagreement about what the right one is — suggest the watershed skill for a wider, multi-angle pass before committing to a direction, rather than picking one here on a single perspective.
+
+## Step 3D — Reproduction Diagnosis
+
+Check, in order:
+
+1. **Same steps, exactly?** Re-walk the reported sequence literally, not from memory of what it probably meant — a skipped precondition or a slightly different path is the most common cause.
+2. **Same environment/state?** Different data, different account/session state, different config, different browser or OS can make code genuinely correct in one place and genuinely broken in another.
+3. **Transient or racy?** Something intermittent needs a different response entirely — you can't fix what you can't reliably trigger. Add logging/instrumentation instead of attempting a direct patch.
+
+If one of these explains the gap, that's the actual finding — report it plainly (e.g., "this only reproduces with an empty cart, not a full one") and re-run Step 2 now that it's confirmed.
+
+If none of them explain it and the behavior still won't reproduce: do not guess at a fix for something unconfirmed. Mark it `[OPEN — needs verification: exact repro steps, environment details, or a screenshot/log from when it occurred]` and stop. Report what was already tried and ruled out, so the next attempt doesn't repeat the same three checks.
 
 ## The Principle
 
