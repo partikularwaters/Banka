@@ -65,6 +65,9 @@ STAGE 3 — The Build Loop (skills-kit/, exposed per supported runtime)
   applicable operational perspectives are embedded inside existing skills
   remember save -> close the session
 
+  charter -> delegate and remember save -> restore are enforced orderings;
+  moor and survey are not strictly sequenced relative to each other.
+
   Loop repeats every session. remember restore opens the next one.
     |
     |  the project outgrows its tier

@@ -245,6 +245,12 @@ survey → check plan-alignment, system integrity, prod-readiness
 remember save → close the session
 ```
 
+`charter → delegate` and `remember save → restore` are enforced orderings —
+`delegate` refuses to run without an approved `charter` plan, and every
+session ends with save, starts with restore. `moor` and `survey` are not
+strictly sequenced relative to each other; either can run first depending on
+what the situation calls for.
+
 Use `/skill-name` in Claude Code and `$skill-name` in Codex. The loop repeats
 every session; the remember skill in restore mode opens the next one. The scale
 skill runs orthogonally whenever a project outgrows its current tier.
