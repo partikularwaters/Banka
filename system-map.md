@@ -58,15 +58,17 @@ STAGE 3 — The Build Loop (skills-kit/, exposed per supported runtime)
                 required, and Owner-required items; model choice stays
                 user-controlled
   [build]
-  moor       -> capture a UI pattern or engineering outcome
   survey     -> check plan-alignment, system integrity, prod-ready
       -> dredge    if something is actually broken
       -> watershed if it is a genuine multi-angle judgment call
+  moor       -> capture a UI pattern or engineering outcome (registry/
+                invariant captures wait for survey to pass first)
   applicable operational perspectives are embedded inside existing skills
   remember save -> close the session
 
-  charter -> delegate and remember save -> restore are enforced orderings;
-  moor and survey are not strictly sequenced relative to each other.
+  charter -> delegate, survey -> moor, and remember save -> restore are
+  enforced orderings; moor's registry/invariant captures require survey to
+  have passed first (see moor's own file for exceptions).
 
   Loop repeats every session. remember restore opens the next one.
     |
@@ -205,3 +207,4 @@ it; several rows are already enforced by `scripts/check-repo-integrity.sh`.
 | `CLAUDE.md` shim | `protocol/Banka.md` §3, `full-context-templates/project-entry/CLAUDE.md`, the integrity script's shim check |
 | Release version | `protocol/Banka.md`'s title line, `README.md`, `CHANGELOG.md`, `VERSION`, the integrity script's version checks |
 | Session-state bloat mechanism | `protocol/Banka.md` §2.9, `remember`/`moor` SKILL.md, `charter`'s Outcome Owner check, `scale`'s disambiguation note, the tier's `overflow/` folder shape |
+| Downstream self-containment | `scripts/check-cold-downstream.sh`, any skill or template that could reference protocol-only content |

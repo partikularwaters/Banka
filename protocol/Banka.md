@@ -787,20 +787,6 @@ or register skills.
 
 **Provenance, for clarity:** `charter`, `survey`, `dredge`, `remember`, `moor` are the original five. `scale`, `delegate`, `watershed`, and `linis` are Banka-native additions — `scale` operationalizes Section 6's promotion path as an actual runnable skill, `delegate` supports Section 7.5's Delegation Setup, `watershed` provides multi-perspective critique beyond a single survey, and `linis` ("clean," Filipino) removes narrative residue from settled files while preserving operational history and rationale.
 
-**External influences, for attribution:** Banka's original five-skill shape and
-Standard tier's nine-file context layer were inspired by JavaScript Mastery's
-earlier agent-skills workflow and context-file template, created by Adrian
-Hajdin and the JavaScript Mastery team
-([skills](https://github.com/jsmastery-pro/skills),
-[context-driven-dev](https://github.com/jsmastery-pro/context-driven-dev)).
-Those upstream projects continue to evolve independently; Banka does not claim
-that its current skills, file contracts, or lifecycle mirror their current
-implementation. Section 7.1's operational-perspective discipline was informed
-by review patterns demonstrated by
-[garrytan/gstack](https://github.com/garrytan/gstack), without importing its
-router, command surface, state machinery, or execution workflow. These are
-design influences, not dependencies or delegated authorities.
-
 **Every skill that reads project files resolves state with Section 3.1's full
 detection matrix.** The schema-2 marker declares the tier; the filesystem shape
 must corroborate it. Directory presence alone never selects a tier, and

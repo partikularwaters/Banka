@@ -1,6 +1,6 @@
 ---
 name: dredge
-description: When something goes wrong during a build, diagnose what type of failure it is before deciding how to respond. Targeted fix, hard reset, or full rethink — the right response depends on the right diagnosis.
+description: When something goes wrong during a build — including when the report can't be reproduced at all — diagnose what type of failure it is before deciding how to respond. Targeted fix, hard reset, full rethink, or a reproduction gap — the right response depends on the right diagnosis.
 ---
 
 Not every problem is a bug. Not every bug needs debugging. Diagnose the failure first, then prescribe the response — two separate steps, never swapped.

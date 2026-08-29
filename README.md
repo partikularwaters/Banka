@@ -20,7 +20,7 @@ that is a consequence—not a promise of universal token efficiency.
 the separate state schema identifies the on-disk project format. Banka 1.3.0
 uses state schema 2. See [VERSION](VERSION) and [CHANGELOG.md](CHANGELOG.md).
 
-**New here?** Jump straight to [Installing the Skills Kit](#installing-the-skills-kit) to get started.
+**New here?** Jump straight to [Getting started](#getting-started) to begin.
 
 ## Why "Banka" 🛶
 
@@ -160,15 +160,21 @@ discovery location and used across every Banka project regardless of tier:
 | --- | --- |
 | `charter` | Thinks through what's about to get built like a senior engineer would, before any code — surfaces decisions, produces a plan you confirm first. |
 | `delegate` | Splits an approved plan into Junior-safe tickets, Senior-required work (current session or fresh-session handoff, decided per ticket), and Owner-required work only the project owner can do. Model choice remains explicit and user-controlled. |
-| `dredge` | Diagnoses a build failure before responding to it — targeted fix, hard reset, or genuine rethink are different problems. |
-| `moor` | Captures a UI pattern or engineering outcome once it's settled, so the next session builds on it instead of drifting. |
-| `remember` | Saves session state on close, restores it on open — always checking disk/git reality first, never trusting this conversation's own memory. |
-| `scale` | Promotes a project exactly one tier at a time, Minimal → Core → Standard, only when a real threshold is met. |
 | `survey` | Checks a build against what was planned, the project's own declared rules, and production-readiness — then routes real findings to the right next skill. |
+| `dredge` | Diagnoses a build failure before responding to it — including when it can't be reproduced at all — targeted fix, hard reset, or genuine rethink are different problems. |
 | `watershed` | Runs a genuinely contested or high-stakes call through five independent perspectives, then consolidates one recommendation. |
+| `moor` | Captures a UI pattern or engineering outcome once it's settled — registry and invariant captures wait for survey to pass first — so the next session builds on it instead of drifting. |
+| `remember` | Saves session state on close, restores it on open — always checking disk/git reality first, and keeping the session-state file itself from bloating as it grows. |
+| `scale` | Promotes a project exactly one tier at a time, Minimal → Core → Standard, only when a real threshold is met. |
 | `linis` | Cleans narrative residue from settled files while preserving operational history, provenance, compatibility facts, and load-bearing rationale. Never runs against active work. |
 
 Each skill's full behavior lives in its own `SKILL.md` under [skills-kit/](skills-kit/) — the table above is the quick-reference, not the source of truth.
+
+## Getting started
+
+New to Banka? [Install the Skills Kit](#installing-the-skills-kit) once per
+machine, then [adopt a project](#adopting-a-project) to bring Banka into a
+specific repo.
 
 ## Installing the Skills Kit
 
@@ -226,6 +232,18 @@ it intentionally has no project-state `AGENTS.md`, `CLAUDE.md`, `/core/`, or
 Read-only skills can inspect an explicitly supplied subject and these repository
 docs; state-writing skills stop rather than treating the repository as Minimal.
 
+## Adopting a project
+
+Once the Skills Kit is installed, paste this into a fresh session working in
+your project's directory:
+
+```
+Clone https://github.com/partikularwaters/Banka.git to a temporary directory,
+then read its protocol/Banka.md in full and follow its instructions exactly,
+starting with the "TO THE AI AGENT READING THIS" banner. Apply it to this
+project.
+```
+
 ## The build loop
 
 ```
@@ -236,20 +254,21 @@ delegate → optional: split approved work into Junior-safe, Senior-required,
    |
 [build]
    |
-moor → capture what's worth remembering
-   |
 survey → check plan-alignment, system integrity, prod-readiness
    |    ├─→ dredge     if something is actually broken
    |    └─→ watershed  if it's a genuine multi-angle judgment call
    |
+moor → capture what's worth remembering (registry/invariant captures wait
+   |    for survey to pass first)
+   |
 remember save → close the session
 ```
 
-`charter → delegate` and `remember save → restore` are enforced orderings —
-`delegate` refuses to run without an approved `charter` plan, and every
-session ends with save, starts with restore. `moor` and `survey` are not
-strictly sequenced relative to each other; either can run first depending on
-what the situation calls for.
+`charter → delegate`, `survey → moor`, and `remember save → restore` are
+enforced orderings — `delegate` refuses to run without an approved `charter`
+plan, `moor`'s registry and invariant/token captures require survey to have
+passed first (see `moor`'s own file for the general-outcome and audit-mode
+exceptions), and every session ends with save, starts with restore.
 
 Use `/skill-name` in Claude Code and `$skill-name` in Codex. The loop repeats
 every session; the remember skill in restore mode opens the next one. The scale
@@ -263,10 +282,9 @@ an existing Banka skill. The canonical perspectives are Outcome Owner, User,
 Builder, Maintainer, and Risk Owner. Perspectives are not personas, commands,
 lifecycle gates, generated project files, or persistent project roles. A skill
 applies only the perspectives relevant to its existing purpose and still emits
-its normal output. gstack informed selected review habits, but is not a Banka
-dependency, replacement workflow, or Craft Layer module; see
-[garrytan/gstack](https://github.com/garrytan/gstack) for the canonical source,
-without copying its instructions or command catalog.
+its normal output. gstack informed selected review habits but is not a Banka
+dependency, replacement workflow, or Craft Layer module (see Influences and
+attribution below).
 
 Delegated tickets run serially when sessions share one checkout. Parallel work
 requires a separate Git worktree and branch per ticket because a fresh session
@@ -312,6 +330,7 @@ Banka/
 ├── VERSION                        # Banka package release version
 ├── CHANGELOG.md                   # retrospective milestones and release notes
 ├── scripts/check-repo-integrity.sh # repository-local packaging smoke check
+├── scripts/check-cold-downstream.sh # simulates a cold install, catches downstream-unreachable references
 ├── system-map.md                  # one-doc orientation, start here
 ├── skills-kit/                    # the nine Skills — install once, use everywhere
 │   └── {charter,survey,dredge,remember,moor,scale,delegate,watershed,linis}/SKILL.md
@@ -324,7 +343,7 @@ Banka/
 
 ## Influences and attribution
 
-Banka's original five-skill foundation was inspired by [JavaScript Mastery / Adrian Hajdin's earlier agent-skills workflow](https://github.com/jsmastery-pro/skills), whose five commands were `architect`, `remember`, `review`, `recover`, and `imprint`. Banka's Standard-tier nine-file context layer was inspired by [JavaScript Master's nine-file context template](https://github.com/jsmastery-pro/context-driven-dev). The current JavaScript Mastery skills repository has evolved into a broader workflow, and both upstream projects evolve independently from Banka; Banka does not mirror their current commands or contracts. gstack informed the newer operational-perspective review discipline; [garrytan/gstack](https://github.com/garrytan/gstack) remains an influence, not a dependency or replacement workflow.
+Banka's original five-skill shape and Standard tier's nine-file layer were inspired by [JavaScript Mastery](https://github.com/jsmastery-pro/skills)'s earlier agent-skills workflow and [context template](https://github.com/jsmastery-pro/context-driven-dev) — both evolve independently now, and Banka doesn't mirror their current form. [gstack](https://github.com/garrytan/gstack) informed the operational-perspective discipline; an influence, not a dependency.
 
 ## Optional: Craft Layer modules
 
@@ -335,7 +354,7 @@ Banka stays agnostic about stack and framework, but defers to genuinely strong o
 - [system-map.md](system-map.md) — the full connective picture of how Banka works.
 - [BANKA-ADOPTION-GUIDE.md](BANKA-ADOPTION-GUIDE.md) — how new and existing projects enter Banka, including adoption conditions and preparation paths.
 - [protocol/Banka.md](protocol/Banka.md) — the authoritative rules: adoption workflow, the complexity rubric, the Layer Principle, all three tiers' exact output, the Skills Kit, and Craft Layer modules.
-- [CHANGELOG.md](CHANGELOG.md) — Banka 1.0.0 release metadata and earlier milestones.
+- [CHANGELOG.md](CHANGELOG.md) — release metadata and version history.
 - [CONTRIBUTING.md](CONTRIBUTING.md) — contribution guidance, including Banka's transparent AI-assistance commit convention.
 
 ## License
