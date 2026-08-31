@@ -81,6 +81,8 @@ state was found, and do not invent project-specific invariants.
 
 Check whether this environment has a subagent- or parallel-task-dispatch tool available (something that can spawn a separate model call and return its result, distinct from just continuing this session). If one exists, use it: dispatch all five perspectives below as separate calls, run in parallel, each given the subject and context files read in Step 1 plus that perspective's paragraph verbatim as its entire instruction. Wait for all five to return before Step 3. Dispatching them one at a time and calling it parallel doesn't count — if the tool can't actually run them concurrently, that's the fallback path below, not this one.
 
+**Model choice for the dispatch stays with the user, not this skill.** Dispatched perspectives default to whatever model the current session is already running, or the dispatch tool's own default — never a specific named model chosen by this skill. Requesting anything other than that default, especially a more expensive or more capable model, five times over, is a real cost decision: ask the user first and state the cost tradeoff plainly before dispatching. This is the same standing rule `delegate` already follows — it never selects a model itself, lighter or heavier, always leaving the choice to the user — Banka does not launch or select models on the user's behalf, this skill included.
+
 If no such tool exists, fall back: apply each perspective fully in turn, in this session, clearly labeled, and do not let one perspective's conclusions leak into the next's framing before it's done.
 
 Whichever path runs, Step 3's report states which one plainly — never left for the user to guess.
