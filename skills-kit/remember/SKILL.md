@@ -169,8 +169,11 @@ readable legacy Core or Standard, read the files listed in legacy `CLAUDE.md`
 instead and identify the restore as legacy. At every tier, read
 `IDEA-SCOPE.md` when it exists. Also read the exact tier-resolved queue when
 present: root `delegation-queue.md` for Minimal/Core, or
-`context/delegation-queue.md` for Standard. Do not scan beyond these declared
-sources.
+`context/delegation-queue.md` for Standard — including its Overflow Index, when
+one exists, to know what's archived. Do not open a file listed in that index
+unless the developer specifically asks about a completed ticket's detail; the
+live queue's one-line summaries are enough for a normal restore. Do not scan
+beyond these declared sources.
 
 Never repeat or surface raw secrets from any source, even in restored context — summarize in redacted form only.
 

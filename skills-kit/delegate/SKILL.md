@@ -25,8 +25,10 @@ skill splits an already-approved plan, it does not re-plan.
 **Outputs:** the written queue (three tier-grouped lists, full ticket specs
 for all three, and a unified Execution Sequence showing every ticket's
 dependencies across tiers), one ready-to-paste handoff block per Junior-safe
-ticket in dependency order, and a plain checklist per Owner-required item —
-never a session handoff, since no AI session executes those.
+ticket in dependency order (or one batch handoff per assigned group of
+consecutive Junior-safe tickets, when the coordinator chooses to batch — see
+Step 4), and a plain checklist per Owner-required item — never a session
+handoff, since no AI session executes those.
 
 **Write authority:** the tier-resolved `delegation-queue.md` only — append
 tickets with stable, never-reused numbers; never touch the code the tickets
@@ -34,12 +36,17 @@ describe.
 
 Fresh-session isolation covers conversation context, not working files. Banka's
 safe default is **serial execution in one checkout**: finish and survey one
-ticket before another session edits the same working directory. Parallel ticket
+ticket (or self-check-and-advance through a batch, then survey the batch —
+see Step 4) before another session edits the same working directory. Parallel
 execution is allowed only when each session receives a separate Git worktree
-and branch, with its results reviewed and merged deliberately. A local or
-cloud-hosted model may execute a ticket if its host can read the assigned
-project state, edit the assigned checkout/worktree, and run the required
-verification; Banka does not launch models or create worktrees itself.
+and branch — one session may be assigned a single ticket or a batch of
+consecutive Junior-safe tickets, but never two sessions the same worktree —
+with its results reviewed and merged deliberately. A local or cloud-hosted
+model may execute a ticket or batch if its host can read the assigned project
+state, edit the assigned checkout/worktree, and run the required verification;
+Banka does not launch models or create worktrees itself. Batching reduces
+session count, not cost — it makes no claim about token or dollar savings,
+which depend on model/runtime pricing this skill cannot generalize about.
 
 This skill does not write code. It writes tickets. Writing a bad ticket is more expensive than writing no ticket — a bad ticket costs a full fresh-session context load, produces wrong output, and then needs the dredge skill to fix. Take the time to make each one right.
 
@@ -99,7 +106,7 @@ State the tier and a one-line reason for every item, including the Senior-requir
 
 ## Step 2 — Write each item as a tier-appropriate ticket
 
-A ticket fails if the reader would need to ask a question to proceed. Before finalizing a ticket, apply the same checkability standard used everywhere else in this project: could a reader with zero conversation memory read this ticket alone and produce the correct result? Every ticket, regardless of tier, includes a `Depends on` field naming other ticket numbers it needs done first, or "none" — this is what makes the unified Execution Sequence in Step 3 possible.
+A ticket fails if the reader would need to ask a question to proceed. Before finalizing a ticket, apply the same checkability standard used everywhere else in this project: could a reader with zero conversation memory read this ticket alone and produce the correct result? Judge this with the **input coverage test**, not introspection: enumerate every value the ticket's work will need to produce, compute, or display; for each, does the ticket's spec name where it comes from — a stated input, a prior decision, a named default? A required value with no named source means the ticket isn't ready, however small it looks — resolve it or reclassify as Senior-required, per Step 2. Every ticket, regardless of tier, includes a `Depends on` field naming other ticket numbers it needs done first, or "none" — this is what makes the unified Execution Sequence in Step 3 possible.
 
 **Junior-safe** must include:
 
@@ -207,6 +214,8 @@ items without telling the user what's being replaced.
 
 **Ticket numbers are append-only.** Never renumber or reuse a number already used in this file — not across separate delegate runs, and not when a merge collapses two candidates into one. A stable number is what lets a session-opening handoff point at "Ticket N" unambiguously; a number that can shift meaning defeats that.
 
+**Full ticket specs archiving.** Before appending, check whether `## Full ticket specs` has crossed ~1,500–2,000 words. If so, archive the oldest tickets already listed in `## Completed` (survey-passed) to the next sequentially numbered file in `overflow/delegation-tickets/` (creating the folder if it doesn't exist yet) — never an unstarted or in-progress ticket's spec, no matter how long the section gets. If no ticket is yet in `## Completed`, do not force an archive — flag the section as oversized with no archive-eligible ticket yet, and stop. Archiving relocates the full spec text only; it never renumbers, resequences, or otherwise touches the stable ticket number. Leave the archived ticket's one-line summary in `## Completed` with a pointer to the overflow file now holding its full spec, and add or update the queue's own `## Overflow Index` (file, ticket numbers covered, date archived) the first time this fires. Give the new overflow file its own short Contents note at its top, naming the ticket numbers it covers. Always preview this action before applying it, same as any other action on a real threshold.
+
 For a merged ticket, the one-line spec summary in the checklist below must name both folded-in behaviors, not just the more prominent one — that line is often the only thing a future skim reads without opening the full spec.
 
 ```markdown
@@ -236,7 +245,17 @@ tiers — this is not the same grouping as the lists above, which group by
 who executes, not by sequence.
 
 ## Full ticket specs
-[Full ticket blocks from Step 2, one per item — all three tiers, not Junior-safe only]
+[Full ticket blocks from Step 2, one per item — all three tiers, not Junior-safe only.
+Unstarted/in-progress tickets always in full. Once a completed ticket's spec is
+archived, remove it from this section entirely — its one-line summary and
+overflow pointer live in `## Completed` only.]
+
+## Completed
+[Survey-passed tickets: one-line summary, date, outcome — plus an overflow
+pointer once the full spec has been archived.]
+
+## Overflow Index
+[Created only the first time archiving fires: file | ticket numbers covered | date archived]
 ```
 
 ---
@@ -251,6 +270,25 @@ Senior-required ticket when the coordinator asks for a handoff instead of
 executing it directly (see below); substitute each bracketed field from the
 resolved project and its full ticket spec, Junior-safe's or Senior-required's
 alike:
+
+**Batching (optional, Junior-safe only).** Instead of one handoff per ticket,
+the coordinator may assign a **batch** — several consecutive Junior-safe
+tickets executed in one continued fresh session — using the Batch handoff
+template below instead of one single-ticket handoff per ticket. A batch is
+valid only when every ticket in it has its `Depends on` already satisfied
+before the batch starts, or points to an earlier ticket in the *same* batch
+— never a later one, never an unresolved ticket outside the batch. Cap a
+batch at a provisional **4 tickets**: the executing session self-checks each
+ticket against its own `Done when` condition and verification commands
+before advancing to the next, which narrows risk but does not replace
+`survey` — the more tickets stacked before the coordinator's single
+end-of-batch survey runs, the more an issue `survey`'s three-layer review
+would catch (an architecture-boundary violation, a silent failure mode) could
+go unseen in the meantime. If any self-check fails or is ambiguous, the batch
+stops immediately at that ticket — it does not guess, fix, or advance — and
+reports which earlier tickets in the batch completed cleanly. Batching
+reduces session count, not cost; it makes no claim about token or dollar
+savings.
 
 ```text
 Work in [exact project path].
@@ -297,6 +335,62 @@ drift, missing authority, an unmet dependency, or a material ambiguity the
 ticket does not resolve.
 ```
 
+For a batch of consecutive Junior-safe tickets, use this shape instead of
+one single-ticket handoff per ticket:
+
+```text
+Work in [exact project path].
+
+You are executing a batch of tickets from the delegation queue:
+[exact queue path]
+
+Tickets in this batch, in order: [Ticket A, Ticket B, Ticket C, ...] (max 4).
+Use a model meeting the highest [required capability] among them; the owner
+controls that selection outside this handoff. Read the queue introduction,
+execution rules, and only the tickets listed above — do not read or begin
+any ticket outside this batch.
+
+Dependency state: [satisfied dependency state for every ticket in this batch
+that has a dependency outside the batch, including any accepted prerequisite
+outcome — not just the first ticket's].
+
+The coordinator session hands ownership of the shared checkout to this session
+for this batch. No other implementation session is authorized to edit this
+checkout until the batch reports completion and returns ownership.
+
+The accepted dirty baseline is: [exact accepted dirty files and their source,
+or "none"]. These changes are accepted dependencies, not evidence of
+concurrency. Dirty files, one worktree, absence of .git/index.lock, and
+process inspection do not prove or disprove concurrent editing. Stop for an
+unexplained changed path; do not stop for the accepted dirty baseline above.
+
+For each ticket in order:
+1. Read that ticket's full spec in the queue — Files to touch, Files not to
+   touch, Do not, and Done when. This handoff does not repeat them.
+2. Implement it within those boundaries only.
+3. Self-check it against its own Done when condition and every verification
+   command it lists. If it passes, move to the next ticket in the batch. If
+   it fails, or anything is ambiguous, or requires a value/decision the
+   ticket doesn't supply — STOP the batch at this ticket. Do not guess, do
+   not fix it yourself, and do not advance to the next ticket. Leave this
+   ticket's partial edits exactly as they are in the working tree — do not
+   revert them and do not attempt to complete them — and report them
+   explicitly so the coordinator has the real evidence to work from.
+
+When the batch ends — whether by completing every ticket or by stopping at a
+failed/ambiguous self-check — report:
+1. files changed, across all attempted tickets;
+2. per ticket: completed-and-self-checked, or the point and reason it
+   stopped;
+3. verification commands run and their results, per ticket;
+4. any unexpected drift, ambiguity, or remaining risk;
+5. that checkout ownership is returned to the coordinator session.
+
+Do not start any ticket outside this batch. Do not create or switch worktrees
+unless explicitly assigned. A batch reporting fewer than all its tickets
+completed is a normal, expected outcome, not a failure of the process.
+```
+
 For Owner-required, use this shape instead — no session capability applies, so it goes to the owner directly, not into a fresh-session prompt:
 
 ```text
@@ -332,14 +426,19 @@ partially done. "Handoff" → generate the same template shown above,
 substituting Ticket [N]'s Senior-required fields in place of Junior-safe's —
 it is one reusable template, not a separate one per tier.
 
-For one ready ticket, return one handoff block. For zero, say what work
-remains — Senior-required, Owner-required, or both — and return no empty
-handoff prompt. This skill never creates sessions, selects models, or creates
-worktrees. In a shared checkout, tickets run serially; parallel execution
-requires a separately assigned Git worktree and branch for each session.
-After each ticket returns, a senior-capability coordinator invokes Survey
+For one ready ticket, return one handoff block; for a batch, return one batch
+handoff block covering all its tickets. For zero, say what work remains —
+Senior-required, Owner-required, or both — and return no empty handoff
+prompt. This skill never creates sessions, selects models, or creates
+worktrees. In a shared checkout, tickets (or a batch) run serially; parallel
+execution requires a separately assigned Git worktree and branch per assigned
+unit — a single ticket or a batch — never two sessions in the same worktree.
+After a single ticket returns, a senior-capability coordinator invokes Survey
 before marking it complete and before another ticket edits the same shared
-checkout.
+checkout. After a batch returns, the coordinator invokes Survey once over the
+whole batch's cumulative diff before marking any of its completed tickets
+done — the batch's own self-checks narrow risk but are not a substitute for
+this pass.
 
 ---
 

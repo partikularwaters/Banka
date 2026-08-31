@@ -314,9 +314,11 @@ Where a fact must appear in more than one file for a skill to remain self-contai
 
 ---
 
-## SECTION 2.9: SESSION-STATE BLOAT PREVENTION AND CORRECTION
+## SECTION 2.9: SESSION-STATE AND DELEGATION-QUEUE BLOAT PREVENTION AND CORRECTION
 
 A project's session-state destination (the Banka-owned `AGENTS.md` block for Minimal, `core/progress.md` for Core, `context/progress-tracker.md` for Standard) is an ever-appending log with no built-in bound. Sustained development will eventually bloat it. The fix has two tracks: prevent what can be prevented at write time, correct what still accumulates on a real threshold.
+
+The tier-resolved `delegation-queue.md` (root for Minimal/Core, `context/delegation-queue.md` for Standard) has the same shape of problem for a different reason: `delegate` appends tickets with stable, never-reused numbers, and completed tickets accumulate in the queue's `## Completed` section indefinitely. Track B extends to it below, using the same overflow mechanism, not a second one.
 
 **Terminology note:** this section's "promotion check" moves a durable fact out of session-state into its owning file. This is unrelated to `scale`'s tier-level promotion (Minimal→Core→Standard) — same word, two different mechanisms. Name which one explicitly wherever it could be ambiguous.
 
@@ -327,11 +329,12 @@ A project's session-state destination (the Banka-owned `AGENTS.md` block for Min
 3. **Write-shape check.** If a decision's rationale runs past a sentence or two, write a one-line entry plus a link to a detail file (Track B's overflow structure), rather than an inline paragraph. Applies from the first write, not retroactively.
 4. **Thread-tagging check** (`remember` only). Session Notes entries are tagged by the distinct line of work they belong to (a sub-heading is enough), never written as one flat, interleaved narrative — genuinely concurrent threads must be separable later without reconstruction. A third concurrently open thread gets a soft prompt ("worth a check — all three genuinely still active?"); a fourth requires a stated one-line reason on record before it is tagged. Neither ever blocks — this is a Soft Suggestion (Section 2.6), not a Hard Default, since reasonable concurrent-work capacity is not identity-independent or checkable the way error handling is.
 
-### Track B — Correction (`remember` only; automatic check every save, action only when a real threshold is crossed or explicitly requested, always previewed before applying)
+### Track B — Correction (`remember` only for session-state; `delegate` for the delegation queue; automatic check every save/write, action only when a real threshold is crossed or explicitly requested, always previewed before applying)
 
 1. **Session Notes ≥ ~2,000 words** (provisional, revise once real usage data exists — Section 2.5's Rule 4). Evaluate each tagged thread independently: a thread with a genuine settled boundary is archive-eligible and moves to `overflow/session-notes/`; a thread with no settled boundary stays live regardless of size. If no thread has a settled boundary, do not force a split — flag the section as oversized with no clean cut point and stop, consistent with `linis`'s rule to never act against unsettled work.
-2. **Any overflow file ≥ ~2,000 words** (same provisional figure). Start the next sequentially numbered file in the same subfolder (`01-session-notes.md` → `02-session-notes.md`, or the decisions equivalent). Never split a file's content mid-file.
+2. **Any overflow file ≥ ~2,000 words** (same provisional figure). Start the next sequentially numbered file in the same subfolder (`01-session-notes.md` → `02-session-notes.md`, or the decisions/delegation-tickets equivalent). Never split a file's content mid-file.
 3. **Decisions section ≥ ~1,500 words** (provisional, matching `scale`'s own Minimal→Core figure — the same "this now deserves its own file" signal). Recommend a dedicated decisions file, previewed and confirmed like any `scale` promotion, but this is a within-tier action `remember` performs directly — it is not a `scale` tier promotion.
+4. **Delegation queue's `## Full ticket specs` ≥ ~1,500–2,000 words** (same provisional figures as 1 and 3). Only tickets already moved to `## Completed` (survey-passed) are archive-eligible — an unstarted or in-progress ticket's full spec stays live no matter how long the file gets, the same "never act against unsettled work" boundary as check 1. Archive the oldest completed tickets first, to the next sequentially numbered file in `overflow/delegation-tickets/`. If no ticket is yet in `## Completed`, do not force an archive — flag the section as oversized with no archive-eligible ticket yet, and stop, the same fallback as check 1. Ticket numbers never change when a spec is archived — archiving relocates spec text, it does not renumber, resequence, or otherwise touch the stable append-only numbering `delegate` assigns. Leave the ticket's one-line summary (name, date, outcome) in `## Completed` with a pointer to the overflow file that holds its full spec.
 
 ### Resulting structure
 
@@ -344,17 +347,45 @@ context/                              (Standard; Core: core/, same shape)
 │     Overflow Index     — file | type | covers (a routing table, not
 │                          decision content — never conflate with the
 │                          Decisions section itself)
+├── delegation-queue.md
+│     Full ticket specs  — unstarted/in-progress tickets, always in full;
+│                          completed tickets only until archived
+│     Completed          — one-line summary + date + outcome per ticket,
+│                          plus an overflow pointer once archived
+│     Overflow Index     — same routing-table shape as progress-tracker.md's,
+│                          a separate table scoped to this file
 └── overflow/
     ├── session-notes/
     │     01-session-notes.md, 02-...  (own Contents header each)
-    └── decisions/
-          01-decisions-detail.md, 02-...  (linked detail; full record
-          of swept superseded entries)
+    ├── decisions/
+    │     01-decisions-detail.md, 02-...  (linked detail; full record
+    │     of swept superseded entries)
+    └── delegation-tickets/
+          01-delegation-tickets.md, 02-...  (own Contents header each;
+          full specs of archived completed tickets only)
 ```
 
-The `overflow/` folder and Overflow Index section are created the first time any threshold above actually fires — never pre-declared empty in a new project's generated files.
+The `overflow/` folder and each file's Overflow Index section are created the first time any threshold above actually fires for that file — never pre-declared empty in a new project's generated files.
 
-Downstream projects never receive this document directly — the compact, self-contained version of these rules lives in each tier's session-state template (its own "Keeping this section lean" note), which `remember` and `moor` read and apply. This section is the canonical full definition, maintained here for anyone editing Banka itself.
+Downstream projects never receive this document directly — the compact, self-contained version of these rules lives in each tier's session-state template (its own "Keeping this section lean" note) and in `delegation-queue.md`'s own note, which `remember`, `moor`, and `delegate` read and apply. This section is the canonical full definition, maintained here for anyone editing Banka itself.
+
+---
+
+## SECTION 2.10: AREA-LOCAL CONVENTION OVERRIDES (Standard tier only)
+
+Standard tier's `code-standards.md` states one set of conventions for the whole project. A real project can still contain one specific area — a payments module, a legacy adapter, a workspace in a monorepo — whose actual, repeated pattern genuinely diverges from that project-wide default for a defensible reason. Without a mechanism for this, that divergence either gets silently tolerated as an inconsistency or gets wrongly treated as a violation to "fix" back to the root default, destroying real information either way.
+
+**Eligibility.** Only conventions and patterns — naming, structure, a locally different but internally consistent pattern. **Never an Absolute Invariant.** Invariants are project-wide, non-negotiable, and Senior-required to touch by definition (Section 5's Delegation note); this mechanism creates no exception to that. A local override is a *different way of doing something*, never a *waiver of a safety or correctness rule*.
+
+**Detection.** `charter`, while reading existing code for a Standard-tier feature it's planning, may notice a divergence from `code-standards.md`'s documented default. Evidence, not a guess: a *repeated* pattern across several files in that area, not one stray file. When found, `charter` surfaces it as a normal Step 3 decision — never writes anything itself, per its own Write authority. On confirmation, capturing the convention is one step in the resulting plan, same as any other build step.
+
+**Storage.** An area-local file, distinct from `AGENTS.md` (that name is reserved for root authority — reusing it for a nested file risks a session mistaking it for another root, and complicates the integrity tooling's marker-uniqueness checks). The exact file/folder shape for this is still open — flagged for a dedicated follow-up rather than settled here — but whatever shape it takes, it is discovered the same way: never a new destination a session has to already know to look for.
+
+**Discovery.** `code-standards.md` carries one `## Area overrides` table — area path → override file path — populated only once a real override exists, never pre-declared. Any session already reading `code-standards.md`, which every skill that touches code already does, finds the pointer without a change to the shared state-resolution preamble duplicated across the Skills Kit. One home for the fact, minimal edit surface.
+
+**Maintenance.** No new skill — the fixed nine-skill roster (Section 7) is unchanged. `moor`'s single-capture mode gains one more destination: an outcome belonging to an area with an existing override file is captured there. `remember`'s existing "whichever file owns a globally-scoped fact a captured decision changes" language already covers writing to one, once one exists.
+
+Downstream projects never receive this document directly — the compact, self-contained version of this mechanism lives in `charter`'s and `moor`'s own SKILL.md, and in `code-standards.md`'s own template note. This section is the canonical full definition, maintained here for anyone editing Banka itself.
 
 ---
 
@@ -989,31 +1020,51 @@ open-ended direction, your scope is that ticket only:
   model/mode information, ask the user to confirm before starting.
 - If the ticket is Owner-required: there is no model/mode to confirm — it
   goes to the project owner directly, not to an AI session.
-- Do not read or start other unstarted tickets in the queue.
+- If you were handed a single ticket, do not read or start any other
+  unstarted ticket in the queue. If you were handed a batch (several
+  consecutive Junior-safe tickets assigned together — see `delegate`'s batch
+  handoff), do not read or start any ticket outside that assigned batch.
 - Do not touch files outside what the ticket lists.
 - If anything in the ticket is ambiguous, or requires a value/decision the
   ticket doesn't supply, STOP and report the gap. Do not guess and proceed.
-- When done, report completion against the ticket's "Done when" condition —
-  do not self-certify with just "it works."
+  In a batch, this also stops the batch — do not advance to the next ticket.
+- When done with a ticket, self-check it against its own "Done when"
+  condition and verification commands before reporting or, in a batch,
+  before advancing — do not self-certify with just "it works." A batch's
+  self-checks are not a substitute for `survey`; they only gate whether the
+  next ticket in the batch is safe to start.
 ```
 
 3. **Remind the user of the mechanics** (this is a workflow reminder, not a
 file — say it plainly, don't bury it): plan and approve with the charter skill
 in a senior-capability session → invoke the delegate skill to write tickets →
-for each Junior-safe ticket, and each Senior-required ticket handed off rather
-than kept with the current session, open a genuinely fresh session using the
-user-selected model and confirm it meets the ticket's required capability →
-invoke the survey skill in a senior-capability session before marking any
-AI-executed ticket done. An Owner-required ticket has no session or model
-involved — it goes to the project owner directly, marked complete in the
-queue once done.
+for each Junior-safe ticket or batch of Junior-safe tickets, and each
+Senior-required ticket handed off rather than kept with the current session,
+open a genuinely fresh session using the user-selected model and confirm it
+meets the assigned work's required capability → for a single ticket, invoke
+the survey skill in a senior-capability session before marking it done; for a
+batch, the executing session self-checks each ticket against its own "Done
+when" condition before advancing to the next, and the coordinator invokes
+survey once over the whole batch's cumulative diff before marking any of its
+tickets done. An Owner-required ticket has no session or model involved — it
+goes to the project owner directly, marked complete in the queue once done.
 
 4. **State the execution-isolation boundary:** a fresh session isolates
 conversation context, not files. Run delegated tickets serially when they share
 one checkout. Parallel execution requires a separate Git worktree and branch
-per ticket, followed by deliberate review and merging. This applies equally to
-local and hosted models. Banka writes the queue and policy; it does not launch
-models, create worktrees, or merge branches.
+per assigned unit — a single ticket, or a batch of consecutive Junior-safe
+tickets run together in one session — followed by deliberate review and
+merging. This applies equally to local and hosted models. Banka writes the
+queue and policy; it does not launch models, create worktrees, or merge
+branches.
+
+5. **Batching is optional and reduces session count, not cost.** A
+coordinator may assign several consecutive Junior-safe tickets to one fresh
+session as a batch instead of one ticket per session — see `delegate`'s batch
+handoff for the batchability rule, size cap, and self-check/escalation
+behavior. This exists to cut the fixed context-load tax an unbatched fresh
+session pays per ticket; it makes no claim about token or dollar cost, which
+depends on model and runtime pricing this protocol cannot generalize about.
 
 ---
 

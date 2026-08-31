@@ -49,7 +49,11 @@ State which mode this is, and why, before proceeding.
 
 ## Step 3A — Targeted Fix
 
-Get the exact error/behavior, the specific file/function, and expected-vs-actual. Read only what's directly relevant. State the root cause plainly (not the symptom), then the fix that addresses it — not a workaround. Wait for confirmation before changing anything.
+Get the exact error/behavior, the specific file/function, and expected-vs-actual. Read only what's directly relevant. State the root cause plainly (not the symptom), then the fix that addresses it — not a workaround.
+
+Before presenting the fix, check for siblings: the same root cause often hides in other places that share the same bad assumption or pattern. Grep for it. Fold any hits into the proposal now, so one confirmation covers the fix's full scope, not just the first occurrence found.
+
+Wait for confirmation before changing anything.
 
 If the fix doesn't work: stop. Don't suggest another fix immediately — the root cause diagnosis was probably wrong. Re-diagnose from scratch. Two wrong diagnoses in a row means this may actually be Mode 2 or 3.
 

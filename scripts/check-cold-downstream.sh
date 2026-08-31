@@ -41,6 +41,8 @@ mkdir -p "$tmp_dir/project-minimal" "$tmp_dir/project-core/core" "$tmp_dir/proje
 cp "$repo_root/full-context-templates/project-entry/minimal-AGENTS.md" "$tmp_dir/project-minimal/AGENTS.md"
 cp "$repo_root/full-context-templates/core/"*.md "$tmp_dir/project-core/core/"
 cp "$repo_root/full-context-templates/standard/"*.md "$tmp_dir/project-standard/context/"
+cp "$repo_root/full-context-templates/delegation-queue.md" "$tmp_dir/project-core/delegation-queue.md"
+cp "$repo_root/full-context-templates/delegation-queue.md" "$tmp_dir/project-standard/context/delegation-queue.md"
 
 # --- Check 1: nothing references full-context-templates/ ------------------
 # This directory structurally never exists outside this repo.
@@ -81,6 +83,17 @@ for rendered in "$tmp_dir/project-standard/context/progress-tracker.md" "$tmp_di
   grep -qi "overflow index" "$rendered" || fail "Missing any mention of an Overflow Index in ${rendered#"$tmp_dir/"}"
   grep -qi "file.*type.*covers\|covers.*type.*file" "$rendered" || fail "Overflow Index is mentioned but no actual schema (its columns) is shown in ${rendered#"$tmp_dir/"} — a downstream session has nothing to build the table from"
   grep -qi "superseded" "$rendered" || fail "Missing what happens to a swept superseded decision in ${rendered#"$tmp_dir/"}"
+done
+
+# --- Check 4b: rendered delegation-queue.md carries complete overflow
+# mechanics too, same standard as Check 4's session-state files ------------
+for rendered in "$tmp_dir/project-core/delegation-queue.md" "$tmp_dir/project-standard/context/delegation-queue.md"; do
+  grep -qi "sequentially\|01-" "$rendered" || fail "Missing the sequential-numbering convention for overflow files in ${rendered#"$tmp_dir/"}"
+  grep -qi "contents" "$rendered" || fail "Missing the overflow file's own Contents-header requirement in ${rendered#"$tmp_dir/"}"
+  grep -qi "overflow index" "$rendered" || fail "Missing any mention of an Overflow Index in ${rendered#"$tmp_dir/"}"
+  grep -qi "file.*type.*covers\|covers.*type.*file" "$rendered" || fail "Overflow Index is mentioned but no actual schema (its columns) is shown in ${rendered#"$tmp_dir/"} — a downstream session has nothing to build the table from"
+  grep -qi "delegation-tickets" "$rendered" || fail "Missing the overflow/delegation-tickets/ destination in ${rendered#"$tmp_dir/"}"
+  grep -qi "never archive live work\|unstarted or in-progress ticket" "$rendered" || fail "Missing the rule that unstarted/in-progress tickets are never archived in ${rendered#"$tmp_dir/"}"
 done
 
 # --- Check 5: Minimal correctly opts out of overflow structure -------------

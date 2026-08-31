@@ -178,3 +178,15 @@ Approved dependencies for this project — do not install anything outside this 
 - `[package]` — `[purpose]`
 
 If the Design Craft Add-on (Section 7.7) is installed, its `pick-ui-library` skill governs which UI/component libraries are trustworthy to add — defer to it rather than picking one ad hoc.
+
+---
+
+## Area overrides
+
+_Empty until `charter` finds a real, repeated divergence from this file's
+defaults and the developer confirms capturing it (Protocol Section 2.10).
+Never an Absolute Invariant — those stay project-wide._
+
+| Area | Override file | Captured |
+| ---- | -------------- | -------- |
+| `[e.g. src/payments/]` | `[path]` | `[date]` |

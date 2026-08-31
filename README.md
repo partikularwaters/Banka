@@ -340,12 +340,16 @@ its normal output. gstack informed selected review habits but is not a Banka
 dependency, replacement workflow, or Craft Layer module (see Influences and
 attribution below).
 
-Delegated tickets run serially when sessions share one checkout. Parallel work
-requires a separate Git worktree and branch per ticket because a fresh session
-isolates conversation history, not files. Local and hosted models can both
-execute Banka tickets when their host can read project state, edit the assigned
-checkout/worktree, and run verification; Banka does not launch or orchestrate
-models itself.
+Delegated tickets run serially when sessions share one checkout. A coordinator
+may also assign several consecutive Junior-safe tickets to one session as a
+batch instead of one ticket per session — the session self-checks each ticket
+before advancing, and `survey` runs once over the whole batch instead of once
+per ticket. Batching cuts session count, not token or dollar cost. Parallel
+work requires a separate Git worktree and branch per assigned unit — a single
+ticket or a batch — because a fresh session isolates conversation history, not
+files. Local and hosted models can both execute Banka tickets when their host
+can read project state, edit the assigned checkout/worktree, and run
+verification; Banka does not launch or orchestrate models itself.
 
 ## What gets written, and where
 

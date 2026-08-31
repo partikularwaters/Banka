@@ -79,6 +79,7 @@ Before saying anything, take stock of what already exists:
 - Read the resolved context file(s), and any existing relevant code
 - If `IDEA-SCOPE.md` exists in the project root, read it too — it's the project's original scope document, and the feature at hand should trace back to something in it. If it doesn't, flag that plainly rather than quietly planning a feature the original scope never named.
 - Build a clear picture of what needs to be built and what already exists
+- **Standard tier only:** while reading existing code for this feature's area, note any *repeated* pattern (several files, not one stray file) that genuinely diverges from `code-standards.md`'s documented default. Never an Absolute Invariant — those are project-wide by definition and this never creates an exception. A real divergence found here carries into Step 3 as a candidate decision (Section 2.10 of the Protocol governs the full mechanism).
 
 Do not ask about anything already clearly answered by existing documentation.
 
@@ -141,9 +142,13 @@ or do you see it differently?
 
 Work through decisions in order of impact. If an answer makes another decision irrelevant, skip it.
 
+**A Step 1 area-convention divergence surfaces here as its own decision**, evidence stated plainly ("this area does X differently from `code-standards.md`, in N files"), never assumed as a defect to silently "fix" back to the root default. On confirmation, capturing it becomes a step in *How to build it* (Step 5) — this skill never writes it itself.
+
 ## Step 4 — Know When You Are Done
 
 Stop when every decision that would change the implementation has been resolved — not when every possible question is answered.
+
+Judge this with the **input coverage test**, not introspection. Don't ask "does this feel like I'm inventing something?" — a plan-writing session rationalizes a real decision as "just an implementation detail" and waves it through. Instead: enumerate every value the build will need to produce, compute, or display. For each one, does the plan name where it comes from — a stated input, a prior decision, a named default? Any required value with no named source is an unresolved decision, not a detail to fill in later — surface it as a decision (Step 3) before declaring the blueprint ready.
 
 ```
 Blueprint ready.

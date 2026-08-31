@@ -102,6 +102,14 @@ extract_handoff_block() {
   ' "$1"
 }
 
+extract_batch_handoff_block() {
+  awk '
+    $0 == "Work in [exact project path]." { n++; if (n == 2) { capture = 1; print; next } }
+    capture && $0 == "```" { exit }
+    capture { print }
+  ' "$1"
+}
+
 release_version=$(cat "$repo_root/VERSION")
 test "$(wc -l < "$repo_root/VERSION" | tr -d ' ')" -eq 1 || \
   fail "VERSION must contain exactly one line"
@@ -237,6 +245,11 @@ for handoff_file in "$repo_root/skills-kit/delegate/SKILL.md" "$repo_root/full-c
   require_literal 'dependency order' "$handoff_file"
   require_literal 'For one ready ticket' "$handoff_file"
   require_literal 'For zero' "$handoff_file"
+  require_literal 'batch of tickets from the delegation queue' "$handoff_file"
+  require_literal 'Tickets in this batch, in order' "$handoff_file"
+  require_literal 'Self-check it against its own Done when condition' "$handoff_file"
+  require_literal 'STOP the batch at this ticket' "$handoff_file"
+  require_literal 'not a failure of the process' "$handoff_file"
 done
 
 delegate_handoff_file="$integrity_tmp_dir/delegate-handoff.txt"
@@ -245,6 +258,13 @@ extract_handoff_block "$repo_root/skills-kit/delegate/SKILL.md" > "$delegate_han
 extract_handoff_block "$repo_root/full-context-templates/delegation-queue.md" > "$template_handoff_file"
 cmp -s "$delegate_handoff_file" "$template_handoff_file" || \
   fail "Delegate and delegation-queue ready-to-paste handoff blocks differ"
+
+delegate_batch_handoff_file="$integrity_tmp_dir/delegate-batch-handoff.txt"
+template_batch_handoff_file="$integrity_tmp_dir/template-batch-handoff.txt"
+extract_batch_handoff_block "$repo_root/skills-kit/delegate/SKILL.md" > "$delegate_batch_handoff_file"
+extract_batch_handoff_block "$repo_root/full-context-templates/delegation-queue.md" > "$template_batch_handoff_file"
+cmp -s "$delegate_batch_handoff_file" "$template_batch_handoff_file" || \
+  fail "Delegate and delegation-queue batch handoff blocks differ"
 
 user_skills_dir="$HOME/.agents/skills"
 if test -d "$user_skills_dir"; then

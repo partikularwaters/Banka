@@ -228,5 +228,5 @@ it; several rows are already enforced by `scripts/check-repo-integrity.sh`.
 | `CLAUDE.md` shim | `protocol/Banka.md` §3, `full-context-templates/project-entry/CLAUDE.md`, the integrity script's shim check |
 | Release version | `protocol/Banka.md`'s title line, `README.md`, `CHANGELOG.md`, `VERSION`, the integrity script's version checks |
 | Existing-project release update | `protocol/Banka.md` §7's update procedure, `README.md`'s install/adopt/update prompts, `BANKA-ADOPTION-GUIDE.md` §6, release compatibility/action/schema notes in `CHANGELOG.md`, annotated release tags, the integrity script's update-path checks |
-| Session-state bloat mechanism | `protocol/Banka.md` §2.9, `remember`/`moor` SKILL.md, `charter`'s Outcome Owner check, `scale`'s disambiguation note, the tier's `overflow/` folder shape |
+| Session-state and delegation-queue bloat mechanism | `protocol/Banka.md` §2.9, `remember`/`moor`/`delegate` SKILL.md, `charter`'s Outcome Owner check, `scale`'s disambiguation note, the tier's `overflow/` folder shape, `full-context-templates/delegation-queue.md`'s own note |
 | Downstream self-containment | `scripts/check-cold-downstream.sh`, any skill or template that could reference protocol-only content |

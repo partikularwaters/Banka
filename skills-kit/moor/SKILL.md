@@ -87,6 +87,7 @@ If no filepath is given, identify recently created/modified component files auto
 - **A UI component pattern** (background, border, radius, text roles, spacing, interactive states, shadow, accent usage — not width/height, layout positioning, or responsive variants, which are too context-dependent to be a consistency rule) → goes to the UI registry (Minimal: a Component Registry note inside the Banka-owned `AGENTS.md` block's Project Overview; Core: `core/design.md`; Standard: `context/ui-registry.md`).
 - **A general engineering outcome, decision, or resolved problem** → goes to the session-state file (Minimal: the Banka-owned `AGENTS.md` block's Session Notes; Core: `core/progress.md`; Standard: `context/progress-tracker.md`).
 - **A changed global token, folder structure, or invariant** → update the file that actually owns it directly (Minimal: inside the Banka-owned `AGENTS.md` block; Core: `core/design.md` for tokens, `core/architecture.md` for structure/invariants/conventions; Standard: `ui-tokens.md`, `architecture.md`, `code-standards.md` respectively) — never just log that it changed, actually update the source.
+- **An outcome belonging to an area with an existing local-override file** (Standard tier only — check `code-standards.md`'s `## Area overrides` table for the touched area) → capture there instead of the general destination above; Section 2.10 of the Protocol governs the full mechanism.
 
 A UI pattern or invariant/token capture becomes what future work is
 checked against — the registry for one, charter's invariant cross-check
