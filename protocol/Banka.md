@@ -332,21 +332,23 @@ The tier-resolved `delegation-queue.md` (root for Minimal/Core, `context/delegat
 ### Track B — Correction (`remember` only for session-state; `delegate` for the delegation queue; automatic check every save/write, action only when a real threshold is crossed or explicitly requested, always previewed before applying)
 
 1. **Session Notes ≥ ~2,000 words** (provisional, revise once real usage data exists — Section 2.5's Rule 4). Evaluate each tagged thread independently: a thread with a genuine settled boundary is archive-eligible and moves to `overflow/session-notes/`; a thread with no settled boundary stays live regardless of size. If no thread has a settled boundary, do not force a split — flag the section as oversized with no clean cut point and stop, consistent with `linis`'s rule to never act against unsettled work.
-2. **Any overflow file ≥ ~2,000 words** (same provisional figure). Start the next sequentially numbered file in the same subfolder (`01-session-notes.md` → `02-session-notes.md`, or the decisions/delegation-tickets equivalent). Never split a file's content mid-file.
-3. **Decisions section ≥ ~1,500 words** (provisional, matching `scale`'s own Minimal→Core figure — the same "this now deserves its own file" signal). Recommend a dedicated decisions file, previewed and confirmed like any `scale` promotion, but this is a within-tier action `remember` performs directly — it is not a `scale` tier promotion.
-4. **Delegation queue's `## Full ticket specs` ≥ ~1,500–2,000 words** (same provisional figures as 1 and 3). Only tickets already moved to `## Completed` (survey-passed) are archive-eligible — an unstarted or in-progress ticket's full spec stays live no matter how long the file gets, the same "never act against unsettled work" boundary as check 1. Archive the oldest completed tickets first, to the next sequentially numbered file in `overflow/delegation-tickets/`. If no ticket is yet in `## Completed`, do not force an archive — flag the section as oversized with no archive-eligible ticket yet, and stop, the same fallback as check 1. Ticket numbers never change when a spec is archived — archiving relocates spec text, it does not renumber, resequence, or otherwise touch the stable append-only numbering `delegate` assigns. Leave the ticket's one-line summary (name, date, outcome) in `## Completed` with a pointer to the overflow file that holds its full spec.
+2. **Any overflow file ≥ ~2,000 words** (same provisional figure). Start the next sequentially numbered file in the same subfolder (`01-session-notes.md` → `02-session-notes.md`, or the delegation-tickets equivalent). Never split a file's content mid-file.
+3. **Delegation queue's `## Full ticket specs` ≥ ~1,500–2,000 words** (same provisional figure as check 1). Only tickets already moved to `## Completed` (survey-passed) are archive-eligible — an unstarted or in-progress ticket's full spec stays live no matter how long the file gets, the same "never act against unsettled work" boundary as check 1. Archive the oldest completed tickets first, to the next sequentially numbered file in `overflow/delegation-tickets/`. If no ticket is yet in `## Completed`, do not force an archive — flag the section as oversized with no archive-eligible ticket yet, and stop, the same fallback as check 1. Ticket numbers never change when a spec is archived — archiving relocates spec text, it does not renumber, resequence, or otherwise touch the stable append-only numbering `delegate` assigns. Leave the ticket's one-line summary (name, date, outcome) in `## Completed` with a pointer to the overflow file that holds its full spec.
+
+**Decisions no longer accumulate here for Core or Standard.** The former check 3 (a "Decisions section ≥ ~1,500 words" correction) is retired: Core/Standard write durable decisions to the Logbook now (Section 2.11), not inline in session-state, so the section this check corrected no longer receives new content to correct. `overflow/decisions/` below is legacy-only — a project that already has one from before this change keeps it untouched (no retroactive migration), but a newly generated or newly promoted Core/Standard project never creates one.
 
 ### Resulting structure
 
 ```
 context/                              (Standard; Core: core/, same shape)
 ├── progress-tracker.md
-│     Decisions section  — compressed one-liners + links; superseded
-│                          entries marked in place until swept
+│     Decisions Index    — durable decisions now live in the Logbook
+│                          (Section 2.11); this is a routing table into
+│                          decisions/, not decision content itself
 │     Session Notes      — current, thread-tagged arc(s) only
 │     Overflow Index     — file | type | covers (a routing table, not
-│                          decision content — never conflate with the
-│                          Decisions section itself)
+│                          session-notes content — never conflate with
+│                          the Session Notes section itself)
 ├── delegation-queue.md
 │     Full ticket specs  — unstarted/in-progress tickets, always in full;
 │                          completed tickets only until archived
@@ -354,18 +356,20 @@ context/                              (Standard; Core: core/, same shape)
 │                          plus an overflow pointer once archived
 │     Overflow Index     — same routing-table shape as progress-tracker.md's,
 │                          a separate table scoped to this file
+├── decisions/                        (the Logbook — Section 2.11, its own
+│                                       canonical structure, not overflow)
 └── overflow/
     ├── session-notes/
     │     01-session-notes.md, 02-...  (own Contents header each)
     ├── decisions/
-    │     01-decisions-detail.md, 02-...  (linked detail; full record
-    │     of swept superseded entries)
+    │     01-decisions-detail.md, 02-...  (legacy only — a project that had
+    │     this before the Logbook keeps it; never created new)
     └── delegation-tickets/
           01-delegation-tickets.md, 02-...  (own Contents header each;
           full specs of archived completed tickets only)
 ```
 
-The `overflow/` folder and each file's Overflow Index section are created the first time any threshold above actually fires for that file — never pre-declared empty in a new project's generated files.
+The `overflow/` folder and each file's Overflow Index section are created the first time any threshold above actually fires for that file — never pre-declared empty in a new project's generated files. `decisions/` (the Logbook) follows its own creation rule instead — see Section 2.11.
 
 Downstream projects never receive this document directly — the compact, self-contained version of these rules lives in each tier's session-state template (its own "Keeping this section lean" note) and in `delegation-queue.md`'s own note, which `remember`, `moor`, and `delegate` read and apply. This section is the canonical full definition, maintained here for anyone editing Banka itself.
 
@@ -386,6 +390,50 @@ Standard tier's `code-standards.md` states one set of conventions for the whole 
 **Maintenance.** No new skill — the fixed nine-skill roster (Section 7) is unchanged. `moor`'s single-capture mode gains one more destination: an outcome belonging to an area with an existing override file is captured there. `remember`'s existing "whichever file owns a globally-scoped fact a captured decision changes" language already covers writing to one, once one exists.
 
 Downstream projects never receive this document directly — the compact, self-contained version of this mechanism lives in `charter`'s and `moor`'s own SKILL.md, and in `code-standards.md`'s own template note. This section is the canonical full definition, maintained here for anyone editing Banka itself.
+
+---
+
+## SECTION 2.11: THE LOGBOOK — DURABLE DECISION RECORDS (Core and Standard only)
+
+Section 2.9 keeps session-state from bloating by compressing what accumulates there past a threshold. That's the right correction for session narrative, but it's the wrong one for *why a durable decision was made* — compressing rationale to a one-line pointer means the actual reasoning is effectively lost the moment it's swept, recoverable only by opening an overflow file most sessions never think to check. The Logbook exists so a project's decision rationale is never subject to that tradeoff: permanent from the moment it's written, discoverable through a short index, never compressed.
+
+**Lineage.** The Logbook is a Banka-flavored variant of the well-known Architecture Decision Record (ADR) pattern — a collection of Decision Records, each capturing a decision and its rationale. Two deliberate departures from typical ADR practice, not oversights:
+1. **Broader than "architecture."** Eligibility is any durable, standing fact worth protecting — architecture, workflow, delegation behavior, coding convention, process — not just architectural choices. Called **Decision Records**, not Architecture Decision Records, for this reason.
+2. **Stricter: append-only, never edited.** Some ADR practice allows a record to be clarified or updated in place. The Logbook does not — once written, a Decision Record is never rewritten. When a decision changes, the old record is marked Superseded and a new one is written; the prior reasoning stays exactly as it was, never silently erased.
+
+**Eligibility.** Reuses Section 2.9 Track A rule 1's existing promotion check, unchanged — no new threshold invented: is this a durable, standing fact? If yes, and it's the kind of decision that carries real reasoning worth preserving (the kind that today would be logged with its rationale, not a single-line settled fact that belongs directly in an owning file), it's Logbook-eligible.
+
+**Tier scope.** Core and Standard only. Minimal has no state folder by design (Section 2.9's own reasoning, applied identically here) and keeps logging decisions inline in the Banka-owned `AGENTS.md` block exactly as before — untouched by this section.
+
+**Structure.** One folder, `decisions/` (`core/decisions/` for Core, `context/decisions/` for Standard). Each decision is its own numbered subdirectory, append-only, reusing `delegation-queue.md`'s `NNNN` numbering convention — never renumbered, never reused:
+
+```
+decisions/
+├── 0001-title/
+│   ├── decision.md    (WHAT — short, plan-facing: title, date, status,
+│   │                    a plain-language summary stated as settled fact,
+│   │                    a pointer to the file/section it governs)
+│   └── rationale.md   (WHY — context, alternatives actually considered
+│                        [only if there were real alternatives — scale to
+│                        how much reasoning actually happened, never
+│                        forced], the reasoning for the final pick,
+│                        optional revisit conditions)
+└── 0002-title/
+    ├── decision.md
+    └── rationale.md
+```
+
+The split is a genuine loading boundary, not just a readability convention: a session doing normal work reads `progress.md`/`progress-tracker.md`'s Decisions Index, then at most a `decision.md` — never `rationale.md` unless the reasoning itself is what's actually needed.
+
+**Lifecycle.** Two states only, not three. A Decision Record is born **Accepted** — `charter` and `remember` only ever persist decisions that are already confirmed and settled (Banka's front-loaded consensus means there's no "proposed but not yet decided" state to represent). The only other state is **Superseded by [NNNN]**, set on the old record when a later decision replaces it.
+
+**Discovery.** `progress.md` (Core) / `progress-tracker.md` (Standard) carries a `## Decisions Index` table — ID, title, status, one-line summary — replacing the old freeform Decisions Made section. Populated only once a real Decision Record exists, never pre-declared. This is the routing table; the records themselves are never duplicated into it.
+
+**Who writes.** `remember` gains write authority to the Logbook (Core/Standard) for an in-session decision that clears the eligibility bar during a save — it writes the Decision Record directly and adds the Decisions Index row. `charter` does not gain write authority — a Step 3 decision the developer confirms becomes a step in the resulting plan's *How to build it* (create the Decision Record, add the index row), executed once building begins, same as any other implementation step. `charter`'s Context Contract stays "Write authority: none."
+
+**No retroactive migration.** This governs decisions going forward only. An already-generated project's existing Decisions Made content, and any `overflow/decisions/` it already has, stay exactly as they are (Section 2.9's own note) — a project only starts using the Logbook once its templates are regenerated or promoted under this section.
+
+Downstream projects never receive this document directly — the compact, self-contained version of this mechanism lives in `charter`'s and `remember`'s own SKILL.md, and in the Core/Standard session-state templates' own Decisions Index note. This section is the canonical full definition, maintained here for anyone editing Banka itself.
 
 ---
 

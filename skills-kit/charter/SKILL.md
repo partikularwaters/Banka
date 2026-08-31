@@ -178,6 +178,8 @@ Blueprint ready.
 [Following the resolved architecture file's Folder Matrix]
 ```
 
+**Core/Standard tier: a Decision made above that clears Section 2.11's eligibility bar** (a durable, standing fact carrying real reasoning worth preserving, not a single-line fact that belongs directly in an owning file) **gets a step in *How to build it*:** create its Decision Record (`decisions/NNNN-title/decision.md` + `rationale.md`) and add its row to the Decisions Index. This skill never writes the record itself — the step executes once building begins, same as any other implementation step, and this skill's Write authority stays none.
+
 Explain any new concept in plain language before using it in the plan (do not assume prior coding background unless the project's context files indicate otherwise).
 
 Cross-check every part of the plan against the resolved architecture file's Absolute Invariants before presenting it. If anything would conflict with an invariant, say so explicitly instead of quietly working around it.

@@ -83,6 +83,8 @@ for rendered in "$tmp_dir/project-standard/context/progress-tracker.md" "$tmp_di
   grep -qi "overflow index" "$rendered" || fail "Missing any mention of an Overflow Index in ${rendered#"$tmp_dir/"}"
   grep -qi "file.*type.*covers\|covers.*type.*file" "$rendered" || fail "Overflow Index is mentioned but no actual schema (its columns) is shown in ${rendered#"$tmp_dir/"} — a downstream session has nothing to build the table from"
   grep -qi "superseded" "$rendered" || fail "Missing what happens to a swept superseded decision in ${rendered#"$tmp_dir/"}"
+  grep -qi "decisions index" "$rendered" || fail "Missing the Decisions Index (Logbook routing table) in ${rendered#"$tmp_dir/"}"
+  grep -qi "decisions/" "$rendered" || fail "Missing a reference to the Logbook's decisions/ folder in ${rendered#"$tmp_dir/"}"
 done
 
 # --- Check 4b: rendered delegation-queue.md carries complete overflow

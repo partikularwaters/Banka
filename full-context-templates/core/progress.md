@@ -30,24 +30,32 @@
 **Next Immediate Step:** [The very first concrete action]
 
 **Keeping this section lean:** promote durable, standing facts to the file
-that owns them (`core/architecture.md`, `core/design.md`), not here; mark a
-reversed decision `[SUPERSEDED — see <new decision>]` rather than leaving it
-looking current; write long rationale as a one-line entry plus a link to
-`overflow/decisions/01-decisions-detail.md`, not an inline paragraph; tag
-narrative by the distinct line of work it belongs to, not one flat story
-(3rd concurrent thread: pause and confirm; 4th: state why in writing).
+that owns them (`core/architecture.md`, `core/design.md`), not here; a
+durable decision worth its own reasoning goes to the Logbook
+(`decisions/NNNN-title/`, Protocol Section 2.11) instead of being written
+inline here — never compressed, never overflowed; tag narrative by the
+distinct line of work it belongs to, not one flat story (3rd concurrent
+thread: pause and confirm; 4th: state why in writing).
 
-If this crosses ~2,000 words of narrative or ~1,500 of decisions, or a
-superseded entry gets swept, move the excess into `overflow/session-notes/`
-or `overflow/decisions/` respectively (creating whichever doesn't exist
-yet; each numbered sequentially — `01-...`, then `02-...` once `01-...`
-itself crosses ~2,000 words) — never force a split against still-active
-work. Add or update:
+If narrative here crosses ~2,000 words, move the excess into
+`overflow/session-notes/` (creating it if it doesn't exist yet; numbered
+sequentially — `01-...`, then `02-...` once `01-...` itself crosses ~2,000
+words) — never force a split against still-active work. Add or update:
 
 ## Overflow Index
 | File | Type | Covers |
 | --- | --- | --- |
 | `overflow/session-notes/01-session-notes.md` | narrative | [what it covers] |
-| `overflow/decisions/01-decisions-detail.md` | decision detail | [what it covers] |
 
 Each overflow file carries its own short Contents note at its own top.
+
+## Decisions Index
+
+_Empty until a decision clears the Logbook's eligibility bar (Section 2.11)
+— durable, standing, and carrying real reasoning worth preserving. Status
+is `Accepted` or `Superseded by [NNNN]` — a superseded decision's record is
+never rewritten, only replaced by a new one._
+
+| ID | Title | Status | Summary |
+| --- | --- | --- | --- |
+| `0001` | `[title]` | `Accepted` | `[one-line summary]` |

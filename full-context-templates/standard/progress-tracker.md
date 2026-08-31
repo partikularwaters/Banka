@@ -35,34 +35,19 @@
 
 ---
 
-## Decisions Made
-[Log important decisions here so the agent doesn't re-debate them.]
+## Decisions Index
 
-**Keeping this section lean:** promote durable, standing facts (architecture,
-invariants, conventions) to the file that owns them, not here. If a new
-decision reverses an earlier one, mark the earlier entry
-`[SUPERSEDED — see <new decision>]` in place — never leave it looking
-current. If a decision's rationale runs past a sentence or two, write a
-one-line entry plus a link to `overflow/decisions/01-decisions-detail.md`
-(the next sequentially numbered file in that folder, once `01-...` itself
-crosses ~2,000 words), not an inline paragraph.
+_Empty until a decision clears the Logbook's eligibility bar (Protocol
+Section 2.11) — durable, standing, and carrying real reasoning worth
+preserving. A durable decision goes to `decisions/NNNN-title/` (its own
+`decision.md`/`rationale.md` pair, never compressed, never overflowed) —
+this table only routes to it, it is never the decision content itself.
+Status is `Accepted` or `Superseded by [NNNN]` — a superseded decision's
+record is never rewritten, only replaced by a new one._
 
-If this section crosses ~1,500 words, or when a superseded entry above gets
-swept out in full, move the excess into `overflow/decisions/` (creating the
-folder if it doesn't exist yet) and add or update this Overflow Index — one
-shared table covering both decisions and session-notes overflow, added the
-first time either is needed:
-
-## Overflow Index
-| File | Type | Covers |
-| --- | --- | --- |
-| `overflow/decisions/01-decisions-detail.md` | decision detail | [what it covers] |
-
-Each overflow file carries its own short Contents note at its own top,
-naming what it covers, so it can be found without reading it in full.
-
-- **[Date]** — [Decision made and why]
-- **[Date]** — [Decision made and why]
+| ID | Title | Status | Summary |
+| --- | --- | --- | --- |
+| `0001` | `[title]` | `Accepted` | `[one-line summary]` |
 
 ---
 
@@ -79,9 +64,15 @@ If this section crosses ~2,000 words, archive whichever tagged thread has
 genuinely concluded to `overflow/session-notes/01-session-notes.md` (the
 next sequentially numbered file in that folder, once `01-...` itself
 crosses ~2,000 words) — never force a split against a thread that's still
-open. Add or update the same Overflow Index used by Decisions Made (see
-above), and give the new overflow file its own short Contents note at its
-top, naming the arc it covers.
+open. Add or update this Overflow Index, added the first time it's needed:
+
+## Overflow Index
+| File | Type | Covers |
+| --- | --- | --- |
+| `overflow/session-notes/01-session-notes.md` | narrative | [what it covers] |
+
+Each overflow file carries its own short Contents note at its own top,
+naming what it covers, so it can be found without reading it in full.
 
 **[Date]**
 - [What was done]

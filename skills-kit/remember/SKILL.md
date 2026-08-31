@@ -25,7 +25,9 @@ confirmation · restore mode — a conversational restore summary.
 **Write authority:** save mode only — the resolved session-state file, by
 section, plus whichever file owns a globally-scoped fact a captured decision
 changes, plus the tier's `overflow/` files and Overflow Index when the size
-thresholds above are crossed. Restore mode: none.
+thresholds above are crossed, plus the Logbook (`decisions/`, Core/Standard
+only) and its Decisions Index row for a decision clearing Section 2.11's
+eligibility bar. Restore mode: none.
 
 ## Resolve Banka state first
 
@@ -110,7 +112,9 @@ file by section; never replace it with a standalone memory document:
 - **Core — `core/progress.md`:** update Current Phase, Active Milestones,
   Completed Actions, Known Issues, Session Memory Bank, and Next Immediate Step.
 - **Standard — `context/progress-tracker.md`:** update Completed, In Progress,
-  Up Next, Blocked, Known Issues, Decisions Made, and Session Notes.
+  Up Next, Blocked, Known Issues, and Session Notes. A durable decision goes
+  to the Logbook instead of an inline Decisions Made entry — see Bloat
+  prevention and correction below.
 
 When a captured decision changes a global invariant, architecture, token, or
 other domain-owned fact, update the file that owns that fact rather than logging
@@ -121,11 +125,20 @@ existing content would be replaced rather than appended or status-updated.
 ### Bloat prevention and correction
 
 Before writing: promote durable, standing facts (architecture, invariants,
-conventions) to the file that owns them, never log them here. If a new
+conventions) to the file that owns them, never log them here.
+
+**Core/Standard — a durable decision carrying real reasoning worth
+preserving goes to the Logbook (Protocol Section 2.11), never inline
+here.** Write its Decision Record (`decisions/NNNN-title/decision.md` +
+`rationale.md`) and add its row to the Decisions Index. If it supersedes an
+earlier Decision Record, mark that earlier record `Superseded by [NNNN]` in
+place — its `rationale.md` is never rewritten, only its status line.
+
+**Minimal — no Logbook; decisions stay inline as before.** If a new
 decision reverses an earlier one, mark the earlier entry
-`[SUPERSEDED — see <new decision>]` in place. If a decision's rationale
-runs past a sentence or two, write a one-line entry plus a link to
-`overflow/decisions/`, not an inline paragraph. Tag Session Notes entries by
+`[SUPERSEDED — see <new decision>]` in place.
+
+Tag Session Notes entries by
 the distinct line of work they belong to, not one flat narrative — a third
 concurrently open thread gets a soft prompt to confirm it's genuinely
 active; a fourth needs a stated one-line reason in writing before it's
@@ -136,18 +149,22 @@ exists): Session Notes crossing ~2,000 words — evaluate each tagged thread
 independently, archive only a thread with a genuine settled boundary to
 `overflow/session-notes/`, never force a split against one that's still
 open; an overflow file itself crossing ~2,000 words — start the next
-sequentially numbered file in the same subfolder; the Decisions section
-crossing ~1,500 words — recommend a dedicated decisions file. Always
-preview before applying, act only when a real threshold is crossed or
-explicitly requested. Each overflow file gets its own short Contents note
-at the top; the live file's Overflow Index (file, type, what it covers)
-tracks all of them and is created the first time any of this fires.
+sequentially numbered file in the same subfolder. Always preview before
+applying, act only when a real threshold is crossed or explicitly
+requested. Each overflow file gets its own short Contents note at the top;
+the live file's Overflow Index (file, type, what it covers) tracks all of
+them and is created the first time any of this fires. Core/Standard's
+Decisions Index is never subject to this correction — Logbook entries are
+permanent by design, not a threshold-triggered archive.
 
 If the resolved session-state file predates this convention, the rules
 above still apply from this point forward — write the guidance above into
-the file yourself (under Decisions Made / Session Notes, or Core's Session
-Memory Bank) so the next session sees it too, rather than applying it only
-in your own head this one time.
+the file yourself (under Session Notes, or Core's Session Memory Bank) so
+the next session sees it too, rather than applying it only in your own head
+this one time. A Core/Standard file that predates the Logbook and still has
+an old Decisions Made section: leave that section's existing content
+exactly as it is (no retroactive migration, per Section 2.11), and add the
+Decisions Index alongside it for decisions going forward.
 
 Confirm after writing: `Session state saved. Next session: invoke the remember skill in restore mode.`
 
