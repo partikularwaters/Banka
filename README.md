@@ -22,6 +22,11 @@ uses state schema 2. See [VERSION](VERSION) and [CHANGELOG.md](CHANGELOG.md).
 
 **New here?** Jump straight to [Getting started](#getting-started) to begin.
 
+> **In progress:** the `scalability-improvements` branch has ongoing,
+> unreleased development beyond this release version. `main` reflects the
+> latest stable release; if you're reading this from that branch, expect
+> protocol and skill changes not yet folded into a numbered release.
+
 ## Why "Banka" 🛶
 
 *Banka* — shortened from *bangka*, Tagalog for the traditional Philippine
