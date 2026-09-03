@@ -10,7 +10,10 @@ AI has no memory between sessions. Every new session starts blank. This skill fi
 **Required:** the resolved session-state file (tier-dependent — see "Resolve
 Banka state first" below) · current git log/status, checked before trusting
 this conversation · AGENTS.md/CLAUDE.md and the tier's required files, to
-resolve state.
+resolve state · on Core/Standard, `scripts/check-banka-thresholds.sh`'s
+output, invoked first and read every call, save and restore alike (Protocol
+Section 2.9) — never trust a self-estimate of a section's size over the
+actual count.
 
 **Conditional:** IDEA-SCOPE.md and the rest of the tier's Source-of-truth
 files, restore mode, when they exist · the resolved delegation queue, when
@@ -84,7 +87,9 @@ No argument given → ask which is meant.
 
 ## Save Mode
 
-### Before writing anything: check for concurrent drift
+### Before writing anything: measure, then check for concurrent drift
+
+On Core/Standard, run `scripts/check-banka-thresholds.sh` first, before anything else — its report is the actual word counts, not an estimate. Read the resulting `## Threshold Check` block(s) so the rest of this save is informed by real numbers, not a guess about whether a section has gotten long.
 
 If this project uses version control, run the equivalent of `git log` and `git status` **before** trusting anything this conversation believes about the project's current state. If a commit exists that this conversation didn't make, another session touched this project since — read what actually changed from disk/git, not from this conversation's assumptions, before writing the save. This applies every single time, not just when something seems off.
 
@@ -130,9 +135,15 @@ conventions) to the file that owns them, never log them here.
 **Core/Standard — a durable decision carrying real reasoning worth
 preserving goes to the Logbook (Protocol Section 2.11), never inline
 here.** Write its Decision Record (`decisions/NNNN-title/decision.md` +
-`rationale.md`) and add its row to the Decisions Index. If it supersedes an
-earlier Decision Record, mark that earlier record `Superseded by [NNNN]` in
-place — its `rationale.md` is never rewritten, only its status line.
+`rationale.md`), giving `decision.md` YAML frontmatter (`status`, `date`,
+`governs`), and add a Decisions Index row whose title links to it. If it
+supersedes an earlier Decision Record, mark that earlier record Superseded
+in place: its `decision.md` prose status line becomes a real link to the
+new record (`Superseded by [<NNNN>](../<new-NNNN>-title/decision.md)`),
+while its `status` frontmatter field stays plain data (`Superseded by
+<NNNN>`) since frontmatter isn't markdown-rendered. Also update its
+Decisions Index row to link to the new record. The earlier record's
+`rationale.md` is never rewritten, only the pointers to it.
 
 **Minimal — no Logbook; decisions stay inline as before.** If a new
 decision reverses an earlier one, mark the earlier entry
@@ -144,18 +155,32 @@ concurrently open thread gets a soft prompt to confirm it's genuinely
 active; a fourth needs a stated one-line reason in writing before it's
 tagged. Neither ever blocks.
 
-After writing, check (provisional figures, revise once real usage data
-exists): Session Notes crossing ~2,000 words — evaluate each tagged thread
-independently, archive only a thread with a genuine settled boundary to
-`overflow/session-notes/`, never force a split against one that's still
-open; an overflow file itself crossing ~2,000 words — start the next
-sequentially numbered file in the same subfolder. Always preview before
-applying, act only when a real threshold is crossed or explicitly
-requested. Each overflow file gets its own short Contents note at the top;
-the live file's Overflow Index (file, type, what it covers) tracks all of
-them and is created the first time any of this fires. Core/Standard's
-Decisions Index is never subject to this correction — Logbook entries are
-permanent by design, not a threshold-triggered archive.
+Every save, check each tagged Session Notes thread independently: the
+moment one reaches a genuine settled boundary, archive it immediately to
+`overflow/session-notes/` — do not wait for the section to also cross a
+size threshold. A thread with no settled boundary stays live regardless of
+size. The ~2,000-word figure (provisional, revise once real usage data
+exists) is now only a fallback: if the section crosses it while nothing is
+yet settled, flag it as oversized with no clean cut point and stop, rather
+than forcing a split against unsettled work. An overflow file itself
+crossing ~2,000 words — start the next sequentially numbered file in the
+same subfolder. Always preview before applying. Each overflow file gets its
+own short Contents note at the top; the live file's Overflow Index (file,
+type, what it covers) tracks all of them, each entry a real link, and is
+created the first time any of this fires.
+
+**Links, not paths.** Every pointer written here — an Overflow Index row, a
+Decisions Index row, an archived entry's summary — is a real markdown link
+to the exact target, never a vague description. Before archiving anything
+(a settled thread, an overflow file rollover), search this project's own
+Banka-generated files for links pointing at the path about to change and
+update them in the same save — never move-and-hope.
+
+Core/Standard's Decisions Index paginates instead of archiving — once it
+crosses ~2,000 words, start `overflow/decisions-index/01-decisions-index.md`
+(next: `02-...`, Section 2.11) and link to it from the live table; rows
+never get swept out for being old, since a decision
+record stays exactly as useful to see years later as it was on day one.
 
 If the resolved session-state file predates this convention, the rules
 above still apply from this point forward — write the guidance above into
@@ -177,6 +202,11 @@ Confirm after writing: `Session state saved. Next session: invoke the remember s
 If version control is in use, run its equivalent of `git log --oneline -10` and `git status` immediately — even if the session-state file looks complete and current. **A project folder worked by more than one session can have real changes on disk that no saved state mentions yet.** Treat this as standing practice, not a one-off check triggered only when something seems wrong — the whole point is that a stale assumption looks exactly like a correct one until it's checked.
 
 ### Step 2 — Read everything available
+
+On Core/Standard, run `scripts/check-banka-thresholds.sh` and read its
+`## Threshold Check` report before anything else — if something is already
+over threshold and unaddressed, that's worth surfacing to the developer
+immediately at restore, not discovered only at the next save.
 
 Read the resolved session-state file first (the Banka-owned `AGENTS.md` block's
 Current Status and Session Notes, `core/progress.md`, or

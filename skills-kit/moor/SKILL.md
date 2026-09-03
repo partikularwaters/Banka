@@ -12,7 +12,8 @@ the resolved destination file for the tier and capture type (see Step 1).
 mode only, to build the whole-codebase baseline · evidence that `survey`
 has passed this build, before capturing a UI pattern or an
 invariant/token change (not a general outcome/decision capture) — audit
-mode is exempt.
+mode is exempt · on Core/Standard, `scripts/check-banka-thresholds.sh`,
+re-run after writing into a section it covers (Protocol Section 2.9).
 
 **Excluded by default:** width/height, layout mechanics, positioning,
 animation/transition timing, and responsive breakpoint variants — Step 2
@@ -88,6 +89,8 @@ If no filepath is given, identify recently created/modified component files auto
 - **A general engineering outcome, decision, or resolved problem** → goes to the session-state file (Minimal: the Banka-owned `AGENTS.md` block's Session Notes; Core: `core/progress.md`; Standard: `context/progress-tracker.md`).
 - **A changed global token, folder structure, or invariant** → update the file that actually owns it directly (Minimal: inside the Banka-owned `AGENTS.md` block; Core: `core/design.md` for tokens, `core/architecture.md` for structure/invariants/conventions; Standard: `ui-tokens.md`, `architecture.md`, `code-standards.md` respectively) — never just log that it changed, actually update the source.
 - **An outcome belonging to an area with an existing local-override file** (Standard tier only — check `code-standards.md`'s `## Area overrides` table for the touched area) → capture there instead of the general destination above; Section 2.10 of the Protocol governs the full mechanism.
+
+**After writing into the session-state file (Core/Standard):** re-run `scripts/check-banka-thresholds.sh` so its embedded `## Threshold Check` report reflects what was just written — `moor` is an independent write path into the same sections `remember` governs, so its own writes need the same mechanical count, not a guess about whether the capture pushed a section over threshold (Protocol Section 2.9).
 
 A UI pattern or invariant/token capture becomes what future work is
 checked against — the registry for one, charter's invariant cross-check

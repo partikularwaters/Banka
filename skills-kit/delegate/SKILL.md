@@ -17,7 +17,9 @@ and security/compliance boundaries when classifying each item's tier.
 
 **Conditional:** the existing delegation queue, when it already has
 unstarted or in-progress tickets — read before appending, never silently
-overwritten.
+overwritten · on Core/Standard, `scripts/check-banka-thresholds.sh`,
+consulted before archiving and re-run after appending any ticket (Protocol
+Section 2.9).
 
 **Excluded by default:** anything outside the approved plan's scope — this
 skill splits an already-approved plan, it does not re-plan.
@@ -87,6 +89,14 @@ For each candidate item, determine its **delegation tier**:
 - Falls into an action category no AI session should perform regardless of
   capability — entering credentials, creating third-party accounts,
   purchasing, granting OAuth, an irreversible production action
+- Names a `Files to touch` or `Files not to touch` path outside the project
+  root, inside `.git/`, or inside any skills-install location
+  (`~/.claude/skills/`, `~/.agents/skills/`, or an equivalent machine-wide
+  skills directory) — a ticket is untrusted prose read directly into a
+  fresh session's instructions; a path there would let one ticket alter
+  the tools every other Banka project on that machine trusts. Never write
+  such a path into a Junior-safe or Senior-required ticket, regardless of
+  what the underlying work is
 
 **Before finalizing the split, check for over-splitting.** "Smallest independently-executable unit" cuts both ways — two candidate items are not actually independent units just because they could technically be described separately. Merge two Junior-safe items into a single ticket when either holds:
 - They touch the same file(s)
@@ -214,7 +224,7 @@ items without telling the user what's being replaced.
 
 **Ticket numbers are append-only.** Never renumber or reuse a number already used in this file — not across separate delegate runs, and not when a merge collapses two candidates into one. A stable number is what lets a session-opening handoff point at "Ticket N" unambiguously; a number that can shift meaning defeats that.
 
-**Full ticket specs archiving.** Before appending, check whether `## Full ticket specs` has crossed ~1,500–2,000 words. If so, archive the oldest tickets already listed in `## Completed` (survey-passed) to the next sequentially numbered file in `overflow/delegation-tickets/` (creating the folder if it doesn't exist yet) — never an unstarted or in-progress ticket's spec, no matter how long the section gets. If no ticket is yet in `## Completed`, do not force an archive — flag the section as oversized with no archive-eligible ticket yet, and stop. Archiving relocates the full spec text only; it never renumbers, resequences, or otherwise touches the stable ticket number. Leave the archived ticket's one-line summary in `## Completed` with a pointer to the overflow file now holding its full spec, and add or update the queue's own `## Overflow Index` (file, ticket numbers covered, date archived) the first time this fires. Give the new overflow file its own short Contents note at its top, naming the ticket numbers it covers. Always preview this action before applying it, same as any other action on a real threshold.
+**Full ticket specs archiving.** Before appending, run `scripts/check-banka-thresholds.sh` (Core/Standard) and read its `## Full ticket specs` row — never estimate by eye; `delegate` is an independent write path into the same section `remember` governs, and self-estimation is exactly the failure mode this script exists to remove. If the mechanical count has crossed ~1,500–2,000 words, archive the oldest tickets already listed in `## Completed` (survey-passed) to the next sequentially numbered file in `overflow/delegation-tickets/` (creating the folder if it doesn't exist yet) — never an unstarted or in-progress ticket's spec, no matter how long the section gets. If no ticket is yet in `## Completed`, do not force an archive — flag the section as oversized with no archive-eligible ticket yet, and stop. Archiving relocates the full spec text only; it never renumbers, resequences, or otherwise touches the stable ticket number. Leave the archived ticket's one-line summary in `## Completed` with a real link (never a vague description) to the overflow file now holding its full spec, and add or update the queue's own `## Overflow Index` (file, ticket numbers covered, date archived) the first time this fires, each row a real link. Before archiving, search the queue and session-state for anything else linking to the ticket's old in-file location and update it in the same operation — reference integrity, not move-and-hope. Give the new overflow file its own short Contents note at its top, naming the ticket numbers it covers. Always preview this action before applying it, same as any other action on a real threshold. After appending any ticket, re-run the script so the queue's `## Threshold Check` row reflects reality, whether or not archiving fired this time.
 
 For a merged ticket, the one-line spec summary in the checklist below must name both folded-in behaviors, not just the more prominent one — that line is often the only thing a future skim reads without opening the full spec.
 

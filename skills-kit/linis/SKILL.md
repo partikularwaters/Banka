@@ -20,7 +20,8 @@ from the session-state file and the version-control diff.
 runs against unsettled code, by design, regardless of requested scope.
 
 **Outputs:** every proposed cleanup, listed for approval before any file is
-touched.
+touched · on Core/Standard, `scripts/check-banka-thresholds.sh`'s report,
+appended to the same proposal, informational only.
 
 **Write authority:** only the confirmed settled file(s) in scope, and only
 narrative/descriptive content — operational history, provenance,
@@ -135,6 +136,8 @@ Do not silently rewrite files. Show the proposed changes as a before/after diff 
 ```
 
 Wait for confirmation. Then apply exactly what was shown — no additional changes introduced during application that weren't in the proposal.
+
+**Also run `scripts/check-banka-thresholds.sh` (Core/Standard) as a standard part of this pass** and append anything over threshold to the proposal, clearly separated from the narrative-cleanup findings above — informational only, `linis` doesn't archive or split, it surfaces the finding for the developer to act on via `remember`/`dredge`. This is a natural fit for `linis`'s own cadence (a milestone/version boundary, repo-wide) and closes the loop on Protocol Section 2.9's mechanical verification, independent of whether any other skill happened to catch it first.
 
 ## Delegation note
 

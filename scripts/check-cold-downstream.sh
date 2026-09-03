@@ -37,12 +37,14 @@ done
 # Rendered tier output, as a generated project actually receives it —
 # copying the templates' *content* into project-shaped paths, never the
 # full-context-templates/ directory itself.
-mkdir -p "$tmp_dir/project-minimal" "$tmp_dir/project-core/core" "$tmp_dir/project-standard/context"
+mkdir -p "$tmp_dir/project-minimal" "$tmp_dir/project-core/core" "$tmp_dir/project-standard/context" "$tmp_dir/project-core/scripts" "$tmp_dir/project-standard/scripts"
 cp "$repo_root/full-context-templates/project-entry/minimal-AGENTS.md" "$tmp_dir/project-minimal/AGENTS.md"
 cp "$repo_root/full-context-templates/core/"*.md "$tmp_dir/project-core/core/"
 cp "$repo_root/full-context-templates/standard/"*.md "$tmp_dir/project-standard/context/"
 cp "$repo_root/full-context-templates/delegation-queue.md" "$tmp_dir/project-core/delegation-queue.md"
 cp "$repo_root/full-context-templates/delegation-queue.md" "$tmp_dir/project-standard/context/delegation-queue.md"
+cp "$repo_root/full-context-templates/scripts/check-banka-thresholds.sh" "$tmp_dir/project-core/scripts/check-banka-thresholds.sh"
+cp "$repo_root/full-context-templates/scripts/check-banka-thresholds.sh" "$tmp_dir/project-standard/scripts/check-banka-thresholds.sh"
 
 # --- Check 1: nothing references full-context-templates/ ------------------
 # This directory structurally never exists outside this repo.
@@ -85,6 +87,19 @@ for rendered in "$tmp_dir/project-standard/context/progress-tracker.md" "$tmp_di
   grep -qi "superseded" "$rendered" || fail "Missing what happens to a swept superseded decision in ${rendered#"$tmp_dir/"}"
   grep -qi "decisions index" "$rendered" || fail "Missing the Decisions Index (Logbook routing table) in ${rendered#"$tmp_dir/"}"
   grep -qi "decisions/" "$rendered" || fail "Missing a reference to the Logbook's decisions/ folder in ${rendered#"$tmp_dir/"}"
+  grep -q '\](decisions/' "$rendered" || fail "Decisions Index example row isn't a real link in ${rendered#"$tmp_dir/"}"
+  grep -q '\](overflow/session-notes/' "$rendered" || fail "Overflow Index example row isn't a real link in ${rendered#"$tmp_dir/"}"
+  grep -qi "settled" "$rendered" || fail "Missing the immediate-split-on-settled-boundary rule in ${rendered#"$tmp_dir/"}"
+  grep -qi "check-banka-thresholds.sh" "$rendered" || fail "Missing a reference to the mechanical threshold script in ${rendered#"$tmp_dir/"}"
+  grep -qi "## Threshold Check" "$rendered" || fail "Missing the Threshold Check block in ${rendered#"$tmp_dir/"}"
+done
+
+# --- Check 4c: the mechanical threshold script itself renders and looks like
+# a real script, not just referenced in prose --------------------------------
+for script in "$tmp_dir/project-core/scripts/check-banka-thresholds.sh" "$tmp_dir/project-standard/scripts/check-banka-thresholds.sh"; do
+  test -f "$script" || fail "Missing rendered check-banka-thresholds.sh at ${script#"$tmp_dir/"}"
+  head -1 "$script" | grep -q '^#!' || fail "check-banka-thresholds.sh has no shebang line at ${script#"$tmp_dir/"}"
+  grep -q "Threshold Check" "$script" || fail "check-banka-thresholds.sh doesn't emit the Threshold Check heading at ${script#"$tmp_dir/"}"
 done
 
 # --- Check 4b: rendered delegation-queue.md carries complete overflow
@@ -96,6 +111,8 @@ for rendered in "$tmp_dir/project-core/delegation-queue.md" "$tmp_dir/project-st
   grep -qi "file.*type.*covers\|covers.*type.*file" "$rendered" || fail "Overflow Index is mentioned but no actual schema (its columns) is shown in ${rendered#"$tmp_dir/"} — a downstream session has nothing to build the table from"
   grep -qi "delegation-tickets" "$rendered" || fail "Missing the overflow/delegation-tickets/ destination in ${rendered#"$tmp_dir/"}"
   grep -qi "never archive live work\|unstarted or in-progress ticket" "$rendered" || fail "Missing the rule that unstarted/in-progress tickets are never archived in ${rendered#"$tmp_dir/"}"
+  grep -q '\](overflow/delegation-tickets/' "$rendered" || fail "Overflow Index example row isn't a real link in ${rendered#"$tmp_dir/"}"
+  grep -qi "check-banka-thresholds.sh" "$rendered" || fail "Missing a reference to the mechanical threshold script in ${rendered#"$tmp_dir/"}"
 done
 
 # --- Check 5: Minimal correctly opts out of overflow structure -------------
@@ -105,6 +122,7 @@ done
 minimal_rendered="$tmp_dir/project-minimal/AGENTS.md"
 grep -qi "overflow/session-notes\|overflow/decisions" "$minimal_rendered" && fail "Minimal's rendered AGENTS.md instructs writing to an overflow/ path — Minimal has no state folder; it should defer to scale's Minimal→Core threshold instead"
 grep -qi "scale" "$minimal_rendered" || fail "Minimal's rendered AGENTS.md doesn't point at scale's promotion threshold as its own overflow alternative"
+grep -qi "check-banka-thresholds.sh" "$minimal_rendered" && fail "Minimal's rendered AGENTS.md references the mechanical threshold script — Minimal is explicitly excluded from it"
 
 # --- Check 6: remember's self-heal instruction is actually resolvable -----
 remember_file="$tmp_dir/skills/remember/SKILL.md"
