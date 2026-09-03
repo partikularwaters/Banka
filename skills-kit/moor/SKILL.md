@@ -1,33 +1,34 @@
 ---
 name: moor
-description: After building any UI component or resolving a notable engineering outcome, extract what matters and save it to the correct project file — the UI registry for UI patterns, the session-state file for everything else. So every future session builds on what's already established instead of drifting from it.
+description: After building a UI component or changing a token/invariant, ground the capture in what actually changed — not recollection of the conversation — and save it to the correct project file. So every future session builds on what's already established instead of drifting from it.
 ---
 
-A pattern or decision that only lives in this conversation is invisible to every future session — moor's job is to move what was just settled into the one file a later session will actually read before building something similar.
+A UI pattern or invariant that only lives in git history and this conversation is invisible to every future session — moor grounds its capture in the actual diff, not memory of the conversation, and moves it into the one file a later session will actually read before building something similar.
 
 ## Context Contract
 
-**Required:** the component file(s) or engineering outcome being captured ·
-the resolved destination file for the tier and capture type (see Step 1).
+**Required:** the changed file(s) — resolved from `git diff`/`git status`,
+or an explicit filepath — being captured · the resolved destination file
+for the tier and capture type (see Step 1).
 
 **Conditional:** every existing UI component file in the project — audit
 mode only, to build the whole-codebase baseline · evidence that `survey`
 has passed this build, before capturing a UI pattern or an
-invariant/token change (not a general outcome/decision capture) — audit
-mode is exempt · on Core/Standard, `scripts/check-banka-thresholds.sh`,
-re-run after writing into `session-notes.md` (Protocol Section 2.9).
+invariant/token change — audit mode is exempt.
 
 **Excluded by default:** width/height, layout mechanics, positioning,
 animation/transition timing, and responsive breakpoint variants — Step 2
-lists these as deliberately not extracted.
+lists these as deliberately not extracted · anything with no corresponding
+file change — a decision, conclusion, or rationale visible only in
+conversation belongs to `remember`, not moor.
 
-**Outputs:** a registry or session-state entry (single-capture mode), or a
+**Outputs:** a registry or owning-file entry (single-capture mode), or a
 proposed baseline plus a deviation list (audit mode) — audit mode's baseline
 is written only after developer confirmation.
 
 **Write authority:** the one resolved destination file for the capture type
-(UI registry or session-state file, by tier), append/update in place — never
-a file outside that resolved destination.
+(UI registry or the fact's owning file, by tier), append/update in place —
+never a file outside that resolved destination, and never session-state.
 
 ## Resolve Banka state first
 
@@ -57,7 +58,11 @@ user-selected model — will read before building something similar.
 Claude Code: `/moor`, `/moor [filepath]`, or `/moor audit`.
 Codex: `$moor`, `$moor [filepath]`, or `$moor audit`.
 
-If no filepath is given, identify recently created/modified component files automatically.
+If no filepath is given, resolve what changed from git: `git status`/`git diff`
+for uncommitted changes, or the most recent commit if the working tree is
+already clean. Never rely on memory of the conversation for what changed —
+the actual diff is the source of truth, the same discipline `remember`
+already applies to its own save.
 
 **Use audit mode when:** the project's UI already exists and consistency is uncertain, multiple sessions have passed without invoking moor, something looks visually off but it's hard to pinpoint why, or before establishing `ui-registry.md` for the first time on an existing project.
 
@@ -65,30 +70,26 @@ If no filepath is given, identify recently created/modified component files auto
 
 ## Step 1 — Determine what's being captured
 
+Classify each file identified above — never a file this skill hasn't actually seen change:
+
 - **A UI component pattern** (background, border, radius, text roles, spacing, interactive states, shadow, accent usage — not width/height, layout positioning, or responsive variants, which are too context-dependent to be a consistency rule) → goes to the UI registry (Minimal: a Component Registry note inside the Banka-owned `AGENTS.md` block's Project Overview; Core: `core/design.md`; Standard: `context/ui-registry.md`).
-- **A general engineering outcome, decision, or resolved problem** → goes to the session narrative (Minimal: the Banka-owned `AGENTS.md` block's Session Notes; Core: `core/session-notes.md`; Standard: `context/session-notes.md`).
 - **A changed global token, folder structure, or invariant** → update the file that actually owns it directly (Minimal: inside the Banka-owned `AGENTS.md` block; Core: `core/design.md` for tokens, `core/architecture.md` for structure/invariants/conventions; Standard: `ui-tokens.md`, `architecture.md`, `code-standards.md` respectively) — never just log that it changed, actually update the source.
 - **An outcome belonging to an area with an existing local-override file** (Standard tier only — check `code-standards.md`'s `## Area overrides` table for the touched area) → capture there instead of the general destination above; Section 2.10 of the Protocol governs the full mechanism.
-
-**After writing into `session-notes.md` (Core/Standard):** re-run `scripts/check-banka-thresholds.sh` so its embedded `## Threshold Check` report reflects what was just written — `moor` is an independent write path into the same file `remember` governs, so its own writes need the same mechanical count, not a guess about whether the capture pushed the file over threshold (Protocol Section 2.9).
+- **Anything else** — a change with no UI, token, invariant, or area content, or a decision/conclusion with no matching file change — isn't moor's job. Tell the developer to invoke `remember` if it's worth a durable narrative entry; moor has no destination for it.
 
 A UI pattern or invariant/token capture becomes what future work is
 checked against — the registry for one, charter's invariant cross-check
 for the other. Capturing either before verification risks enshrining
 something wrong as settled. Confirm `survey` has passed this build —
 cleanly, or with findings resolved or explicitly accepted as intentional,
-not just run. Check the conversation
-for evidence; if unclear, stop and ask rather than assume either way. A
-general outcome/decision capture (the second bullet) is unaffected — a
-log entry, not reference material, with its own graceful path for being
-wrong later (`[SUPERSEDED — see <new decision>]`). Audit mode is exempt —
-see below.
+not just run. Check the conversation for evidence; if unclear, stop and ask
+rather than assume either way. Audit mode is exempt — see below.
 
-The bullet above is this skill's own promotion check. If a captured
-outcome's rationale runs past a sentence or two, that's a decision-detail
-write outside this skill's own write authority — capture only a one-line
-summary here and tell the developer to invoke remember for the fuller
-entry; do not create a link to a file this skill has no authority to write.
+The bullets above are this skill's own promotion check. If a captured
+pattern's notes run past a sentence or two, that's a decision-detail write
+outside this skill's own write authority — capture only a one-line summary
+here and tell the developer to invoke remember for the fuller entry; do not
+create a link to a file this skill has no authority to write.
 
 ## Step 2 — Extract only what matters for consistency (UI capture)
 

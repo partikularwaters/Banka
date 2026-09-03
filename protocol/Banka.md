@@ -359,7 +359,7 @@ _Last run: [date]. Run `bash scripts/check-banka-thresholds.sh` to refresh._
 
 `session-notes.md` and `decisions-index.md` each carry the same block reporting their own word count directly, not as a rollup.
 
-Four skills invoke it, each at the point where it actually catches something the others can't: `remember` invokes it first and reads the report on every call, save and restore alike — restore is nearly free since the file is already being read, and it means a fresh session sees immediately whether something is already over threshold and unaddressed. `moor` and `delegate` are independent write paths into tracked files (`moor`'s captured outcomes into `session-notes.md`, `delegate`'s appended tickets into `delegation-queue.md`) and re-run it after writing, replacing self-estimation with the mechanical count. `linis` runs it as a standard part of its own milestone sweep and surfaces anything over threshold in its report — informational only, no write authority needed beyond what `linis` already has. No single skill being skipped silently loses the whole safety net, since the underlying measurement never depended on any of them in the first place.
+Three skills invoke it, each at the point where it actually catches something the others can't: `remember` invokes it first and reads the report on every call, save and restore alike — restore is nearly free since the file is already being read, and it means a fresh session sees immediately whether something is already over threshold and unaddressed. `delegate` is an independent write path into `delegation-queue.md` and re-runs it after appending, replacing self-estimation with the mechanical count. `linis` runs it as a standard part of its own milestone sweep and surfaces anything over threshold in its report — informational only, no write authority needed beyond what `linis` already has. `moor` never writes to a threshold-tracked file (its destinations are the UI registry and each fact's own owning file, never session-state) so it has no need to invoke this script at all. No single skill being skipped silently loses the whole safety net, since the underlying measurement never depended on any of them in the first place.
 
 The script's canonical definition lives here; the copy installed into a project is a checked template (Section 2.8's existing pattern) — it updates on that project's next regeneration or promotion, never retroactively.
 
@@ -801,10 +801,11 @@ If `IDEA-SCOPE.md` exists, consult it for original intent. Never overwrite it.
 This project uses the standard Skills Kit: charter, survey, dredge, remember,
 moor, scale, delegate, watershed, and linis. Install it once per runtime; do
 not create a project-local copy. Follow each skill's own instructions exactly.
-The moor skill writes UI patterns to `context/ui-registry.md` and general
-outcomes to `context/session-notes.md`; remember updates task state in
-`context/progress-tracker.md`, session narrative in `context/session-notes.md`,
-and the Logbook routing table in `context/decisions-index.md`.
+The moor skill writes git-observed UI patterns to `context/ui-registry.md`
+and invariant/token changes to their owning file, never session-state;
+remember updates task state in `context/progress-tracker.md`, session
+narrative in `context/session-notes.md`, and the Logbook routing table in
+`context/decisions-index.md`.
 <!-- BANKA:END -->
 ```
 

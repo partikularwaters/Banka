@@ -28,8 +28,9 @@ If `IDEA-SCOPE.md` exists, consult it for original intent. Never overwrite it.
 This project uses the standard Skills Kit: charter, survey, dredge, remember,
 moor, scale, delegate, watershed, and linis. Install it once per runtime; do
 not create a project-local copy. Follow each skill's own instructions exactly.
-The moor skill writes UI patterns to `context/ui-registry.md` and general
-outcomes to `context/session-notes.md`; remember updates task state in
-`context/progress-tracker.md`, session narrative in `context/session-notes.md`,
-and the Logbook routing table in `context/decisions-index.md`.
+The moor skill writes git-observed UI patterns to `context/ui-registry.md`
+and invariant/token changes to their owning file, never session-state;
+remember updates task state in `context/progress-tracker.md`, session
+narrative in `context/session-notes.md`, and the Logbook routing table in
+`context/decisions-index.md`.
 <!-- BANKA:END -->

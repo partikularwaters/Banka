@@ -168,7 +168,7 @@ discovery location and used across every Banka project regardless of tier:
 | `survey` | Checks a build against what was planned, the project's own declared rules, and production-readiness — then routes real findings to the right next skill. |
 | `dredge` | Diagnoses a build failure before responding to it — including when it can't be reproduced at all — targeted fix, hard reset, or genuine rethink are different problems. |
 | `watershed` | Runs a genuinely contested or high-stakes call through five independent perspectives, then consolidates one recommendation. |
-| `moor` | Captures a UI pattern or engineering outcome once it's settled — registry and invariant captures wait for survey to pass first — so the next session builds on it instead of drifting. |
+| `moor` | Captures a UI pattern or invariant/token change, grounded in the actual file diff (not conversation memory) — registry and invariant captures wait for survey to pass first — so the next session builds on it instead of drifting. |
 | `remember` | Saves session state on close, restores it on open — always checking disk/git reality first, and keeping the session-state file itself from bloating as it grows. |
 | `scale` | Promotes a project exactly one tier at a time, Minimal → Core → Standard, only when a real threshold is met. |
 | `linis` | Cleans narrative residue from settled files while preserving operational history, provenance, compatibility facts, and load-bearing rationale. Never runs against active work. |
@@ -317,8 +317,9 @@ survey → check plan-alignment, system integrity, prod-readiness
    |    ├─→ dredge     if something is actually broken
    |    └─→ watershed  if it's a genuine multi-angle judgment call
    |
-moor → capture what's worth remembering (registry/invariant captures wait
-   |    for survey to pass first)
+moor → capture a UI pattern or invariant/token change, grounded in the
+   |    actual git diff (registry/invariant captures wait for survey to
+   |    pass first)
    |
 remember save → close the session
 ```
@@ -326,8 +327,8 @@ remember save → close the session
 `charter → delegate`, `survey → moor`, and `remember save → restore` are
 enforced orderings — `delegate` refuses to run without an approved `charter`
 plan, `moor`'s registry and invariant/token captures require survey to have
-passed first (see `moor`'s own file for the general-outcome and audit-mode
-exceptions), and every session ends with save, starts with restore.
+passed first (see `moor`'s own file for the audit-mode exception), and
+every session ends with save, starts with restore.
 
 Use `/skill-name` in Claude Code and `$skill-name` in Codex. The loop repeats
 every session; the remember skill in restore mode opens the next one. The scale
@@ -369,7 +370,7 @@ This is what Banka generates *inside a project you build* — not this repo's ow
 | Standard files (nine files) | `/context/` | Standard-tier generation; restructured by `scale` on promotion |
 | `delegation-queue.md` | project root (Minimal/Core) or `/context/` (Standard) | `delegate` |
 | UI patterns | `ui-registry.md` (Standard) / `core/design.md` (Core) / inline (Minimal) | `moor` |
-| Session state | `progress.md`, `progress-tracker.md`, or the marked `AGENTS.md` block's Session Notes | `moor`, `remember` |
+| Session state | `progress.md`, `progress-tracker.md`, or the marked `AGENTS.md` block's Session Notes | `remember` |
 
 ### Current state and migration
 

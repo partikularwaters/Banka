@@ -4,8 +4,8 @@
 # threshold-bearing sections (Protocol Section 2.9).
 #
 # Runs independent of any AI session: invoke it directly from a terminal,
-# or wire it into a git hook. remember, moor, delegate, and linis also call
-# it at their own points, but none of them are required for it to work.
+# or wire it into a git hook. remember, delegate, and linis also call it at
+# their own points, but none of them are required for it to work.
 #
 # Never applies a fix, never archives anything — reports word counts
 # against the documented provisional thresholds and stops. What to do

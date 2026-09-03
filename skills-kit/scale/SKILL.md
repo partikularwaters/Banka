@@ -110,7 +110,8 @@ If triggered, perform the promotion:
    set its tier marker to Standard, and make its Source of truth section list
    all eleven `/context/` files. Preserve all content outside the block and keep
    `CLAUDE.md` exactly `@AGENTS.md`. The Skills available note reflects that
-   moor writes to `context/ui-registry.md` or `context/session-notes.md`, and
+   moor writes git-observed UI patterns to `context/ui-registry.md` and
+   invariant/token changes to their owning file, never session-state; and
    remember uses `context/progress-tracker.md`, `context/session-notes.md`,
    and `context/decisions-index.md`.
 8. Output all eleven new files and the proposed replacement Banka block in full.

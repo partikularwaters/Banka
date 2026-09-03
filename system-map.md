@@ -61,14 +61,15 @@ STAGE 3 — The Build Loop (skills-kit/, exposed per supported runtime)
   survey     -> check plan-alignment, system integrity, prod-ready
       -> dredge    if something is actually broken
       -> watershed if it is a genuine multi-angle judgment call
-  moor       -> capture a UI pattern or engineering outcome (registry/
-                invariant captures wait for survey to pass first)
+  moor       -> capture a UI pattern or invariant/token change, grounded
+                in the actual git diff (registry/invariant captures wait
+                for survey to pass first)
   applicable operational perspectives are embedded inside existing skills
   remember save -> close the session
 
   charter -> delegate, survey -> moor, and remember save -> restore are
   enforced orderings; moor's registry/invariant captures require survey to
-  have passed first (see moor's own file for exceptions).
+  have passed first (see moor's own file for the audit-mode exception).
 
   Loop repeats every session. remember restore opens the next one.
     |

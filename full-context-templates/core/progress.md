@@ -7,7 +7,7 @@
 
 ## Threshold Check
 
-_Mechanical, not estimated — `remember`, `moor`, and `linis` run
+_Mechanical, not estimated — `remember` and `linis` run
 `bash scripts/check-banka-thresholds.sh` and update this from its actual
 output, never a guess (Protocol Section 2.9). This file no longer holds
 Session Notes or the Decisions Index itself — each lives in its own file
