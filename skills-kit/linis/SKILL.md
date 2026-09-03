@@ -28,6 +28,28 @@ narrative/descriptive content — operational history, provenance,
 compatibility facts, and load-bearing rationale are preserved, never
 removed.
 
+## Resolve Banka state first
+
+Read `../_shared/banka-state-resolution.md` (a sibling of this skill's own
+installed directory) and follow it in full before proceeding — it covers
+schema-2 detection, matching tier shapes, stop conditions, and legacy-state
+handling.
+
+linis's own legacy handling is narrower than the shared default: it may
+report the classification and inspect state only to resolve scope and
+prepare the cleanup proposal — a confirmed cleanup must not change a legacy
+Banka state file, tier marker, state directory, queue, or runtime shim; if
+the proposal would do so, stop until an explicitly requested, previewed,
+and confirmed migration completes.
+
+For active schema 2, Standard state is in `/context/`, Core state is in
+`/core/`, and Minimal state is in the Banka-owned `AGENTS.md` block. If
+neither schema 2 nor recognizable legacy state exists, treat the repository
+as unstructured rather than assuming Minimal; use the supplied
+milestone/diff to resolve scope and do not create Banka state files. If a
+confirmed Minimal cleanup changes `AGENTS.md`, edit only its Banka-owned
+block and preserve all content outside the block.
+
 ---
 
 ## Step 0 — Determine scope
@@ -36,49 +58,6 @@ Default: files changed in the current completed milestone, resolved from the
 session-state file and version-control diff. Do not expand this to a repo-wide
 cleanup unless the user explicitly requests that scope. If the user specifies a
 narrower scope, respect it.
-
-Before reading project state, inspect `AGENTS.md`, the complete contents of
-`CLAUDE.md`, `/core/`, `/context/`, and the required tier files. Active schema 2
-requires one complete Banka block in `AGENTS.md` containing these exact comments
-exactly once and in this order: `<!-- BANKA:START -->`,
-`<!-- BANKA:STATE-SCHEMA: 2 -->`, exactly one of
-`<!-- BANKA:TIER: Minimal -->`, `<!-- BANKA:TIER: Core -->`, or
-`<!-- BANKA:TIER: Standard -->`, then `<!-- BANKA:END -->`. The declared tier
-must match the filesystem shape and required files. `CLAUDE.md`
-must be exactly `@AGENTS.md`; if it is missing, schema 2 is still active for a
-runtime that discovers `AGENTS.md` directly, but report that Claude Code
-compatibility is unavailable.
-
-A matching Minimal shape has neither `/core/` nor `/context/`. Core has
-`/core/` and its `overview.md`, `architecture.md`, `design.md`, `progress.md`,
-`session-notes.md`, and `decisions-index.md`, with no `/context/`. Standard
-has `/context/` and its `project-overview.md`, `architecture.md`,
-`build-plan.md`, `code-standards.md`, `library-docs.md`, `ui-tokens.md`,
-`ui-rules.md`, `ui-registry.md`, `progress-tracker.md`, `session-notes.md`,
-and `decisions-index.md`, with no `/core/`.
-
-Stop state-dependent work for competing authority, malformed/partial/duplicate
-or unknown Banka markers, a non-exact `CLAUDE.md` beside schema 2, an exact shim
-with missing authority, both state directories, tier mismatch, or missing
-required tier files. Do not choose, repair, or normalize any of these states.
-
-Without valid schema 2, recognize legacy Banka state only when `CLAUDE.md` has
-the `# Project Operating Protocol` heading and exactly one complete legacy tier
-shape, with or without an old AGENTS block pointing to it. Legacy is
-compatibility-read-only: report that classification and inspect its state only
-to resolve scope and prepare the cleanup proposal. Applying a confirmed cleanup
-must not change a legacy Banka state file, tier marker, state directory, queue,
-or runtime shim; if the proposal would do so, stop until an explicitly
-requested, previewed, and confirmed migration completes. Incomplete legacy
-state or a broken old shim is a stop condition.
-
-For active schema 2, Standard state is in `/context/`, Core state is in
-`/core/`, and Minimal state is in the Banka-owned `AGENTS.md` block. If neither
-schema 2 nor recognizable legacy state exists, treat the repository as
-unstructured rather than assuming Minimal; use the supplied milestone/diff to
-resolve scope and do not create Banka state files. If a confirmed Minimal
-cleanup changes `AGENTS.md`, edit only its Banka-owned block and preserve all
-content outside the block.
 
 **Never run this against active, in-progress work** — check the session-state file first; if the scope includes something still marked in-progress, ask before touching it. Cleanup is for what's settled, not what's still being decided.
 

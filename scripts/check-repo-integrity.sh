@@ -207,27 +207,55 @@ if rg -n -i '@CLAUDE\.md|AGENTS\.md[^\n]*(points? to|imports?)[^\n]*CLAUDE\.md|C
   fail "Found obsolete CLAUDE-authority claim; CLAUDE.md may only be a compatibility shim or legacy read-only state"
 fi
 
+shared_state_file="$repo_root/skills-kit/_shared/banka-state-resolution.md"
+test -f "$shared_state_file" || fail "Missing skills-kit/_shared/banka-state-resolution.md"
+
+require_literal '<!-- BANKA:START -->' "$shared_state_file"
+require_literal '<!-- BANKA:STATE-SCHEMA: 2 -->' "$shared_state_file"
+require_literal '<!-- BANKA:TIER: Minimal -->' "$shared_state_file"
+require_literal '<!-- BANKA:TIER: Core -->' "$shared_state_file"
+require_literal '<!-- BANKA:TIER: Standard -->' "$shared_state_file"
+require_literal '<!-- BANKA:END -->' "$shared_state_file"
+require_literal 'exactly once' "$shared_state_file"
+require_literal '@AGENTS.md' "$shared_state_file"
+require_literal 'compatibility-read-only' "$shared_state_file"
+require_literal '/core/' "$shared_state_file"
+require_literal '/context/' "$shared_state_file"
+require_literal 'unstructured/non-Banka' "$shared_state_file"
+for required_tier_file in overview.md architecture.md design.md progress.md \
+  session-notes.md decisions-index.md \
+  project-overview.md build-plan.md code-standards.md library-docs.md \
+  ui-tokens.md ui-rules.md ui-registry.md progress-tracker.md; do
+  require_literal "$required_tier_file" "$shared_state_file"
+done
+
+# Every state-resolver skill must carry an identical, byte-for-byte pointer
+# to the shared file — checked the same way Section 2.8 already checks the
+# tier blocks against project-entry/*-AGENTS.md (extract, then cmp -s).
+extract_pointer_block() {
+  awk '
+    /^## Resolve Banka state first$/ { print; n=5; next }
+    n>0 { print; n--; next }
+  ' "$1"
+}
+
+pointer_reference_file="$integrity_tmp_dir/pointer-reference.md"
+extract_pointer_block "$repo_root/skills-kit/charter/SKILL.md" > "$pointer_reference_file"
+grep -q '^Read `\.\./_shared/banka-state-resolution\.md`' "$pointer_reference_file" || \
+  fail "charter/SKILL.md's pointer block doesn't start as expected — extraction may be broken"
+
 for skill in "${state_resolver_skills[@]}"; do
   skill_file="$repo_root/skills-kit/$skill/SKILL.md"
-  require_literal '<!-- BANKA:START -->' "$skill_file"
-  require_literal '<!-- BANKA:STATE-SCHEMA: 2 -->' "$skill_file"
-  require_literal '<!-- BANKA:TIER: Minimal -->' "$skill_file"
-  require_literal '<!-- BANKA:TIER: Core -->' "$skill_file"
-  require_literal '<!-- BANKA:TIER: Standard -->' "$skill_file"
-  require_literal '<!-- BANKA:END -->' "$skill_file"
-  require_literal 'exactly once and in this order' "$skill_file"
-  require_literal '@AGENTS.md' "$skill_file"
-  require_literal 'compatibility-read-only' "$skill_file"
-  require_literal '/core/' "$skill_file"
-  require_literal '/context/' "$skill_file"
-  require_literal 'A matching Minimal shape has neither `/core/` nor `/context/`.' "$skill_file"
-  for required_tier_file in overview.md architecture.md design.md progress.md \
-    session-notes.md decisions-index.md \
-    project-overview.md build-plan.md code-standards.md library-docs.md \
-    ui-tokens.md ui-rules.md ui-registry.md progress-tracker.md; do
-    require_literal "$required_tier_file" "$skill_file"
-  done
+  require_literal '## Resolve Banka state first' "$skill_file"
+  pointer_block_file="$integrity_tmp_dir/pointer-$skill.md"
+  extract_pointer_block "$skill_file" > "$pointer_block_file"
+  cmp -s "$pointer_reference_file" "$pointer_block_file" || \
+    fail "skills-kit/$skill/SKILL.md's pointer to _shared/banka-state-resolution.md isn't byte-identical to the others"
 done
+
+# dredge doesn't get its own heading — it points to the shared file only
+# conditionally, from its Context Contract's Conditional line.
+require_literal '../_shared/banka-state-resolution.md' "$repo_root/skills-kit/dredge/SKILL.md"
 
 for handoff_file in "$repo_root/skills-kit/delegate/SKILL.md" "$repo_root/full-context-templates/delegation-queue.md"; do
   grep -Fiq 'ready-to-paste' "$handoff_file" || fail "Missing ready-to-paste handoff requirement in ${handoff_file#$repo_root/}"
@@ -269,7 +297,7 @@ cmp -s "$delegate_batch_handoff_file" "$template_batch_handoff_file" || \
 
 user_skills_dir="$HOME/.agents/skills"
 if test -d "$user_skills_dir"; then
-  for skill in "${skills[@]}"; do
+  for skill in "${skills[@]}" "_shared"; do
     installed_skill="$user_skills_dir/$skill"
     if test -e "$installed_skill" || test -L "$installed_skill"; then
       canonical_target=$(cd "$repo_root/skills-kit/$skill" && pwd -P)

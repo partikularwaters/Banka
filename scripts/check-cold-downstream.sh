@@ -27,12 +27,16 @@ trap 'rm -rf "$tmp_dir"' EXIT
 
 # --- Build the cold-downstream simulation ---------------------------------
 # Skills as they exist once installed standalone (~/.claude/skills/<name>/SKILL.md
-# or ~/.agents/skills/<name>/SKILL.md) — nothing else from this repo alongside them.
+# or ~/.agents/skills/<name>/SKILL.md), plus the one thing that now legitimately
+# travels alongside them: the sibling _shared/ directory (Protocol Section 7) —
+# nothing else from this repo is present.
 mkdir -p "$tmp_dir/skills"
 for skill in "${skills[@]}"; do
   mkdir -p "$tmp_dir/skills/$skill"
   cp "$repo_root/skills-kit/$skill/SKILL.md" "$tmp_dir/skills/$skill/SKILL.md"
 done
+mkdir -p "$tmp_dir/skills/_shared"
+cp "$repo_root/skills-kit/_shared/banka-state-resolution.md" "$tmp_dir/skills/_shared/banka-state-resolution.md"
 
 # Rendered tier output, as a generated project actually receives it —
 # copying the templates' *content* into project-shaped paths, never the
@@ -76,6 +80,27 @@ done
 if grep -rl -E "Track A|Track B" "$tmp_dir/skills" >/dev/null 2>&1; then
   fail "Found 'Track A'/'Track B' protocol-internal jargon inside an installed skill file"
 fi
+
+# --- Check 3a: every state-resolver skill's ../_shared/ pointer actually
+# resolves against the simulated cold-install layout — not just present as
+# text, structurally real. dredge is checked separately below since it has
+# no dedicated heading.
+state_resolver_skills_downstream=(charter delegate linis moor remember scale survey watershed)
+for skill in "${state_resolver_skills_downstream[@]}"; do
+  skill_file="$tmp_dir/skills/$skill/SKILL.md"
+  grep -q '^## Resolve Banka state first$' "$skill_file" || \
+    fail "$skill/SKILL.md has no '## Resolve Banka state first' heading in the cold install"
+  pointer_line=$(grep -o '\.\./_shared/[A-Za-z0-9_-]*\.md' "$skill_file" | head -n 1)
+  test -n "$pointer_line" || fail "$skill/SKILL.md has no ../_shared/ pointer in the cold install"
+  resolved_path=$(cd "$tmp_dir/skills/$skill" && cd "$(dirname "$pointer_line")" && pwd)/$(basename "$pointer_line")
+  test -f "$resolved_path" || fail "$skill/SKILL.md's pointer ($pointer_line) doesn't resolve to a real file in the cold install"
+done
+
+dredge_file="$tmp_dir/skills/dredge/SKILL.md"
+dredge_pointer=$(grep -o '\.\./_shared/[A-Za-z0-9_-]*\.md' "$dredge_file" | head -n 1)
+test -n "$dredge_pointer" || fail "dredge/SKILL.md has no ../_shared/ pointer in the cold install"
+dredge_resolved=$(cd "$tmp_dir/skills/dredge" && cd "$(dirname "$dredge_pointer")" && pwd)/$(basename "$dredge_pointer")
+test -f "$dredge_resolved" || fail "dredge/SKILL.md's pointer ($dredge_pointer) doesn't resolve to a real file in the cold install"
 
 # --- Check 4: Core/Standard's rendered task-tracking file (progress.md /
 # progress-tracker.md) carries only rollup rows for the two files it split

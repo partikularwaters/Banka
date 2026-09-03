@@ -36,6 +36,23 @@ handoff, since no AI session executes those.
 tickets with stable, never-reused numbers; never touch the code the tickets
 describe.
 
+## Resolve Banka state first
+
+Read `../_shared/banka-state-resolution.md` (a sibling of this skill's own
+installed directory) and follow it in full before proceeding — it covers
+schema-2 detection, matching tier shapes, stop conditions, and legacy-state
+handling.
+
+delegate writes, so legacy state is stricter than the shared default: it may
+be inspected, but delegate must not create or change a queue until an
+explicitly requested, previewed, and confirmed migration completes.
+
+Minimal and Core resolve to root `delegation-queue.md`; Standard resolves to
+`context/delegation-queue.md`. Create the resolved queue only for active
+schema 2. Append tickets — never silently overwrite a queue that already has
+unstarted or in-progress items without telling the user what's being
+replaced.
+
 Fresh-session isolation covers conversation context, not working files. Banka's
 safe default is **serial execution in one checkout**: finish and survey one
 ticket (or self-check-and-advance through a batch, then survey the batch —
@@ -186,42 +203,6 @@ AI-execution fields that don't apply to the owner.]
 ---
 
 ## Step 3 — Write the tier-resolved queue
-
-Resolve the project with the schema-2 authority and tier contract before
-writing. `AGENTS.md` must contain one valid schema-2 Banka block with these
-comments exactly once and in this order:
-
-```markdown
-<!-- BANKA:START -->
-<!-- BANKA:STATE-SCHEMA: 2 -->
-<!-- BANKA:TIER: Minimal -->
-<!-- BANKA:END -->
-```
-
-The third comment is exactly one of `<!-- BANKA:TIER: Minimal -->`,
-`<!-- BANKA:TIER: Core -->`, or `<!-- BANKA:TIER: Standard -->`. Its declared
-tier must match the verified filesystem shape, and any present `CLAUDE.md` must
-be exactly `@AGENTS.md`.
-
-A matching Minimal shape has neither `/core/` nor `/context/`. Core has
-`/core/` and its `overview.md`, `architecture.md`, `design.md`, `progress.md`,
-`session-notes.md`, and `decisions-index.md`, with no `/context/`. Standard
-has `/context/` and its `project-overview.md`, `architecture.md`,
-`build-plan.md`, `code-standards.md`, `library-docs.md`, `ui-tokens.md`,
-`ui-rules.md`, `ui-registry.md`, `progress-tracker.md`, `session-notes.md`,
-and `decisions-index.md`, with no `/core/`.
-
-Minimal and Core resolve to root
-`delegation-queue.md`; Standard resolves to `context/delegation-queue.md`.
-
-Legacy `CLAUDE.md` authority is compatibility-read-only: it may be inspected,
-but Delegate must not create or change a queue until the explicit, previewed,
-and confirmed migration has completed. Stop rather than choosing a destination
-when root authority is missing or broken, Banka metadata competes or is
-malformed, both `/core/` and `/context/` exist, or the tier and storage shape
-disagree. Create the resolved queue only for active schema 2. Append tickets —
-never silently overwrite a queue that already has unstarted or in-progress
-items without telling the user what's being replaced.
 
 **Ticket numbers are append-only.** Never renumber or reuse a number already used in this file — not across separate delegate runs, and not when a merge collapses two candidates into one. A stable number is what lets a session-opening handoff point at "Ticket N" unambiguously; a number that can shift meaning defeats that.
 

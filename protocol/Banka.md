@@ -310,7 +310,7 @@ Every durable Banka rule or project fact has exactly one canonical home — the 
 
 This is not a new practice; it is already enforced mechanically. `scripts/check-repo-integrity.sh` verifies each project-entry `AGENTS.md` template is byte-identical to the tier block this protocol defines in Sections 3.3, 4, and 5 — the protocol is canonical, the templates are checked copies, never an independent source. The same script verifies the `delegate` skill's ready-to-paste handoff block is byte-identical to `full-context-templates/delegation-queue.md`'s copy of it, for the same reason.
 
-Where a fact must appear in more than one file for a skill to remain self-contained and portable — each skill's own state-resolution preamble in Section 7's Skills Kit is the clearest case — exact duplication of the load-bearing facts is checked by the repository's integrity tooling rather than left to manual consistency or rewritten into a single shared block. This is a deliberate, checked exception to "one home," not a gap in the principle: skill portability is itself a Banka invariant (Section 7), and a runtime include or generation step would trade one problem for another. Do not deduplicate a self-contained skill's required content merely to reduce line count.
+Each skill's own state-resolution preamble in Section 7's Skills Kit used to be this principle's one deliberate, checked exception — the load-bearing facts duplicated verbatim across every skill, because a skill installs standalone and nothing else from this repository travels alongside it. That reasoning no longer holds: the Skills Kit is itself installed as one unit (Section 7), never a single skill in isolation, so a shared file installed alongside the nine skills is exactly as portable as any one of them. The genuinely shared mechanics — schema-2 detection, matching tier shapes, stop conditions, legacy-state handling — now live in one real home, `skills-kit/_shared/banka-state-resolution.md`, installed and discovered the same way as every skill (Section 7). Every state-resolving skill points to it with an identical, mechanically-checked pointer sentence; what a skill does *with* the resolved classification — where it reads from, writes to, or reviews against — stays in that skill's own file, since that part was never actually shared to begin with. `dredge` is the one skill that never resolves state upfront; it names the shared file only in its Context Contract's Conditional line, consulted solely on its Hard Reset path.
 
 ---
 
@@ -895,7 +895,8 @@ Install once at `~/.claude/skills/` for personal, machine-wide use:
 ├── scale/SKILL.md
 ├── delegate/SKILL.md
 ├── watershed/SKILL.md
-└── linis/SKILL.md
+├── linis/SKILL.md
+└── _shared/banka-state-resolution.md
 ```
 
 Clone or download this repo, fetch tags, and check out the newest annotated
@@ -906,7 +907,9 @@ instead of installing from the default branch. Then ask Claude Code directly:
 
 ```
 Install the Banka Skills Kit from <path-to-clone>/skills-kit/ into
-~/.claude/skills/ — one folder per skill, copying each SKILL.md as-is.
+~/.claude/skills/ — one folder per skill, copying each SKILL.md as-is, plus
+the sibling `_shared/` folder (copy `_shared/banka-state-resolution.md` too
+— every skill except dredge reads it before touching project state).
 ```
 
 Claude Code performs the copy with its normal file tools. Invoke the installed
@@ -929,8 +932,12 @@ default branch.
 
 Install the standard Banka kit once at the Codex user-level location,
 `~/.agents/skills/`. Link each directory from this package's `skills-kit/` into
-that location; a symlink is preferred so `skills-kit/` remains the only source
-of truth. A symlink must target this persistent checkout, never a temporary
+that location, **including the sibling `_shared/` directory** — a symlink is
+preferred so `skills-kit/` remains the only source of truth, and `_shared/`
+follows the exact same rule as every skill directory: every skill except
+`dredge` resolves state by reading `_shared/banka-state-resolution.md`
+through this link, so a project without it breaks resolution for all eight.
+A symlink must target this persistent checkout, never a temporary
 clone. Before linking, check the user-level directory and existing projects
 for a Banka skill with the same name — Codex can show duplicate same-named
 skills and does not merge them.
@@ -940,7 +947,7 @@ Repository-local discovery is reserved for skills that genuinely belong only to
 that repository. If a persistent checkout or symlinks cannot be used, copy each
 complete skill directory into `~/.agents/skills/` from a temporary checkout
 instead — never link to a temporary directory — and confirm every entry
-contains a readable `SKILL.md`.
+contains a readable `SKILL.md`, plus a copied `_shared/banka-state-resolution.md`.
 
 In Codex, explicitly invoke a Banka skill with `$` (for example `$charter`,
 `$survey`, or `$remember save`). A host may also show enabled skills in its
@@ -982,6 +989,9 @@ The update has two independently assessed surfaces:
 - **Machine-level Skills Kit.** Inspect the selected runtime's user-level skill
   locations and classify each Banka skill as a standard copy, a symlink, a
   customized or conflicting entry, a duplicate project-local entry, or missing.
+  Classify `_shared/banka-state-resolution.md` the same way, alongside the nine
+  skills — every skill except `dredge` depends on it, so a missing or stale
+  copy silently breaks state resolution for eight of nine skills at once.
   A Codex symlink must target a persistent checkout, never a temporary clone.
   A temporary checkout is safe only when the skills are copied. Do not replace
   a customized or conflicting entry without showing the difference and getting
