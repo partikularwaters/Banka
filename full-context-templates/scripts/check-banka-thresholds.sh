@@ -37,23 +37,21 @@ row() {
 echo "## Threshold Check"
 echo "_Last run: $(date +%Y-%m-%d). Run \`bash scripts/check-banka-thresholds.sh\` to refresh._"
 echo
-echo "| Section | Words | Threshold | Status |"
+echo "| File | Words | Threshold | Status |"
 echo "| --- | --- | --- | --- |"
 
-# Session-state file: Standard's context/progress-tracker.md, or Core's core/progress.md.
-state_file=""
-if [ -f "context/progress-tracker.md" ]; then
-  state_file="context/progress-tracker.md"
-elif [ -f "core/progress.md" ]; then
-  state_file="core/progress.md"
-fi
-
-if [ -n "$state_file" ]; then
-  for heading in "Session Notes" "Decisions Index"; do
-    w=$(section_words "$heading" "$state_file")
-    row "$heading" "$w" "$THRESHOLD"
+# Session Notes and Decisions Index: standalone files under context/ (Standard)
+# or core/ (Core) — Protocol Section 4/5's file split. Each is checked as a
+# whole file, not a section within progress.md/progress-tracker.md.
+for base in context core; do
+  [ -d "$base" ] || continue
+  for name in session-notes.md decisions-index.md; do
+    f="$base/$name"
+    [ -f "$f" ] || continue
+    w=$(wc -w < "$f" | tr -d ' ')
+    row "$name" "$w" "$THRESHOLD"
   done
-fi
+done
 
 # Delegation queue: Standard's context/delegation-queue.md, or root delegation-queue.md.
 queue_file=""

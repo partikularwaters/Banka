@@ -204,11 +204,12 @@ tier must match the verified filesystem shape, and any present `CLAUDE.md` must
 be exactly `@AGENTS.md`.
 
 A matching Minimal shape has neither `/core/` nor `/context/`. Core has
-`/core/` and its `overview.md`, `architecture.md`, `design.md`, and
-`progress.md`, with no `/context/`. Standard has `/context/` and its
-`project-overview.md`, `architecture.md`, `build-plan.md`, `code-standards.md`,
-`library-docs.md`, `ui-tokens.md`, `ui-rules.md`, `ui-registry.md`, and
-`progress-tracker.md`, with no `/core/`.
+`/core/` and its `overview.md`, `architecture.md`, `design.md`, `progress.md`,
+`session-notes.md`, and `decisions-index.md`, with no `/context/`. Standard
+has `/context/` and its `project-overview.md`, `architecture.md`,
+`build-plan.md`, `code-standards.md`, `library-docs.md`, `ui-tokens.md`,
+`ui-rules.md`, `ui-registry.md`, `progress-tracker.md`, `session-notes.md`,
+and `decisions-index.md`, with no `/core/`.
 
 Minimal and Core resolve to root
 `delegation-queue.md`; Standard resolves to `context/delegation-queue.md`.

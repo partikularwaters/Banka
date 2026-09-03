@@ -222,6 +222,7 @@ for skill in "${state_resolver_skills[@]}"; do
   require_literal '/context/' "$skill_file"
   require_literal 'A matching Minimal shape has neither `/core/` nor `/context/`.' "$skill_file"
   for required_tier_file in overview.md architecture.md design.md progress.md \
+    session-notes.md decisions-index.md \
     project-overview.md build-plan.md code-standards.md library-docs.md \
     ui-tokens.md ui-rules.md ui-registry.md progress-tracker.md; do
     require_literal "$required_tier_file" "$skill_file"

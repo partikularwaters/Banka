@@ -7,8 +7,8 @@ AI has no memory between sessions. Every new session starts blank. This skill fi
 
 ## Context Contract
 
-**Required:** the resolved session-state file (tier-dependent — see "Resolve
-Banka state first" below) · current git log/status, checked before trusting
+**Required:** the resolved session-state file(s) (tier-dependent — see
+"Resolve Banka state first" below) · current git log/status, checked before trusting
 this conversation · AGENTS.md/CLAUDE.md and the tier's required files, to
 resolve state · on Core/Standard, `scripts/check-banka-thresholds.sh`'s
 output, invoked first and read every call, save and restore alike (Protocol
@@ -25,12 +25,14 @@ truth · raw secret values, in any form, at any point.
 **Outputs:** save mode — an updated session-state file, plus a one-line
 confirmation · restore mode — a conversational restore summary.
 
-**Write authority:** save mode only — the resolved session-state file, by
-section, plus whichever file owns a globally-scoped fact a captured decision
-changes, plus the tier's `overflow/` files and Overflow Index when the size
-thresholds above are crossed, plus the Logbook (`decisions/`, Core/Standard
-only) and its Decisions Index row for a decision clearing Section 2.11's
-eligibility bar. Restore mode: none.
+**Write authority:** save mode only — the resolved session-state file(s), by
+section (Minimal: the `AGENTS.md` block; Core/Standard: `progress.md`/
+`progress-tracker.md`, `session-notes.md`, and `decisions-index.md`), plus
+whichever file owns a globally-scoped fact a captured decision changes, plus
+the tier's `overflow/` files and Overflow Index when the size thresholds
+above are crossed, plus the Logbook (`decisions/`, Core/Standard only) and
+its Decisions Index row for a decision clearing Section 2.11's eligibility
+bar. Restore mode: none.
 
 ## Resolve Banka state first
 
@@ -47,11 +49,12 @@ active for a runtime that discovers `AGENTS.md` directly, but report that
 Claude Code compatibility is unavailable.
 
 A matching Minimal shape has neither `/core/` nor `/context/`. Core has
-`/core/` and its `overview.md`, `architecture.md`, `design.md`, and
-`progress.md`, with no `/context/`. Standard has `/context/` and its
-`project-overview.md`, `architecture.md`, `build-plan.md`, `code-standards.md`,
-`library-docs.md`, `ui-tokens.md`, `ui-rules.md`, `ui-registry.md`, and
-`progress-tracker.md`, with no `/core/`.
+`/core/` and its `overview.md`, `architecture.md`, `design.md`, `progress.md`,
+`session-notes.md`, and `decisions-index.md`, with no `/context/`. Standard
+has `/context/` and its `project-overview.md`, `architecture.md`,
+`build-plan.md`, `code-standards.md`, `library-docs.md`, `ui-tokens.md`,
+`ui-rules.md`, `ui-registry.md`, `progress-tracker.md`, `session-notes.md`,
+and `decisions-index.md`, with no `/core/`.
 
 Stop state-dependent work for competing authority, malformed/partial/duplicate
 or unknown Banka markers, a non-exact `CLAUDE.md` beside schema 2, an exact shim
@@ -66,12 +69,15 @@ mode must stop because it writes state. No Banka state may change until an
 explicitly requested, previewed, and confirmed migration completes. Incomplete
 legacy state or a broken old shim is a stop condition.
 
-For active schema 2, Standard session state lives in
-`context/progress-tracker.md`, Core session state in `core/progress.md`, and
-Minimal session state in the Current Status and Session Notes sections of the
-Banka-owned `AGENTS.md` block. If neither schema 2 nor recognizable legacy
-state exists, stop because no defined session-state destination exists. Never
-create one implicitly.
+For active schema 2, Core and Standard split session state into three files
+from day one (Protocol Section 4/5): task tracking in `core/progress.md` /
+`context/progress-tracker.md`, thread-tagged narrative in
+`core/session-notes.md` / `context/session-notes.md`, and the Logbook
+routing table in `core/decisions-index.md` / `context/decisions-index.md`.
+Minimal session state stays in the Current Status and Session Notes sections
+of the Banka-owned `AGENTS.md` block, unchanged. If neither schema 2 nor
+recognizable legacy state exists, stop because no defined session-state
+destination exists. Never create one implicitly.
 
 ## Security Boundary
 
@@ -109,16 +115,22 @@ Do not capture: implementation detail visible in the code itself, anything alrea
 ### Safety check, then update the existing structure
 
 Run a final pass for anything secret-shaped before writing. Update the resolved
-file by section; never replace it with a standalone memory document:
+files by section; never replace any of them with a standalone memory document:
 
 - **Minimal — Banka-owned `AGENTS.md` block:** update Current Status, Completed
   Actions, Known Issues / Open Decisions, Session Notes, and Next Immediate
   Step. Preserve all content outside the marked block.
-- **Core — `core/progress.md`:** update Current Phase, Active Milestones,
-  Completed Actions, Known Issues, Session Memory Bank, and Next Immediate Step.
-- **Standard — `context/progress-tracker.md`:** update Completed, In Progress,
-  Up Next, Blocked, Known Issues, and Session Notes. A durable decision goes
-  to the Logbook instead of an inline Decisions Made entry — see Bloat
+- **Core — three files:** `core/progress.md` for Current Phase, Active
+  Milestones, Completed Actions, Known Issues, and Next Immediate Step;
+  `core/session-notes.md` for session narrative; `core/decisions-index.md`
+  for the Decisions Index. A durable decision goes to the Logbook
+  (`core/decisions/`) with a row in `core/decisions-index.md`, never an
+  inline entry — see Bloat prevention and correction below.
+- **Standard — three files:** `context/progress-tracker.md` for Completed,
+  In Progress, Up Next, Blocked, and Known Issues; `context/session-notes.md`
+  for session narrative; `context/decisions-index.md` for the Decisions
+  Index. A durable decision goes to the Logbook (`context/decisions/`) with a
+  row in `context/decisions-index.md`, never an inline entry — see Bloat
   prevention and correction below.
 
 When a captured decision changes a global invariant, architecture, token, or
@@ -155,12 +167,14 @@ concurrently open thread gets a soft prompt to confirm it's genuinely
 active; a fourth needs a stated one-line reason in writing before it's
 tagged. Neither ever blocks.
 
-Every save, check each tagged Session Notes thread independently: the
+Every save, check each tagged Session Notes thread independently (Minimal:
+the `AGENTS.md` block's Session Notes section; Core/Standard:
+`core/session-notes.md` / `context/session-notes.md`): the
 moment one reaches a genuine settled boundary, archive it immediately to
-`overflow/session-notes/` — do not wait for the section to also cross a
+`overflow/session-notes/` — do not wait for the file to also cross a
 size threshold. A thread with no settled boundary stays live regardless of
 size. The ~2,000-word figure (provisional, revise once real usage data
-exists) is now only a fallback: if the section crosses it while nothing is
+exists) is now only a fallback: if the file crosses it while nothing is
 yet settled, flag it as oversized with no clean cut point and stop, rather
 than forcing a split against unsettled work. An overflow file itself
 crossing ~2,000 words — start the next sequentially numbered file in the
@@ -176,20 +190,23 @@ to the exact target, never a vague description. Before archiving anything
 Banka-generated files for links pointing at the path about to change and
 update them in the same save — never move-and-hope.
 
-Core/Standard's Decisions Index paginates instead of archiving — once it
+Core/Standard's `decisions-index.md` paginates instead of archiving — once it
 crosses ~2,000 words, start `overflow/decisions-index/01-decisions-index.md`
 (next: `02-...`, Section 2.11) and link to it from the live table; rows
 never get swept out for being old, since a decision
 record stays exactly as useful to see years later as it was on day one.
 
-If the resolved session-state file predates this convention, the rules
+If a resolved session-state file predates this convention, the rules
 above still apply from this point forward — write the guidance above into
-the file yourself (under Session Notes, or Core's Session Memory Bank) so
-the next session sees it too, rather than applying it only in your own head
-this one time. A Core/Standard file that predates the Logbook and still has
-an old Decisions Made section: leave that section's existing content
-exactly as it is (no retroactive migration, per Section 2.11), and add the
-Decisions Index alongside it for decisions going forward.
+the file yourself (Minimal: under Session Notes; Core/Standard:
+`session-notes.md`) so the next session sees it too, rather than applying
+it only in your own head this one time. A Core/Standard project that
+predates the Section 4/5 file split and still has Session Notes or a
+Decisions Made section inline in `progress.md`/`progress-tracker.md`: this
+governs going forward only (no retroactive migration, per Section 2.11 and
+Section 2.9) — leave that existing content exactly as it is, and start
+using `session-notes.md` and `decisions-index.md` once the project is
+regenerated or promoted under Section 4/5.
 
 Confirm after writing: `Session state saved. Next session: invoke the remember skill in restore mode.`
 
@@ -208,10 +225,13 @@ On Core/Standard, run `scripts/check-banka-thresholds.sh` and read its
 over threshold and unaddressed, that's worth surfacing to the developer
 immediately at restore, not discovered only at the next save.
 
-Read the resolved session-state file first (the Banka-owned `AGENTS.md` block's
-Current Status and Session Notes, `core/progress.md`, or
-`context/progress-tracker.md`). Under active schema-2 Core or Standard, also
-read every other file listed in `AGENTS.md`'s Source of truth section. Under
+Read the resolved session-state file(s) first: the Banka-owned `AGENTS.md`
+block's Current Status and Session Notes for Minimal, or
+`core/progress.md`/`core/session-notes.md`/`core/decisions-index.md` for
+Core (`context/progress-tracker.md`/`context/session-notes.md`/
+`context/decisions-index.md` for Standard). Under active schema-2 Core or
+Standard, also read every other file listed in `AGENTS.md`'s Source of truth
+section. Under
 readable legacy Core or Standard, read the files listed in legacy `CLAUDE.md`
 instead and identify the restore as legacy. At every tier, read
 `IDEA-SCOPE.md` when it exists. Also read the exact tier-resolved queue when

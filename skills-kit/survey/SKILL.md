@@ -45,11 +45,12 @@ runtime that discovers `AGENTS.md` directly, but report that Claude Code
 compatibility is unavailable.
 
 A matching Minimal shape has neither `/core/` nor `/context/`. Core has
-`/core/` and its `overview.md`, `architecture.md`, `design.md`, and
-`progress.md`, with no `/context/`. Standard has `/context/` and its
-`project-overview.md`, `architecture.md`, `build-plan.md`, `code-standards.md`,
-`library-docs.md`, `ui-tokens.md`, `ui-rules.md`, `ui-registry.md`, and
-`progress-tracker.md`, with no `/core/`.
+`/core/` and its `overview.md`, `architecture.md`, `design.md`, `progress.md`,
+`session-notes.md`, and `decisions-index.md`, with no `/context/`. Standard
+has `/context/` and its `project-overview.md`, `architecture.md`,
+`build-plan.md`, `code-standards.md`, `library-docs.md`, `ui-tokens.md`,
+`ui-rules.md`, `ui-registry.md`, `progress-tracker.md`, `session-notes.md`,
+and `decisions-index.md`, with no `/core/`.
 
 Stop state-dependent work for competing authority, malformed/partial/duplicate
 or unknown Banka markers, a non-exact `CLAUDE.md` beside schema 2, an exact shim

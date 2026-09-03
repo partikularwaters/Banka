@@ -18,7 +18,9 @@ Read the Standard file relevant to the work before acting:
 - `context/library-docs.md` — project-specific third-party library patterns
 - `context/ui-tokens.md` and `context/ui-rules.md` — design system
 - `context/ui-registry.md` — living catalog of built components
-- `context/progress-tracker.md` — current status, decisions, and session memory
+- `context/progress-tracker.md` — current status and task tracking
+- `context/session-notes.md` — thread-tagged session narrative
+- `context/decisions-index.md` — routing table into the Logbook (`decisions/`)
 
 If `IDEA-SCOPE.md` exists, consult it for original intent. Never overwrite it.
 
@@ -27,6 +29,7 @@ This project uses the standard Skills Kit: charter, survey, dredge, remember,
 moor, scale, delegate, watershed, and linis. Install it once per runtime; do
 not create a project-local copy. Follow each skill's own instructions exactly.
 The moor skill writes UI patterns to `context/ui-registry.md` and general
-outcomes to `context/progress-tracker.md`; remember updates session state in
-`context/progress-tracker.md`.
+outcomes to `context/session-notes.md`; remember updates task state in
+`context/progress-tracker.md`, session narrative in `context/session-notes.md`,
+and the Logbook routing table in `context/decisions-index.md`.
 <!-- BANKA:END -->

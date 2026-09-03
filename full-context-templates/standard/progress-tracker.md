@@ -1,4 +1,4 @@
-<!-- Progress tracker: live build status — update this after every session -->
+<!-- Progress tracker: live build status and task tracking — update this after every session -->
 
 # Progress Tracker
 
@@ -12,16 +12,17 @@
 
 _Mechanical, not estimated — `remember`, `moor`, and `linis` run
 `bash scripts/check-banka-thresholds.sh` and update this from its actual
-output, never a guess (Protocol Section 2.9). This file's own sections
-only; anything split into its own file gets a rollup row here instead of
-its own full check._
+output, never a guess (Protocol Section 2.9). This file no longer holds
+Session Notes or the Decisions Index itself — each lives in its own file
+with its own Threshold Check; these are rollup rows only, so a session
+reading just this file never loses visibility into either._
 
 _Last run: [date]. Run `bash scripts/check-banka-thresholds.sh` to refresh._
 
-| Section | Words | Threshold | Status |
+| File | Words | Threshold | Status |
 | --- | --- | --- | --- |
-| Session Notes | [N] | ~2,000 | [OK / OVER — action needed] |
-| Decisions Index | [N] | ~2,000 | [OK / OVER — action needed] |
+| [`session-notes.md`](session-notes.md) | [N] | ~2,000 | [OK / OVER — action needed] |
+| [`decisions-index.md`](decisions-index.md) | [N] | ~2,000 | [OK / OVER — action needed] |
 
 ---
 
@@ -52,51 +53,7 @@ _Last run: [date]. Run `bash scripts/check-banka-thresholds.sh` to refresh._
 
 ---
 
-## Decisions Index
-
-_Empty until a decision clears the Logbook's eligibility bar (Protocol
-Section 2.11) — durable, standing, and carrying real reasoning worth
-preserving. A durable decision goes to `decisions/NNNN-title/` (its own
-`decision.md`/`rationale.md` pair, never compressed, never overflowed) —
-this table only routes to it, it is never the decision content itself.
-Status is `Accepted` or `Superseded by [NNNN]` — a superseded decision's
-record is never rewritten, only replaced by a new one. Once this table
-crosses ~2,000 words, start `overflow/decisions-index/01-decisions-index.md`
-(next: `02-...`) and link to it from here (rows never get archived out for
-being old — a decision stays just as useful to see years later)._
-
-| ID | Title | Status | Summary |
-| --- | --- | --- | --- |
-| `0001` | [`[title]`](decisions/0001-title/decision.md) | `Accepted` | `[one-line summary]` |
-
----
-
-## Session Notes
-[Brief notes from the last few sessions — what was done, what broke, what to watch for.]
-
-**Keeping this section lean:** tag entries by the distinct line of work they
-belong to (a sub-heading is enough), not one flat narrative — a third
-concurrently open thread is worth a pause to confirm all are genuinely
-active; a fourth needs a stated one-line reason in writing before it's
-tagged.
-
-The moment a tagged thread genuinely concludes, archive it immediately to
-`overflow/session-notes/01-session-notes.md` (the next sequentially
-numbered file in that folder, once `01-...` itself crosses ~2,000 words) —
-don't wait for this section to also cross a size threshold. Never force a
-split against a thread that's still open; the ~2,000-word figure is only a
-fallback for when nothing here is settled yet. Add or update this Overflow
-Index, added the first time it's needed, each row a real link:
-
-## Overflow Index
-| File | Type | Covers |
-| --- | --- | --- |
-| [`overflow/session-notes/01-session-notes.md`](overflow/session-notes/01-session-notes.md) | narrative | [what it covers] |
-
-Each overflow file carries its own short Contents note at its own top,
-naming what it covers, so it can be found without reading it in full.
-
-**[Date]**
-- [What was done]
-- [What broke or needs attention]
-- [What to do next session]
+**Keeping this file lean:** durable decisions belong in the Logbook via
+[`decisions-index.md`](decisions-index.md), never written inline here.
+Session narrative belongs in [`session-notes.md`](session-notes.md), not
+here — this file is task-tracking only.

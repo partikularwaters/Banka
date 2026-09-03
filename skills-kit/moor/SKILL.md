@@ -13,7 +13,7 @@ mode only, to build the whole-codebase baseline · evidence that `survey`
 has passed this build, before capturing a UI pattern or an
 invariant/token change (not a general outcome/decision capture) — audit
 mode is exempt · on Core/Standard, `scripts/check-banka-thresholds.sh`,
-re-run after writing into a section it covers (Protocol Section 2.9).
+re-run after writing into `session-notes.md` (Protocol Section 2.9).
 
 **Excluded by default:** width/height, layout mechanics, positioning,
 animation/transition timing, and responsive breakpoint variants — Step 2
@@ -42,11 +42,12 @@ active for a runtime that discovers `AGENTS.md` directly, but report that
 Claude Code compatibility is unavailable.
 
 A matching Minimal shape has neither `/core/` nor `/context/`. Core has
-`/core/` and its `overview.md`, `architecture.md`, `design.md`, and
-`progress.md`, with no `/context/`. Standard has `/context/` and its
-`project-overview.md`, `architecture.md`, `build-plan.md`, `code-standards.md`,
-`library-docs.md`, `ui-tokens.md`, `ui-rules.md`, `ui-registry.md`, and
-`progress-tracker.md`, with no `/core/`.
+`/core/` and its `overview.md`, `architecture.md`, `design.md`, `progress.md`,
+`session-notes.md`, and `decisions-index.md`, with no `/context/`. Standard
+has `/context/` and its `project-overview.md`, `architecture.md`,
+`build-plan.md`, `code-standards.md`, `library-docs.md`, `ui-tokens.md`,
+`ui-rules.md`, `ui-registry.md`, `progress-tracker.md`, `session-notes.md`,
+and `decisions-index.md`, with no `/core/`.
 
 Stop for competing authority, malformed/partial/duplicate or unknown Banka
 markers, a non-exact `CLAUDE.md` beside schema 2, an exact shim with missing
@@ -64,7 +65,7 @@ exists, stop because no defined destination exists. Never create Banka state
 implicitly.
 
 For active schema 2, resolve destinations from the declared tier: Standard uses
-the nine files under `/context/`, Core uses the four files under `/core/`, and
+the eleven files under `/context/`, Core uses the six files under `/core/`, and
 Minimal uses the Banka-owned block in `AGENTS.md`. A Minimal write changes only
 that block and preserves all content outside it.
 
@@ -86,11 +87,11 @@ If no filepath is given, identify recently created/modified component files auto
 ## Step 1 — Determine what's being captured
 
 - **A UI component pattern** (background, border, radius, text roles, spacing, interactive states, shadow, accent usage — not width/height, layout positioning, or responsive variants, which are too context-dependent to be a consistency rule) → goes to the UI registry (Minimal: a Component Registry note inside the Banka-owned `AGENTS.md` block's Project Overview; Core: `core/design.md`; Standard: `context/ui-registry.md`).
-- **A general engineering outcome, decision, or resolved problem** → goes to the session-state file (Minimal: the Banka-owned `AGENTS.md` block's Session Notes; Core: `core/progress.md`; Standard: `context/progress-tracker.md`).
+- **A general engineering outcome, decision, or resolved problem** → goes to the session narrative (Minimal: the Banka-owned `AGENTS.md` block's Session Notes; Core: `core/session-notes.md`; Standard: `context/session-notes.md`).
 - **A changed global token, folder structure, or invariant** → update the file that actually owns it directly (Minimal: inside the Banka-owned `AGENTS.md` block; Core: `core/design.md` for tokens, `core/architecture.md` for structure/invariants/conventions; Standard: `ui-tokens.md`, `architecture.md`, `code-standards.md` respectively) — never just log that it changed, actually update the source.
 - **An outcome belonging to an area with an existing local-override file** (Standard tier only — check `code-standards.md`'s `## Area overrides` table for the touched area) → capture there instead of the general destination above; Section 2.10 of the Protocol governs the full mechanism.
 
-**After writing into the session-state file (Core/Standard):** re-run `scripts/check-banka-thresholds.sh` so its embedded `## Threshold Check` report reflects what was just written — `moor` is an independent write path into the same sections `remember` governs, so its own writes need the same mechanical count, not a guess about whether the capture pushed a section over threshold (Protocol Section 2.9).
+**After writing into `session-notes.md` (Core/Standard):** re-run `scripts/check-banka-thresholds.sh` so its embedded `## Threshold Check` report reflects what was just written — `moor` is an independent write path into the same file `remember` governs, so its own writes need the same mechanical count, not a guess about whether the capture pushed the file over threshold (Protocol Section 2.9).
 
 A UI pattern or invariant/token capture becomes what future work is
 checked against — the registry for one, charter's invariant cross-check

@@ -14,7 +14,9 @@ Read the Core file relevant to the work before acting:
 - `core/overview.md` — vision and data model
 - `core/architecture.md` — stack, structure, invariants, conventions, and library patterns
 - `core/design.md` — UI tokens, layout rules, and component registry
-- `core/progress.md` — milestones, completed work, and session memory
+- `core/progress.md` — current status, milestones, and task tracking
+- `core/session-notes.md` — thread-tagged session narrative
+- `core/decisions-index.md` — routing table into the Logbook (`decisions/`)
 
 If `IDEA-SCOPE.md` exists, consult it for original intent. Never overwrite it.
 

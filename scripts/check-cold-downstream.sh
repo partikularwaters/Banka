@@ -77,19 +77,36 @@ if grep -rl -E "Track A|Track B" "$tmp_dir/skills" >/dev/null 2>&1; then
   fail "Found 'Track A'/'Track B' protocol-internal jargon inside an installed skill file"
 fi
 
-# --- Check 4: Core/Standard's rendered session-state files are actually
-# complete, not just "when," for the overflow mechanics --------------------
+# --- Check 4: Core/Standard's rendered task-tracking file (progress.md /
+# progress-tracker.md) carries only rollup rows for the two files it split
+# out, not the overflow mechanics themselves ---------------------------------
 for rendered in "$tmp_dir/project-standard/context/progress-tracker.md" "$tmp_dir/project-core/core/progress.md"; do
+  grep -q '\](session-notes.md)' "$rendered" || fail "Missing a rollup link to session-notes.md in ${rendered#"$tmp_dir/"}"
+  grep -q '\](decisions-index.md)' "$rendered" || fail "Missing a rollup link to decisions-index.md in ${rendered#"$tmp_dir/"}"
+  grep -qi "check-banka-thresholds.sh" "$rendered" || fail "Missing a reference to the mechanical threshold script in ${rendered#"$tmp_dir/"}"
+  grep -qi "## Threshold Check" "$rendered" || fail "Missing the Threshold Check block in ${rendered#"$tmp_dir/"}"
+done
+
+# --- Check 4a: Core/Standard's rendered session-notes.md carries the full
+# overflow mechanics for the thread-tagged narrative -------------------------
+for rendered in "$tmp_dir/project-standard/context/session-notes.md" "$tmp_dir/project-core/core/session-notes.md"; do
   grep -qi "sequentially\|01-" "$rendered" || fail "Missing the sequential-numbering convention for overflow files in ${rendered#"$tmp_dir/"}"
   grep -qi "contents" "$rendered" || fail "Missing the overflow file's own Contents-header requirement in ${rendered#"$tmp_dir/"}"
   grep -qi "overflow index" "$rendered" || fail "Missing any mention of an Overflow Index in ${rendered#"$tmp_dir/"}"
   grep -qi "file.*type.*covers\|covers.*type.*file" "$rendered" || fail "Overflow Index is mentioned but no actual schema (its columns) is shown in ${rendered#"$tmp_dir/"} — a downstream session has nothing to build the table from"
+  grep -q '\](overflow/session-notes/' "$rendered" || fail "Overflow Index example row isn't a real link in ${rendered#"$tmp_dir/"}"
+  grep -qi "settled" "$rendered" || fail "Missing the immediate-split-on-settled-boundary rule in ${rendered#"$tmp_dir/"}"
+  grep -qi "check-banka-thresholds.sh" "$rendered" || fail "Missing a reference to the mechanical threshold script in ${rendered#"$tmp_dir/"}"
+  grep -qi "## Threshold Check" "$rendered" || fail "Missing the Threshold Check block in ${rendered#"$tmp_dir/"}"
+done
+
+# --- Check 4d: Core/Standard's rendered decisions-index.md carries the
+# Logbook routing mechanics ---------------------------------------------------
+for rendered in "$tmp_dir/project-standard/context/decisions-index.md" "$tmp_dir/project-core/core/decisions-index.md"; do
   grep -qi "superseded" "$rendered" || fail "Missing what happens to a swept superseded decision in ${rendered#"$tmp_dir/"}"
   grep -qi "decisions index" "$rendered" || fail "Missing the Decisions Index (Logbook routing table) in ${rendered#"$tmp_dir/"}"
   grep -qi "decisions/" "$rendered" || fail "Missing a reference to the Logbook's decisions/ folder in ${rendered#"$tmp_dir/"}"
   grep -q '\](decisions/' "$rendered" || fail "Decisions Index example row isn't a real link in ${rendered#"$tmp_dir/"}"
-  grep -q '\](overflow/session-notes/' "$rendered" || fail "Overflow Index example row isn't a real link in ${rendered#"$tmp_dir/"}"
-  grep -qi "settled" "$rendered" || fail "Missing the immediate-split-on-settled-boundary rule in ${rendered#"$tmp_dir/"}"
   grep -qi "check-banka-thresholds.sh" "$rendered" || fail "Missing a reference to the mechanical threshold script in ${rendered#"$tmp_dir/"}"
   grep -qi "## Threshold Check" "$rendered" || fail "Missing the Threshold Check block in ${rendered#"$tmp_dir/"}"
 done

@@ -175,9 +175,9 @@ Answer yes or no to each:
 
 **Scoring:**
 - **0 yes → Minimal** (Section 3) is almost certainly sufficient — one canonical Banka state block in `AGENTS.md`, holding live project state inline with no state folder.
-- **1–2 yes → Core** (Section 4) is almost certainly sufficient — four focused files, no single-file crowding, no nine-file overhead.
+- **1–2 yes → Core** (Section 4) is almost certainly sufficient — six focused files, no single-file crowding, no eleven-file overhead.
 - **3 yes → borderline.** Lean Core by default — recommend it, but let the user decide. Starting leaner and promoting later (Section 6) costs less than over-building up front.
-- **4–5 yes → Standard** (Section 5) is recommended — the project has enough real complexity that splitting context into nine focused files will save more time than it costs to maintain.
+- **4–5 yes → Standard** (Section 5) is recommended — the project has enough real complexity that splitting context into eleven focused files will save more time than it costs to maintain.
 
 State the tally and your recommendation plainly. The user makes the final call — never decide silently.
 
@@ -316,7 +316,7 @@ Where a fact must appear in more than one file for a skill to remain self-contai
 
 ## SECTION 2.9: SESSION-STATE AND DELEGATION-QUEUE BLOAT PREVENTION AND CORRECTION
 
-A project's session-state destination (the Banka-owned `AGENTS.md` block for Minimal, `core/progress.md` for Core, `context/progress-tracker.md` for Standard) is an ever-appending log with no built-in bound. Sustained development will eventually bloat it. The fix has two tracks: prevent what can be prevented at write time, correct what still accumulates on a real threshold.
+A project's session-state destination is an ever-appending log with no built-in bound. Sustained development will eventually bloat it. On Minimal, that destination is the Banka-owned `AGENTS.md` block. On Core and Standard, task-tracking (`core/progress.md` / `context/progress-tracker.md`), thread-tagged narrative (`core/session-notes.md` / `context/session-notes.md`), and the Logbook routing table (`core/decisions-index.md` / `context/decisions-index.md`) are three separate files from day one — Section 4/5's file split, not an earned or conditional promotion — so each accumulates and is checked independently. The fix has two tracks: prevent what can be prevented at write time, correct what still accumulates on a real threshold.
 
 The tier-resolved `delegation-queue.md` (root for Minimal/Core, `context/delegation-queue.md` for Standard) has the same shape of problem for a different reason: `delegate` appends tickets with stable, never-reused numbers, and completed tickets accumulate in the queue's `## Completed` section indefinitely. Track B extends to it below, using the same overflow mechanism, not a second one.
 
@@ -331,7 +331,7 @@ The tier-resolved `delegation-queue.md` (root for Minimal/Core, `context/delegat
 
 ### Track B — Correction (`remember` only for session-state; `delegate` for the delegation queue; automatic check every save/write, action only when a real threshold is crossed or explicitly requested, always previewed before applying)
 
-1. **Session Notes — split immediately once a thread settles, not on a word count.** Evaluate each tagged thread independently, on every save: the moment a thread reaches a genuine settled boundary, archive it immediately to `overflow/session-notes/` — do not wait for the section to also cross a size threshold first. A thread with no settled boundary stays live regardless of size. The ~2,000-word figure (provisional, revise once real usage data exists — Section 2.5's Rule 4) is now only a fallback: if the section crosses it while nothing is yet settled, flag it as oversized with no clean cut point and stop, consistent with `linis`'s rule to never act against unsettled work. In the common case this check rarely fires at all — settled threads leave before the section has a chance to grow large from them.
+1. **Session Notes — split immediately once a thread settles, not on a word count.** Evaluate each tagged thread independently, on every save: the moment a thread reaches a genuine settled boundary, archive it immediately to `overflow/session-notes/` — do not wait for `session-notes.md` to also cross a size threshold first. A thread with no settled boundary stays live regardless of size. The ~2,000-word figure (provisional, revise once real usage data exists — Section 2.5's Rule 4) is now only a fallback: if the file crosses it while nothing is yet settled, flag it as oversized with no clean cut point and stop, consistent with `linis`'s rule to never act against unsettled work. In the common case this check rarely fires at all — settled threads leave before the file has a chance to grow large from them.
 2. **Any overflow file ≥ ~2,000 words** (same provisional figure). Start the next sequentially numbered file in the same subfolder (`01-session-notes.md` → `02-session-notes.md`, or the delegation-tickets equivalent). Never split a file's content mid-file.
 3. **Delegation queue's `## Full ticket specs` ≥ ~1,500–2,000 words** (same provisional figure as check 1). Only tickets already moved to `## Completed` (survey-passed) are archive-eligible — an unstarted or in-progress ticket's full spec stays live no matter how long the file gets, the same "never act against unsettled work" boundary as check 1. Archive the oldest completed tickets first, to the next sequentially numbered file in `overflow/delegation-tickets/`. If no ticket is yet in `## Completed`, do not force an archive — flag the section as oversized with no archive-eligible ticket yet, and stop, the same fallback as check 1. Ticket numbers never change when a spec is archived — archiving relocates spec text, it does not renumber, resequence, or otherwise touch the stable append-only numbering `delegate` assigns. Leave the ticket's one-line summary (name, date, outcome) in `## Completed` with a link to the overflow file that holds its full spec.
 
@@ -343,19 +343,21 @@ The tier-resolved `delegation-queue.md` (root for Minimal/Core, `context/delegat
 
 **Mechanical verification.** Every Track B check above is a threshold judgment, and a prose instruction asking a session to notice when a section has grown too long is not reliable on its own — nothing about writing one more entry naturally prompts stepping back to total a whole section's word count, and there is no confirmed evidence this class of check has ever fired autonomously without something external prompting it. The fix is to stop trusting an LLM's self-estimate for the *measurement* itself: Core and Standard projects install `scripts/check-banka-thresholds.sh` (Core/Standard tier generation and `scale` promotion; Minimal is excluded, same reasoning as the Logbook — outgrowing "no extra files" is itself the promotion signal). It counts words per tracked section against these provisional thresholds and prints a report — it never archives, splits, or fixes anything itself, only measures. Critically, it runs independent of any AI session: a developer can invoke it directly from a terminal, or wire it into a git hook, so the measurement no longer depends on any session remembering to take it.
 
-Each file it covers carries its own `## Threshold Check` block, reporting only that file's own sections — never one global table naming fixed sections by name, so the shape survives a future file split unchanged. A file holding content that has since moved to its own file carries a rollup row for it instead, so a session reading only the default file never loses visibility into split-out state:
+Each file it covers carries its own `## Threshold Check` block, reporting only that file's own count — never one global table naming every tracked file, so the shape survives a future split unchanged. `progress.md`/`progress-tracker.md` no longer holds Session Notes or Decisions Index content itself (Section 4/5's file split put each in its own file, checked independently); it instead carries a rollup row for each, so a session reading only the task-tracking file never loses visibility into the other two:
 
 ```markdown
 ## Threshold Check
 _Last run: [date]. Run `bash scripts/check-banka-thresholds.sh` to refresh._
 
-| Section | Words | Threshold | Status |
+| File | Words | Threshold | Status |
 | --- | --- | --- | --- |
-| Session Notes | 1,679 | ~2,000 | OK |
-| Decisions Index | 2,246 | ~2,000 | OVER — action needed |
+| session-notes.md | 1,679 | ~2,000 | OK |
+| decisions-index.md | 2,246 | ~2,000 | OVER — action needed |
 ```
 
-Four skills invoke it, each at the point where it actually catches something the others can't: `remember` invokes it first and reads the report on every call, save and restore alike — restore is nearly free since the file is already being read, and it means a fresh session sees immediately whether something is already over threshold and unaddressed. `moor` and `delegate` are independent write paths into the same tracked sections (`moor`'s captured outcomes, `delegate`'s appended tickets) and re-run it after writing into a section it covers, replacing self-estimation with the mechanical count. `linis` runs it as a standard part of its own milestone sweep and surfaces anything over threshold in its report — informational only, no write authority needed beyond what `linis` already has. No single skill being skipped silently loses the whole safety net, since the underlying measurement never depended on any of them in the first place.
+`session-notes.md` and `decisions-index.md` each carry the same block reporting their own word count directly, not as a rollup.
+
+Four skills invoke it, each at the point where it actually catches something the others can't: `remember` invokes it first and reads the report on every call, save and restore alike — restore is nearly free since the file is already being read, and it means a fresh session sees immediately whether something is already over threshold and unaddressed. `moor` and `delegate` are independent write paths into tracked files (`moor`'s captured outcomes into `session-notes.md`, `delegate`'s appended tickets into `delegation-queue.md`) and re-run it after writing, replacing self-estimation with the mechanical count. `linis` runs it as a standard part of its own milestone sweep and surfaces anything over threshold in its report — informational only, no write authority needed beyond what `linis` already has. No single skill being skipped silently loses the whole safety net, since the underlying measurement never depended on any of them in the first place.
 
 The script's canonical definition lives here; the copy installed into a project is a checked template (Section 2.8's existing pattern) — it updates on that project's next regeneration or promotion, never retroactively.
 
@@ -365,27 +367,36 @@ The script's canonical definition lives here; the copy installed into a project 
 scripts/check-banka-thresholds.sh   (Core/Standard only — measures, never fixes)
 context/                              (Standard; Core: core/, same shape)
 ├── progress-tracker.md
-│     Threshold Check    — mechanical word counts for this file's own
-│                          sections, rollup rows for anything split out
-│     Decisions Index    — durable decisions now live in the Logbook
-│                          (Section 2.11); this is a routing table into
-│                          decisions/, not decision content itself
-│     Session Notes      — current, thread-tagged arc(s) only
+│     Threshold Check    — rollup rows for session-notes.md and
+│                          decisions-index.md, plus task-tracking
+│                          (Completed / In Progress / Up Next / Blocked)
+├── session-notes.md
+│     Threshold Check    — this file's own mechanical word count
+│     (body)             — current, thread-tagged arc(s) only
 │     Overflow Index     — file | type | covers (a routing table, not
 │                          session-notes content — never conflate with
-│                          the Session Notes section itself)
+│                          the Session Notes body itself)
+├── decisions-index.md
+│     Threshold Check    — this file's own mechanical word count
+│     (body)             — the Decisions Index table (Section 2.11):
+│                          durable decisions live in the Logbook, this
+│                          is a routing table into decisions/, not
+│                          decision content itself
 ├── delegation-queue.md
 │     Full ticket specs  — unstarted/in-progress tickets, always in full;
 │                          completed tickets only until archived
 │     Completed          — one-line summary + date + outcome per ticket,
 │                          plus an overflow pointer once archived
-│     Overflow Index     — same routing-table shape as progress-tracker.md's,
+│     Overflow Index     — same routing-table shape as session-notes.md's,
 │                          a separate table scoped to this file
 ├── decisions/                        (the Logbook — Section 2.11, its own
 │                                       canonical structure, not overflow)
 └── overflow/
     ├── session-notes/
     │     01-session-notes.md, 02-...  (own Contents header each)
+    ├── decisions-index/
+    │     01-decisions-index.md, 02-...  (paginated Decisions Index rows —
+    │     Section 2.11)
     ├── decisions/
     │     01-decisions-detail.md, 02-...  (legacy only — a project that had
     │     this before the Logbook keeps it; never created new)
@@ -450,11 +461,11 @@ decisions/
 
 `decision.md` carries YAML frontmatter — `status` (`Accepted` or `Superseded by <NNNN>`), `date`, and `governs` (the path it affects) — so the record is queryable without opening it, not just readable. `rationale.md` carries no frontmatter; it's prose, opened by choice, never scanned in bulk.
 
-The split is a genuine loading boundary, not just a readability convention: a session doing normal work reads `progress.md`/`progress-tracker.md`'s Decisions Index, then at most a `decision.md` — never `rationale.md` unless the reasoning itself is what's actually needed.
+The split is a genuine loading boundary, not just a readability convention: a session doing normal work reads `decisions-index.md`, then at most a `decision.md` — never `rationale.md` unless the reasoning itself is what's actually needed.
 
 **Lifecycle.** Two states only, not three. A Decision Record is born **Accepted** — `charter` and `remember` only ever persist decisions that are already confirmed and settled (Banka's front-loaded consensus means there's no "proposed but not yet decided" state to represent). The only other state is **Superseded**, set on the old record when a later decision replaces it: the `decision.md` prose status line becomes a real link — `Superseded by [<NNNN>](../<new-NNNN>-title/decision.md)` — since prose renders markdown; the `status` frontmatter field stays plain data (`Superseded by <NNNN>`), since frontmatter isn't markdown-rendered and a link there would just be inert text. Superseding also updates the Decisions Index row for the old record to link to the new one (see Reference integrity, Section 2.9) — the old `decision.md`/`rationale.md` content itself is never rewritten, only the pointers to it.
 
-**Discovery.** `progress.md` (Core) / `progress-tracker.md` (Standard) carries a `## Decisions Index` table — ID, title, status, one-line summary, each row's title a real link to that record's `decision.md` — replacing the old freeform Decisions Made section. Populated only once a real Decision Record exists, never pre-declared. This is the routing table; the records themselves are never duplicated into it. Once the Decisions Index itself crosses ~2,000 words (Section 2.9's provisional overflow figure, reused here — rows don't go stale the way narrative does, so this paginates rather than archiving anything out of view): start `overflow/decisions-index/01-decisions-index.md` (next: `02-decisions-index.md`, sequentially numbered, same convention as every other overflow file), add a link to it from the live table, and continue new rows there. Distinct from `overflow/decisions/`, which is legacy-only (pre-Logbook Decisions Made overflow) — `overflow/decisions-index/` never holds anything but paginated Decisions Index rows.
+**Discovery.** `decisions-index.md` (`core/decisions-index.md` for Core, `context/decisions-index.md` for Standard) carries a `## Decisions Index` table — ID, title, status, one-line summary, each row's title a real link to that record's `decision.md` — replacing the old freeform Decisions Made section. Populated only once a real Decision Record exists, never pre-declared. This is the routing table; the records themselves are never duplicated into it. `progress.md`/`progress-tracker.md` carries a rollup row pointing at it instead of the table itself (Section 2.9's "Resulting structure"). Once the Decisions Index itself crosses ~2,000 words (Section 2.9's provisional overflow figure, reused here — rows don't go stale the way narrative does, so this paginates rather than archiving anything out of view): start `overflow/decisions-index/01-decisions-index.md` (next: `02-decisions-index.md`, sequentially numbered, same convention as every other overflow file), add a link to it from the live table, and continue new rows there. Distinct from `overflow/decisions/`, which is legacy-only (pre-Logbook Decisions Made overflow) — `overflow/decisions-index/` never holds anything but paginated Decisions Index rows.
 
 **Who writes.** `remember` gains write authority to the Logbook (Core/Standard) for an in-session decision that clears the eligibility bar during a save — it writes the Decision Record directly and adds the Decisions Index row. `charter` does not gain write authority — a Step 3 decision the developer confirms becomes a step in the resulting plan's *How to build it* (create the Decision Record, add the index row), executed once building begins, same as any other implementation step. `charter`'s Context Contract stays "Write authority: none."
 
@@ -502,8 +513,8 @@ Claude Code follows the import to the same root authority that Codex discovers
 directly. This makes each tier one directed chain:
 
 - Minimal: `CLAUDE.md` → `AGENTS.md` (all live state is in the marked block).
-- Core: `CLAUDE.md` → `AGENTS.md` → the four files in `/core/`.
-- Standard: `CLAUDE.md` → `AGENTS.md` → the nine files in `/context/`.
+- Core: `CLAUDE.md` → `AGENTS.md` → the six files in `/core/`.
+- Standard: `CLAUDE.md` → `AGENTS.md` → the eleven files in `/context/`.
 
 `IDEA-SCOPE.md` remains an immutable origin record, not another live authority.
 
@@ -544,8 +555,8 @@ succeeded.
 | No valid schema-2 block and no recognizable legacy Banka authority | Unstructured/non-Banka repository. Never assume Minimal and never create Banka state implicitly. |
 
 For this matrix, Minimal's matching shape has neither `/core/` nor `/context/`;
-Core has `/core/`, not `/context/`, and its four files from Section 4; Standard
-has `/context/`, not `/core/`, and its nine files from Section 5. Unrelated
+Core has `/core/`, not `/context/`, and its six files from Section 4; Standard
+has `/context/`, not `/core/`, and its eleven files from Section 5. Unrelated
 project prose outside the marked `AGENTS.md` block is preserved and is not
 competing Banka state. A second Banka block is a conflict, not an extension.
 
@@ -661,11 +672,11 @@ not create a project-local copy. Follow each skill's own instructions exactly.
 
 ---
 
-## SECTION 4: CORE — FOUR CORE STATE FILES
+## SECTION 4: CORE — SIX CORE STATE FILES
 
 Use this when the rubric points to Core. Generate
 `full-context-templates/project-entry/core-AGENTS.md` into `AGENTS.md`, the
-shared `CLAUDE.md` shim, and the four canonical templates under `/core/`:
+shared `CLAUDE.md` shim, and the six canonical templates under `/core/`:
 
 ```
 project-root/
@@ -675,7 +686,9 @@ project-root/
     ├── overview.md
     ├── architecture.md
     ├── design.md
-    └── progress.md
+    ├── progress.md          (task-tracking + Threshold Check, rollup only)
+    ├── session-notes.md     (thread-tagged narrative, own Threshold Check)
+    └── decisions-index.md   (Logbook routing table, own Threshold Check)
 ```
 
 The root block is the authority and router; domain state remains in `/core/`:
@@ -697,7 +710,9 @@ Read the Core file relevant to the work before acting:
 - `core/overview.md` — vision and data model
 - `core/architecture.md` — stack, structure, invariants, conventions, and library patterns
 - `core/design.md` — UI tokens, layout rules, and component registry
-- `core/progress.md` — milestones, completed work, and session memory
+- `core/progress.md` — current status, milestones, and task tracking
+- `core/session-notes.md` — thread-tagged session narrative
+- `core/decisions-index.md` — routing table into the Logbook (`decisions/`)
 
 If `IDEA-SCOPE.md` exists, consult it for original intent. Never overwrite it.
 
@@ -708,7 +723,7 @@ not create a project-local copy. Follow each skill's own instructions exactly.
 <!-- BANKA:END -->
 ```
 
-The four canonical Core domain templates live under
+The six canonical Core domain templates live under
 `full-context-templates/core/`. Fill those files directly. If they are not
 available, stop rather than reconstructing them from memory.
 
@@ -718,7 +733,7 @@ available, stop rather than reconstructing them from memory.
 
 Use this when the rubric points to Standard. Generate
 `full-context-templates/project-entry/standard-AGENTS.md` into `AGENTS.md`, the
-shared `CLAUDE.md` shim, and the nine canonical templates under `/context/`:
+shared `CLAUDE.md` shim, and the eleven canonical templates under `/context/`:
 
 ```
 project-root/
@@ -733,7 +748,9 @@ project-root/
     ├── ui-tokens.md
     ├── ui-rules.md
     ├── ui-registry.md
-    └── progress-tracker.md
+    ├── progress-tracker.md   (task-tracking + Threshold Check, rollup only)
+    ├── session-notes.md      (thread-tagged narrative, own Threshold Check)
+    └── decisions-index.md    (Logbook routing table, own Threshold Check)
 ```
 
 The root block is the authority and router; domain state remains in
@@ -760,7 +777,9 @@ Read the Standard file relevant to the work before acting:
 - `context/library-docs.md` — project-specific third-party library patterns
 - `context/ui-tokens.md` and `context/ui-rules.md` — design system
 - `context/ui-registry.md` — living catalog of built components
-- `context/progress-tracker.md` — current status, decisions, and session memory
+- `context/progress-tracker.md` — current status and task tracking
+- `context/session-notes.md` — thread-tagged session narrative
+- `context/decisions-index.md` — routing table into the Logbook (`decisions/`)
 
 If `IDEA-SCOPE.md` exists, consult it for original intent. Never overwrite it.
 
@@ -769,8 +788,9 @@ This project uses the standard Skills Kit: charter, survey, dredge, remember,
 moor, scale, delegate, watershed, and linis. Install it once per runtime; do
 not create a project-local copy. Follow each skill's own instructions exactly.
 The moor skill writes UI patterns to `context/ui-registry.md` and general
-outcomes to `context/progress-tracker.md`; remember updates session state in
-`context/progress-tracker.md`.
+outcomes to `context/session-notes.md`; remember updates task state in
+`context/progress-tracker.md`, session narrative in `context/session-notes.md`,
+and the Logbook routing table in `context/decisions-index.md`.
 <!-- BANKA:END -->
 ```
 
@@ -800,10 +820,17 @@ Triggered when either:
 2. Any one domain (overview, architecture, design, or progress) has enough real
    content to crowd out the others in that block.
 
-Preview the mapping, then split the marked block's project state into the four
+Preview the mapping, then split the marked block's project state into the six
 `/core/` files: overview and data model to `core/overview.md`; stack, structure,
-and invariants to `core/architecture.md`; UI content to `core/design.md`; status
-and session notes to `core/progress.md`. Replace only the marked Banka block
+and invariants to `core/architecture.md`; UI content to `core/design.md`;
+status and task tracking to `core/progress.md`; session notes to
+`core/session-notes.md`. Any inline decision that clears Section 2.11's
+Logbook eligibility bar (a durable, standing fact carrying real reasoning
+worth preserving — the same check Track A rule 1 applies at initial
+generation) becomes a Decision Record under `core/decisions/` with a row in
+`core/decisions-index.md`; a single-line settled fact with no real rationale
+goes to whichever owning file it belongs in instead, never into
+`decisions-index.md` directly. Replace only the marked Banka block
 with the Core router from Section 4, changing exactly
 `<!-- BANKA:TIER: Minimal -->` to `<!-- BANKA:TIER: Core -->`. Preserve all
 content outside the block, keep `CLAUDE.md` exactly `@AGENTS.md`, and show what
@@ -813,21 +840,24 @@ moved where before finalizing.
 
 Triggered when any of:
 
-1. The four `/core/` files combined exceed roughly 4,000 words (~25,000
+1. The six `/core/` files combined exceed roughly 4,000 words (~25,000
    characters).
 2. The project has split into a genuinely distinct architectural environment.
 3. `core/design.md`'s Component Registry exceeds roughly 15 distinct reusable
    UI patterns.
 
-Preview the mapping, then split the four `/core/` files into the nine Standard
-files: `core/overview.md` to `project-overview.md`; `core/architecture.md`
-mostly to `architecture.md`, with conventions to `code-standards.md` and
-library patterns to `library-docs.md`; `core/design.md` to `ui-tokens.md`,
-`ui-rules.md`, and `ui-registry.md`; `core/progress.md` to `build-plan.md` and
-`progress-tracker.md`. Move the resulting files into `/context/` and remove the
-superseded `/core/` authority only after equivalence is verified. Replace only
-the marked Banka block with the Standard router from Section 5, changing
-exactly `<!-- BANKA:TIER: Core -->` to `<!-- BANKA:TIER: Standard -->`.
+Preview the mapping, then split the six `/core/` files into the eleven
+Standard files: `core/overview.md` to `project-overview.md`;
+`core/architecture.md` mostly to `architecture.md`, with conventions to
+`code-standards.md` and library patterns to `library-docs.md`;
+`core/design.md` to `ui-tokens.md`, `ui-rules.md`, and `ui-registry.md`;
+`core/progress.md` to `build-plan.md` and `progress-tracker.md`;
+`core/session-notes.md` to `session-notes.md`; `core/decisions-index.md` to
+`decisions-index.md`, and `core/decisions/` to `decisions/`, unchanged. Move
+the resulting files into `/context/` and remove the superseded `/core/`
+authority only after equivalence is verified. Replace only the marked Banka
+block with the Standard router from Section 5, changing exactly
+`<!-- BANKA:TIER: Core -->` to `<!-- BANKA:TIER: Standard -->`.
 Preserve all content outside the block, keep `CLAUDE.md` exactly `@AGENTS.md`,
 and show what moved where before finalizing.
 
