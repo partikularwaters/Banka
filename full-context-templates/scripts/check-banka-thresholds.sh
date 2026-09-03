@@ -19,13 +19,17 @@ cd "$repo_root"
 THRESHOLD=2000
 TICKET_THRESHOLD=2000
 
-section_words() {
-  # Word count of the text between "## $1" and the next "## " heading (or EOF).
+section_text() {
+  # The text between "## $1" and the next "## " heading (or EOF).
   awk -v heading="## $1" '
     $0 == heading { flag=1; next }
     /^## / { if (flag) exit }
     flag { print }
-  ' "$2" 2>/dev/null | wc -w | tr -d ' '
+  ' "$2" 2>/dev/null
+}
+
+section_words() {
+  section_text "$1" "$2" | wc -w | tr -d ' '
 }
 
 row() {
@@ -34,11 +38,59 @@ row() {
   printf '| %s | %s | ~%s | %s |\n' "$label" "${count:-0}" "$threshold" "$status"
 }
 
+# Completed running total: a mechanical count of checked "- [x]" items, never
+# a self-estimate — the live section's own checked items plus everything
+# already archived to overflow/completed/. Printed as a standalone line, not
+# a Threshold Check row, since it's a count of tasks, not words, and isn't a
+# threshold gate.
+completed_state_file=""
+completed_heading=""
+if [ -f "context/progress-tracker.md" ]; then
+  completed_state_file="context/progress-tracker.md"
+  completed_heading="Completed"
+elif [ -f "core/progress.md" ]; then
+  completed_state_file="core/progress.md"
+  completed_heading="Completed Actions"
+fi
+
+if [ -n "$completed_state_file" ]; then
+  live_count=$(section_text "$completed_heading" "$completed_state_file" | grep -c '^- \[x\]' || true)
+  archived_count=0
+  archived_files=0
+  for overflow_dir in context/overflow/completed core/overflow/completed; do
+    [ -d "$overflow_dir" ] || continue
+    while IFS= read -r file; do
+      [ -n "$file" ] || continue
+      c=$(grep -c '^- \[x\]' "$file" || true)
+      archived_count=$((archived_count + c))
+      archived_files=$((archived_files + 1))
+    done < <(find "$overflow_dir" -type f -name "*.md")
+  done
+  total=$((live_count + archived_count))
+  phases=$((archived_files + 1))
+  phase_word="phases"
+  [ "$phases" -eq 1 ] && phase_word="phase"
+  echo "**Completed so far:** $total tasks across $phases $phase_word (mechanical count — see scripts/check-banka-thresholds.sh)"
+  echo
+fi
+
 echo "## Threshold Check"
 echo "_Last run: $(date +%Y-%m-%d). Run \`bash scripts/check-banka-thresholds.sh\` to refresh._"
 echo
 echo "| File | Words | Threshold | Status |"
 echo "| --- | --- | --- | --- |"
+
+# Completed / Completed Actions: never split into its own file (Protocol
+# Section 2.9, Track B check 2) — checked as a section within
+# progress-tracker.md (Standard) or progress.md (Core), heading name differs
+# by tier.
+if [ -f "context/progress-tracker.md" ]; then
+  w=$(section_words "Completed" "context/progress-tracker.md")
+  row "Completed (progress-tracker.md)" "$w" "$THRESHOLD"
+elif [ -f "core/progress.md" ]; then
+  w=$(section_words "Completed Actions" "core/progress.md")
+  row "Completed Actions (progress.md)" "$w" "$THRESHOLD"
+fi
 
 # Session Notes and Decisions Index: standalone files under context/ (Standard)
 # or core/ (Core) — Protocol Section 4/5's file split. Each is checked as a

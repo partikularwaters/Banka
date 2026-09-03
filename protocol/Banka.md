@@ -332,8 +332,9 @@ The tier-resolved `delegation-queue.md` (root for Minimal/Core, `context/delegat
 ### Track B — Correction (`remember` only for session-state; `delegate` for the delegation queue; automatic check every save/write, action only when a real threshold is crossed or explicitly requested, always previewed before applying)
 
 1. **Session Notes — split immediately once a thread settles, not on a word count.** Evaluate each tagged thread independently, on every save: the moment a thread reaches a genuine settled boundary, archive it immediately to `overflow/session-notes/` — do not wait for `session-notes.md` to also cross a size threshold first. A thread with no settled boundary stays live regardless of size. The ~2,000-word figure (provisional, revise once real usage data exists — Section 2.5's Rule 4) is now only a fallback: if the file crosses it while nothing is yet settled, flag it as oversized with no clean cut point and stop, consistent with `linis`'s rule to never act against unsettled work. In the common case this check rarely fires at all — settled threads leave before the file has a chance to grow large from them.
-2. **Any overflow file ≥ ~2,000 words** (same provisional figure). Start the next sequentially numbered file in the same subfolder (`01-session-notes.md` → `02-session-notes.md`, or the delegation-tickets equivalent). Never split a file's content mid-file.
-3. **Delegation queue's `## Full ticket specs` ≥ ~1,500–2,000 words** (same provisional figure as check 1). Only tickets already moved to `## Completed` (survey-passed) are archive-eligible — an unstarted or in-progress ticket's full spec stays live no matter how long the file gets, the same "never act against unsettled work" boundary as check 1. Archive the oldest completed tickets first, to the next sequentially numbered file in `overflow/delegation-tickets/`. If no ticket is yet in `## Completed`, do not force an archive — flag the section as oversized with no archive-eligible ticket yet, and stop, the same fallback as check 1. Ticket numbers never change when a spec is archived — archiving relocates spec text, it does not renumber, resequence, or otherwise touch the stable append-only numbering `delegate` assigns. Leave the ticket's one-line summary (name, date, outcome) in `## Completed` with a link to the overflow file that holds its full spec.
+2. **Completed — archive by phase boundary, not word count** (Core/Standard's `progress.md`/`progress-tracker.md` only; Minimal has no In Progress/Up Next/Blocked split and defers this entirely to `scale`'s own Minimal→Core threshold, same reasoning as the Logbook and the threshold script). The moment `**Current Phase:**` changes, the *previous* phase's `## Completed` entries are now permanently settled — archive them immediately to `overflow/completed/` and add a row to the live file's `## Completed Archive Index` (`Phase | File | Covers`, each a real link). A still-open phase's entries stay live regardless of size — the same "never act against unsettled work" boundary as check 1. The ~2,000-word figure is again only a fallback: if `## Completed` crosses it while the current phase is still open, flag it oversized with no clean cut point and stop. Unlike Session Notes or the Decisions Index, Completed needs no dedicated file of its own — its entries are one-line checkboxes with no per-item depth, so the routing index lives inside `progress.md`/`progress-tracker.md` itself, the same way Session Notes' Overflow Index lives inside `session-notes.md`. The running-total line next to `**Current Phase:**` is never hand-maintained: `scripts/check-banka-thresholds.sh` computes it mechanically — a count of checked `- [x]` items in the live section plus everything already archived to `overflow/completed/` — the same "never trust a self-estimate over the actual count" rule the rest of this section already applies to word counts, applied here to an item count instead.
+3. **Any overflow file ≥ ~2,000 words** (same provisional figure). Start the next sequentially numbered file in the same subfolder (`01-session-notes.md` → `02-session-notes.md`, `01-completed.md` → `02-completed.md`, or the delegation-tickets equivalent). Never split a file's content mid-file.
+4. **Delegation queue's `## Full ticket specs` ≥ ~1,500–2,000 words** (same provisional figure as check 1). Only tickets already moved to `## Completed` (survey-passed) are archive-eligible — an unstarted or in-progress ticket's full spec stays live no matter how long the file gets, the same "never act against unsettled work" boundary as check 1. Archive the oldest completed tickets first, to the next sequentially numbered file in `overflow/delegation-tickets/`. If no ticket is yet in `## Completed`, do not force an archive — flag the section as oversized with no archive-eligible ticket yet, and stop, the same fallback as check 1. Ticket numbers never change when a spec is archived — archiving relocates spec text, it does not renumber, resequence, or otherwise touch the stable append-only numbering `delegate` assigns. Leave the ticket's one-line summary (name, date, outcome) in `## Completed` with a link to the overflow file that holds its full spec.
 
 **Decisions no longer accumulate here for Core or Standard.** The former check 3 (a "Decisions section ≥ ~1,500 words" correction) is retired: Core/Standard write durable decisions to the Logbook now (Section 2.11), not inline in session-state, so the section this check corrected no longer receives new content to correct. `overflow/decisions/` below is legacy-only — a project that already has one from before this change keeps it untouched (no retroactive migration), but a newly generated or newly promoted Core/Standard project never creates one.
 
@@ -341,9 +342,9 @@ The tier-resolved `delegation-queue.md` (root for Minimal/Core, `context/delegat
 
 **Reference integrity.** Before any of Track B's three archiving/superseding operations actually moves or retires a file — a Session Notes thread, an overflow file being superseded by the next numbered one, a ticket's full spec, or a Decision Record being marked Superseded (Section 2.11) — search this project's own Banka-generated files (session-state, `delegation-queue.md`, `decisions/`) for every link pointing at the exact path about to change, and update each one in the same operation, never move-and-hope. This is fully mechanical for Banka's own artifacts: nothing outside a project is ever expected to hardcode a path into them, so unlike a general-purpose reference-integrity check, there is no external-consumer case to ask a human about — the in-project search is the whole check.
 
-**Mechanical verification.** Every Track B check above is a threshold judgment, and a prose instruction asking a session to notice when a section has grown too long is not reliable on its own — nothing about writing one more entry naturally prompts stepping back to total a whole section's word count, and there is no confirmed evidence this class of check has ever fired autonomously without something external prompting it. The fix is to stop trusting an LLM's self-estimate for the *measurement* itself: Core and Standard projects install `scripts/check-banka-thresholds.sh` (Core/Standard tier generation and `scale` promotion; Minimal is excluded, same reasoning as the Logbook — outgrowing "no extra files" is itself the promotion signal). It counts words per tracked section against these provisional thresholds and prints a report — it never archives, splits, or fixes anything itself, only measures. Critically, it runs independent of any AI session: a developer can invoke it directly from a terminal, or wire it into a git hook, so the measurement no longer depends on any session remembering to take it.
+**Mechanical verification.** Every Track B check above is a threshold judgment, and a prose instruction asking a session to notice when a section has grown too long is not reliable on its own — nothing about writing one more entry naturally prompts stepping back to total a whole section's word count, and there is no confirmed evidence this class of check has ever fired autonomously without something external prompting it. The fix is to stop trusting an LLM's self-estimate for the *measurement* itself: Core and Standard projects install `scripts/check-banka-thresholds.sh` (Core/Standard tier generation and `scale` promotion; Minimal is excluded, same reasoning as the Logbook — outgrowing "no extra files" is itself the promotion signal). It counts words per tracked section against these provisional thresholds, plus a checked-item count for Completed's running total (Track B check 2), and prints a report — it never archives, splits, or fixes anything itself, only measures. Critically, it runs independent of any AI session: a developer can invoke it directly from a terminal, or wire it into a git hook, so the measurement no longer depends on any session remembering to take it.
 
-Each file it covers carries its own `## Threshold Check` block, reporting only that file's own count — never one global table naming every tracked file, so the shape survives a future split unchanged. `progress.md`/`progress-tracker.md` no longer holds Session Notes or Decisions Index content itself (Section 4/5's file split put each in its own file, checked independently); it instead carries a rollup row for each, so a session reading only the task-tracking file never loses visibility into the other two:
+Each file it covers carries its own `## Threshold Check` block, reporting only that file's own count — never one global table naming every tracked file, so the shape survives a future split unchanged. `progress.md`/`progress-tracker.md` no longer holds Session Notes or Decisions Index content itself (Section 4/5's file split put each in its own file, checked independently); it instead carries a rollup row for each, so a session reading only the task-tracking file never loses visibility into the other two. Completed, unlike those two, was never split into its own file (Track B check 2 above), so its row is a direct in-file section count, not a rollup:
 
 ```markdown
 ## Threshold Check
@@ -351,6 +352,7 @@ _Last run: [date]. Run `bash scripts/check-banka-thresholds.sh` to refresh._
 
 | File | Words | Threshold | Status |
 | --- | --- | --- | --- |
+| Completed (this file) | 812 | ~2,000 | OK |
 | session-notes.md | 1,679 | ~2,000 | OK |
 | decisions-index.md | 2,246 | ~2,000 | OVER — action needed |
 ```
@@ -368,8 +370,17 @@ scripts/check-banka-thresholds.sh   (Core/Standard only — measures, never fixe
 context/                              (Standard; Core: core/, same shape)
 ├── progress-tracker.md
 │     Threshold Check    — rollup rows for session-notes.md and
-│                          decisions-index.md, plus task-tracking
-│                          (Completed / In Progress / Up Next / Blocked)
+│                          decisions-index.md, plus a direct in-file
+│                          row for Completed (never split into its
+│                          own file — see Track B check 2)
+│     Completed          — mechanical running total line next to Current
+│                          Phase (script-computed, never hand-maintained);
+│                          only the still-open phase's entries live here
+│     Completed Archive Index — Phase | File | Covers, each a real link
+│                          (a routing table, not Completed content —
+│                          never conflate with the Completed body itself)
+│     In Progress / Up Next / Blocked — task-tracking, no overflow of
+│                          their own (naturally self-limiting)
 ├── session-notes.md
 │     Threshold Check    — this file's own mechanical word count
 │     (body)             — current, thread-tagged arc(s) only
@@ -394,6 +405,9 @@ context/                              (Standard; Core: core/, same shape)
 └── overflow/
     ├── session-notes/
     │     01-session-notes.md, 02-...  (own Contents header each)
+    ├── completed/
+    │     01-completed.md, 02-...  (own Contents header each; one
+    │     archived phase's Completed entries per rollover)
     ├── decisions-index/
     │     01-decisions-index.md, 02-...  (paginated Decisions Index rows —
     │     Section 2.11)

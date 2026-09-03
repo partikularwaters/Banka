@@ -85,6 +85,11 @@ for rendered in "$tmp_dir/project-standard/context/progress-tracker.md" "$tmp_di
   grep -q '\](decisions-index.md)' "$rendered" || fail "Missing a rollup link to decisions-index.md in ${rendered#"$tmp_dir/"}"
   grep -qi "check-banka-thresholds.sh" "$rendered" || fail "Missing a reference to the mechanical threshold script in ${rendered#"$tmp_dir/"}"
   grep -qi "## Threshold Check" "$rendered" || fail "Missing the Threshold Check block in ${rendered#"$tmp_dir/"}"
+  grep -qi "completed archive index" "$rendered" || fail "Missing the Completed Archive Index in ${rendered#"$tmp_dir/"}"
+  grep -qi "phase.*file.*covers\|covers.*file.*phase" "$rendered" || fail "Completed Archive Index is mentioned but no actual schema (its columns) is shown in ${rendered#"$tmp_dir/"} — a downstream session has nothing to build the table from"
+  grep -q '\](overflow/completed/' "$rendered" || fail "Completed Archive Index example row isn't a real link in ${rendered#"$tmp_dir/"}"
+  grep -qi "running total\|completed so far" "$rendered" || fail "Missing the running-total line for Completed in ${rendered#"$tmp_dir/"}"
+  grep -qi "current phase" "$rendered" || fail "Missing the phase-boundary archive trigger for Completed in ${rendered#"$tmp_dir/"}"
 done
 
 # --- Check 4a: Core/Standard's rendered session-notes.md carries the full
@@ -117,6 +122,18 @@ for script in "$tmp_dir/project-core/scripts/check-banka-thresholds.sh" "$tmp_di
   test -f "$script" || fail "Missing rendered check-banka-thresholds.sh at ${script#"$tmp_dir/"}"
   head -1 "$script" | grep -q '^#!' || fail "check-banka-thresholds.sh has no shebang line at ${script#"$tmp_dir/"}"
   grep -q "Threshold Check" "$script" || fail "check-banka-thresholds.sh doesn't emit the Threshold Check heading at ${script#"$tmp_dir/"}"
+done
+
+# --- Check 4e: the threshold script actually executes cleanly against a
+# rendered project and mechanically computes the Completed running total —
+# not just referenced in prose, actually run ----------------------------------
+for project_dir in "$tmp_dir/project-core" "$tmp_dir/project-standard"; do
+  output=$(cd "$project_dir" && bash scripts/check-banka-thresholds.sh) || \
+    fail "check-banka-thresholds.sh failed to execute cleanly in ${project_dir#"$tmp_dir/"}"
+  echo "$output" | grep -qi "completed so far" || \
+    fail "check-banka-thresholds.sh's real output has no Completed running-total line in ${project_dir#"$tmp_dir/"}"
+  echo "$output" | grep -qE '[0-9]+ (tasks|actions)' || \
+    fail "check-banka-thresholds.sh's running-total line has no actual computed number in ${project_dir#"$tmp_dir/"}"
 done
 
 # --- Check 4b: rendered delegation-queue.md carries complete overflow

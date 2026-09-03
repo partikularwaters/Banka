@@ -121,17 +121,19 @@ files by section; never replace any of them with a standalone memory document:
   Actions, Known Issues / Open Decisions, Session Notes, and Next Immediate
   Step. Preserve all content outside the marked block.
 - **Core — three files:** `core/progress.md` for Current Phase, Active
-  Milestones, Completed Actions, Known Issues, and Next Immediate Step;
-  `core/session-notes.md` for session narrative; `core/decisions-index.md`
-  for the Decisions Index. A durable decision goes to the Logbook
-  (`core/decisions/`) with a row in `core/decisions-index.md`, never an
-  inline entry — see Bloat prevention and correction below.
-- **Standard — three files:** `context/progress-tracker.md` for Completed,
-  In Progress, Up Next, Blocked, and Known Issues; `context/session-notes.md`
-  for session narrative; `context/decisions-index.md` for the Decisions
-  Index. A durable decision goes to the Logbook (`context/decisions/`) with a
-  row in `context/decisions-index.md`, never an inline entry — see Bloat
-  prevention and correction below.
+  Milestones, Completed Actions (plus its running total and Completed
+  Archive Index once a phase archives — see Bloat prevention and correction
+  below), Known Issues, and Next Immediate Step; `core/session-notes.md` for
+  session narrative; `core/decisions-index.md` for the Decisions Index. A
+  durable decision goes to the Logbook (`core/decisions/`) with a row in
+  `core/decisions-index.md`, never an inline entry.
+- **Standard — three files:** `context/progress-tracker.md` for Completed
+  (plus its running total and Completed Archive Index once a phase
+  archives — see Bloat prevention and correction below), In Progress, Up
+  Next, Blocked, and Known Issues; `context/session-notes.md` for session
+  narrative; `context/decisions-index.md` for the Decisions Index. A durable
+  decision goes to the Logbook (`context/decisions/`) with a row in
+  `context/decisions-index.md`, never an inline entry.
 
 When a captured decision changes a global invariant, architecture, token, or
 other domain-owned fact, update the file that owns that fact rather than logging
@@ -183,10 +185,32 @@ own short Contents note at the top; the live file's Overflow Index (file,
 type, what it covers) tracks all of them, each entry a real link, and is
 created the first time any of this fires.
 
+**Core/Standard — Completed archives by phase boundary, not word count.**
+The moment `**Current Phase:**` / `**Current phase:**` changes, the
+*previous* phase's `Completed`/`Completed Actions` entries are now
+permanently settled — archive them immediately to `overflow/completed/`
+(next sequentially numbered file, same convention as Session Notes) and add
+a row to the live file's `## Completed Archive Index` (`Phase | File |
+Covers`, each a real link). A still-open phase's entries stay live
+regardless of size — the same "never act against unsettled work" boundary
+as Session Notes. The ~2,000-word figure is again only a fallback: if
+`Completed`/`Completed Actions` crosses it while the phase is still open,
+flag it oversized with no clean cut point and stop. **Never hand-update the
+running-total line next to Current Phase** — it's a mechanical count
+(`scripts/check-banka-thresholds.sh`, run first per the Save Mode step
+above), not a narrative one; after archiving, re-run the script and copy its
+computed total in verbatim, the same as the Threshold Check block itself.
+Unlike Session Notes or
+the Decisions Index, this never needs its own file — the routing index
+lives inside `progress.md`/`progress-tracker.md` itself. Minimal has no
+In Progress/Up Next/Blocked split and defers this entirely to `scale`'s own
+Minimal→Core threshold, same reasoning as the Logbook.
+
 **Links, not paths.** Every pointer written here — an Overflow Index row, a
-Decisions Index row, an archived entry's summary — is a real markdown link
-to the exact target, never a vague description. Before archiving anything
-(a settled thread, an overflow file rollover), search this project's own
+Decisions Index row, a Completed Archive Index row, an archived entry's
+summary — is a real markdown link to the exact target, never a vague
+description. Before archiving anything (a settled thread, a settled phase's
+Completed entries, an overflow file rollover), search this project's own
 Banka-generated files for links pointing at the path about to change and
 update them in the same save — never move-and-hope.
 
