@@ -107,9 +107,12 @@ Also orthogonal:
   linis — scoped cleanup pass, run once a version ships or a milestone
   closes. Never run against active work.
 
-Codex discovery (user-level, shared by every repository):
+Runtime discovery (user-level, shared by every repository):
 
-  ~/.agents/skills/* -> symlinks to Banka/skills-kit/*
+  ~/.agents/skills/*  -> symlinks to Banka/skills-kit/* (Codex)
+  ~/.claude/skills/*  -> symlinks to Banka/skills-kit/* (Claude Code)
+  Symlinking is the fresh-install default for both; an existing copy-based
+  install changes only through the confirmed update procedure (Protocol §7).
   $skill-name invokes a skill in Codex; Claude Code uses /skill-name.
 ```
 

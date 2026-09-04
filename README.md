@@ -195,21 +195,27 @@ Paste this into a fresh Claude Code session — no pre-cloning needed, the agent
 does it:
 
 ```
-Clone https://github.com/partikularwaters/Banka.git to a temporary directory,
-fetch tags, and check out the newest annotated stable vMAJOR.MINOR.PATCH tag
-by semantic-version order. Verify that the tag is annotated and its commit's
-VERSION matches the tag, and do not use newer unreleased commits from the
-default branch. If no valid stable tag exists, stop instead of falling back to
-the default branch. Then install its Skills Kit: copy each skills-kit/*/SKILL.md into
-~/.claude/skills/<skill-name>/SKILL.md as-is. Before installing, check
-~/.claude/commands/, ~/.claude/skills/, and, if this is a specific project,
-its own .claude/commands/ and .claude/skills/, for any existing file using
-one of these ten names: charter, delegate, dredge, linis, moor, remember,
-scale, survey, verify, watershed. If you find one, don't delete it unilaterally —
-back it up and ask me how to reconcile it before installing over it.
+Clone https://github.com/partikularwaters/Banka.git to a persistent directory
+owned by the current user, fetch tags, and check out the newest annotated stable
+vMAJOR.MINOR.PATCH tag by semantic-version order. Verify that the tag is
+annotated and its commit's VERSION matches the tag, and do not use newer
+unreleased commits from the default branch. If no valid stable tag exists, stop
+instead of falling back to the default branch. Then install its Skills Kit:
+link each of these ten skills-kit/<skill> directories into
+~/.claude/skills/<skill>/: charter, delegate, dredge, linis, moor, remember,
+scale, survey, verify, watershed. If a persistent checkout or symlinks cannot be used,
+copy from a temporary checkout instead; never link to a temporary directory.
+Before installing, check ~/.claude/commands/, ~/.claude/skills/, and, if this
+is a specific project, its own .claude/commands/ and .claude/skills/, for any
+existing file using one of these ten names. If you find one, don't delete it
+unilaterally — back it up and ask me how to reconcile it before installing
+over it.
 ```
 
 Invoke skills with `/skill-name`, for example `/charter` or `/remember restore`.
+Symlinking is the new default for a fresh install only — it doesn't apply
+retroactively to an existing copy-based install, which changes only through
+the confirmed [Updating Banka](#updating-banka) procedure below.
 
 Full install details and rationale: [protocol/Banka.md](protocol/Banka.md), Section 7.
 

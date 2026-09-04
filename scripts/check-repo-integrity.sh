@@ -150,7 +150,12 @@ test "$missing_tag_stop_count" -eq 4 || \
 if rg -n -U 'temporary directory,\nthen install its Skills Kit for the current user: link' "$repo_root/README.md" >/dev/null; then
   fail "Codex installation must never symlink Banka skills from a temporary checkout"
 fi
-require_literal 'never link to a temporary directory' "$repo_root/README.md"
+if rg -n -U '(?s)temporary directory,.*?Then install its Skills Kit:\nlink' "$repo_root/README.md" >/dev/null; then
+  fail "Claude Code installation must never symlink Banka skills from a temporary checkout"
+fi
+never_link_temp_count=$(grep -Fc 'never link to a temporary directory' "$repo_root/README.md" || true)
+test "$never_link_temp_count" -eq 2 || \
+  fail "Expected the never-link-to-a-temporary-directory caution in both README install prompts, found $never_link_temp_count"
 
 integrity_tmp_dir=$(mktemp -d)
 trap 'rm -rf "$integrity_tmp_dir"' EXIT
@@ -286,8 +291,11 @@ extract_batch_handoff_block "$repo_root/full-context-templates/delegation-queue.
 cmp -s "$delegate_batch_handoff_file" "$template_batch_handoff_file" || \
   fail "Delegate and delegation-queue batch handoff blocks differ"
 
-user_skills_dir="$HOME/.agents/skills"
-if test -d "$user_skills_dir"; then
+verify_user_skills_dir() {
+  local user_skills_dir=$1
+  if ! test -d "$user_skills_dir"; then
+    return
+  fi
   for skill in "${skills[@]}"; do
     installed_skill="$user_skills_dir/$skill"
     if test -e "$installed_skill" || test -L "$installed_skill"; then
@@ -307,6 +315,9 @@ if test -d "$user_skills_dir"; then
       echo "Installed Banka skill link not present (repository package remains valid): $installed_skill"
     fi
   done
-fi
+}
+
+verify_user_skills_dir "$HOME/.agents/skills"
+verify_user_skills_dir "$HOME/.claude/skills"
 
 echo "Banka repository integrity check passed."

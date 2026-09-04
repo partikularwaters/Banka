@@ -910,25 +910,35 @@ Install once at `~/.claude/skills/` for personal, machine-wide use:
 └── verify/SKILL.md
 ```
 
-Clone or download this repo, fetch tags, and check out the newest annotated
-stable `vMAJOR.MINOR.PATCH` tag by semantic-version order — verify it is
-annotated and its commit's `VERSION` matches the tag, and never install from
-newer, unreleased default-branch commits. If no valid stable tag exists, stop
-instead of installing from the default branch. Then ask Claude Code directly:
+Clone this package to a persistent directory owned by the current user, fetch
+tags, and check out the newest annotated stable `vMAJOR.MINOR.PATCH` tag by
+semantic-version order — verify it is annotated and its commit's `VERSION`
+matches the tag, and never install from newer, unreleased default-branch
+commits. If no valid stable tag exists, stop instead of installing from the
+default branch.
 
-```
-Install the Banka Skills Kit from <path-to-clone>/skills-kit/ into
-~/.claude/skills/ — one folder per skill, copying each SKILL.md as-is.
-```
+Install the standard Banka kit once at `~/.claude/skills/`. Link each
+directory from this package's `skills-kit/` into that location; a symlink is
+preferred so `skills-kit/` remains the only source of truth. A symlink must
+target this persistent checkout, never a temporary clone. Before linking,
+check `~/.claude/commands/`, `~/.claude/skills/`, and any old project-local
+`.claude/commands/` or `.claude/skills/` entries for a file already using one
+of the ten skill names above. If one exists, do not remove it unilaterally —
+back it up, tell the user what was found, and let them decide whether to
+remove, rename, or keep it before installing over it.
 
-Claude Code performs the copy with its normal file tools. Invoke the installed
-skills with `/skill-name`.
+If a persistent checkout or symlinks cannot be used, copy each complete skill
+directory into `~/.claude/skills/` from a temporary checkout instead — never
+link to a temporary directory — and confirm every entry contains a readable
+`SKILL.md`.
 
-**Before installing, check `~/.claude/commands/` and `~/.claude/skills/`, plus
-any old project-local `.claude/commands/` or `.claude/skills/` entries, for a
-file already using one of the ten skill names above.** If one exists, do not
-remove it unilaterally — back it up, tell the user what was found, and let them
-decide whether to remove, rename, or keep it before installing over it.
+Invoke the installed skills with `/skill-name`.
+
+Symlinking is the new preferred default for a fresh install; it does not
+apply retroactively to an existing copy-based install. An existing
+Banka-managed project only changes through the confirmed update procedure
+below, which previews every change — including a mechanism change like this
+one — before applying anything.
 
 ### Codex discovery
 
