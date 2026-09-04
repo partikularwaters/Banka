@@ -22,6 +22,13 @@ uses state schema 2. See [VERSION](VERSION) and [CHANGELOG.md](CHANGELOG.md).
 
 **New here?** Jump straight to [Getting started](#getting-started) to begin.
 
+> **Coming soon:** Banka 3.0.0. The `scalability-improvements` branch adds a
+> 10th skill (`verify`, mechanical claim verification), splits Core/Standard
+> session state into smaller per-concern files, and adds overflow archiving so
+> long-running projects stay lean. `main` reflects the latest stable release;
+> if you're reading this from that branch, expect protocol and skill changes
+> not yet folded into a numbered release.
+
 ## Why "Banka" 🛶
 
 *Banka* — shortened from *bangka*, Tagalog for the traditional Philippine
