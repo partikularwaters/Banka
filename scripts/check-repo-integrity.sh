@@ -30,6 +30,14 @@ done
 skill_file_count=$(find "$repo_root/skills-kit" -mindepth 2 -maxdepth 2 -name SKILL.md -type f | wc -l | tr -d ' ')
 test "$skill_file_count" -eq "${#skills[@]}" || fail "Expected ${#skills[@]} skills-kit/*/SKILL.md files, found $skill_file_count"
 
+for skill in "${skills[@]}"; do
+  grep -Fq "\`$skill\`" "$repo_root/README.md" || fail "README.md doesn't mention skill \`$skill\` anywhere"
+done
+
+readme_skill_tree_list=$(IFS=,; echo "${skills[*]}")
+grep -Fq "{$readme_skill_tree_list}/SKILL.md" "$repo_root/README.md" || \
+  fail "README.md's repo-structure tree skill list doesn't match the skills array: {$readme_skill_tree_list}"
+
 start_count=$(grep -c '<!-- BANKA:START -->' "$repo_root/protocol/Banka.md")
 end_count=$(grep -c '<!-- BANKA:END -->' "$repo_root/protocol/Banka.md")
 test "$start_count" -eq 4 || fail "Expected 4 BANKA:START markers in protocol/Banka.md, found $start_count"

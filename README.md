@@ -158,8 +158,9 @@ These protocols remain independently useful and are not dependencies of Banka.
 
 ## The skills
 
-Nine Skills with one canonical source, exposed through each supported runtime's
-discovery location and used across every Banka project regardless of tier:
+The Skills Kit has one canonical source, exposed through each supported
+runtime's discovery location and used across every Banka project regardless
+of tier:
 
 | Skill | What it does |
 | --- | --- |
@@ -168,6 +169,7 @@ discovery location and used across every Banka project regardless of tier:
 | `survey` | Checks a build against what was planned, the project's own declared rules, and production-readiness — then routes real findings to the right next skill. |
 | `dredge` | Diagnoses a build failure before responding to it — including when it can't be reproduced at all — targeted fix, hard reset, or genuine rethink are different problems. |
 | `watershed` | Runs a genuinely contested or high-stakes call through five independent perspectives, then consolidates one recommendation. |
+| `verify` | Mechanically reconciles a blocked `survey` claim, or a promotion check, against real repo evidence — never re-judging correctness, only confirming what the repo actually shows, and writing one durable record. |
 | `moor` | Captures a UI pattern or invariant/token change, grounded in the actual file diff (not conversation memory) — registry and invariant captures wait for survey to pass first — so the next session builds on it instead of drifting. |
 | `remember` | Saves session state on close, restores it on open — always checking disk/git reality first, and keeping the session-state file itself from bloating as it grows. |
 | `scale` | Promotes a project exactly one tier at a time, Minimal → Core → Standard, only when a real threshold is met. |
@@ -184,7 +186,7 @@ instead of adopting the project again.
 
 ## Installing the Skills Kit
 
-`skills-kit/` is the canonical source for all nine skills. Choose the discovery
+`skills-kit/` is the canonical source for the Skills Kit. Choose the discovery
 path for the runtime you use.
 
 ### Claude Code
@@ -202,8 +204,8 @@ the default branch. Then install its Skills Kit: copy each skills-kit/*/SKILL.md
 ~/.claude/skills/<skill-name>/SKILL.md as-is. Before installing, check
 ~/.claude/commands/, ~/.claude/skills/, and, if this is a specific project,
 its own .claude/commands/ and .claude/skills/, for any existing file using
-one of these nine names: charter, delegate, dredge, linis, moor, remember,
-scale, survey, watershed. If you find one, don't delete it unilaterally —
+one of these ten names: charter, delegate, dredge, linis, moor, remember,
+scale, survey, verify, watershed. If you find one, don't delete it unilaterally —
 back it up and ask me how to reconcile it before installing over it.
 ```
 
@@ -223,9 +225,9 @@ vMAJOR.MINOR.PATCH tag by semantic-version order. Verify that the tag is
 annotated and its commit's VERSION matches the tag, and do not use newer
 unreleased commits from the default branch. If no valid stable tag exists, stop
 instead of falling back to the default branch. Then install its Skills Kit for the
-current user: link each of these nine skills-kit/<skill> directories into
+current user: link each of these ten skills-kit/<skill> directories into
 ~/.agents/skills/<skill>/: charter, delegate, dredge, linis, moor, remember,
-scale, survey, watershed. If a persistent checkout or symlinks cannot be used,
+scale, survey, verify, watershed. If a persistent checkout or symlinks cannot be used,
 copy from a temporary checkout instead; never link to a temporary directory.
 Before installing, check
 ~/.agents/skills/ and the projects I use for an existing Banka skill with the
@@ -237,8 +239,8 @@ SKILL.md.
 
 Invoke skills with `$skill-name`, for example `$charter` or `$remember restore`.
 
-Run `scripts/check-repo-integrity.sh` from the cloned checkout to verify all
-nine canonical `SKILL.md` files and names, confirm repository-local Banka
+Run `scripts/check-repo-integrity.sh` from the cloned checkout to verify every
+canonical `SKILL.md` file and name, confirm repository-local Banka
 duplicates have not been reintroduced, check the generated Banka block
 markers, and scan for known obsolete terminology.
 
@@ -315,11 +317,12 @@ delegate → optional: split approved work into Junior-safe, Senior-required,
    |
 survey → check plan-alignment, system integrity, prod-readiness
    |    ├─→ dredge     if something is actually broken
-   |    └─→ watershed  if it's a genuine multi-angle judgment call
+   |    ├─→ watershed  if it's a genuine multi-angle judgment call
+   |    └─→ verify     if a Layer 3 claim is blocked (Core/Standard only)
    |
 moor → capture a UI pattern or invariant/token change, grounded in the
    |    actual git diff (registry/invariant captures wait for survey to
-   |    pass first)
+   |    pass first, and check verify's recorded verdict on Core/Standard)
    |
 remember save → close the session
 ```
@@ -328,7 +331,9 @@ remember save → close the session
 enforced orderings — `delegate` refuses to run without an approved `charter`
 plan, `moor`'s registry and invariant/token captures require survey to have
 passed first (see `moor`'s own file for the audit-mode exception), and
-every session ends with save, starts with restore.
+every session ends with save, starts with restore. `survey → verify` is
+conditional, not enforced — it only runs for a blocked Layer 3 claim on
+Core/Standard.
 
 Use `/skill-name` in Claude Code and `$skill-name` in Codex. The loop repeats
 every session; the remember skill in restore mode opens the next one. The scale
@@ -366,11 +371,13 @@ This is what Banka generates *inside a project you build* — not this repo's ow
 | `IDEA-SCOPE.md` | project root | Section 1.5 — permanent record of original scope, never edited afterward |
 | `AGENTS.md` | project root | Sections 3/4/5 — the canonical, runtime-neutral Banka source of truth. Its one marked schema-2 block declares the tier and routes to any tier files. |
 | `CLAUDE.md` | project root | Claude Code compatibility import only: exactly `@AGENTS.md` plus a newline. It contains no separate project state. |
-| Core files (`overview.md`, `architecture.md`, `design.md`, `progress.md`) | `/core/` | Core-tier generation; restructured by `scale` on promotion |
-| Standard files (nine files) | `/context/` | Standard-tier generation; restructured by `scale` on promotion |
+| Core files — see `full-context-templates/core/` for the current list | `/core/` | Core-tier generation; restructured by `scale` on promotion |
+| Standard files — see `full-context-templates/standard/` for the current list | `/context/` | Standard-tier generation; restructured by `scale` on promotion |
 | `delegation-queue.md` | project root (Minimal/Core) or `/context/` (Standard) | `delegate` |
 | UI patterns | `ui-registry.md` (Standard) / `core/design.md` (Core) / inline (Minimal) | `moor` |
 | Session state | `progress.md`, `progress-tracker.md`, or the marked `AGENTS.md` block's Session Notes | `remember` |
+| `verified-index.md` | `/core/` (Core) or `/context/` (Standard) | `verify` |
+| `CONTRIBUTING.md` | project root | Section 8 — adoption-time only, soft default |
 
 ### Current state and migration
 
@@ -396,12 +403,12 @@ Banka/
 ├── scripts/check-repo-integrity.sh # repository-local packaging smoke check
 ├── scripts/check-cold-downstream.sh # simulates a cold install, catches downstream-unreachable references
 ├── system-map.md                  # one-doc orientation, start here
-├── skills-kit/                    # the nine Skills — install once, use everywhere
-│   └── {charter,survey,dredge,remember,moor,scale,delegate,watershed,linis}/SKILL.md
+├── skills-kit/                    # the Skills — install once, use everywhere
+│   └── {charter,delegate,dredge,linis,moor,remember,scale,survey,watershed,verify}/SKILL.md
 └── full-context-templates/
-    ├── project-entry/             # canonical AGENTS.md tier blocks and Claude shim
-    ├── core/                      # the four Core-tier files
-    ├── standard/                  # the nine Standard-tier files
+    ├── project-entry/             # canonical AGENTS.md tier blocks, Claude shim, CONTRIBUTING.md
+    ├── core/                      # the Core-tier files
+    ├── standard/                  # the Standard-tier files
     └── delegation-queue.md        # tier-agnostic, used by delegate
 ```
 

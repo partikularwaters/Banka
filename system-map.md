@@ -43,8 +43,8 @@ STAGE 1 — Scoping Intake (Protocol §1.5)
 
 STAGE 2 — Tier Generation (Protocol §3 / §4 / §5)
   Minimal:  marked AGENTS.md state block, no state folder
-  Core:     AGENTS.md router + /core/ (4 files)
-  Standard: AGENTS.md router + /context/ (9 files)
+  Core:     AGENTS.md router + /core/ (see full-context-templates/core/)
+  Standard: AGENTS.md router + /context/ (see full-context-templates/standard/)
   Claude Code compatibility: CLAUDE.md contains exactly @AGENTS.md
   Section 2.6 (Layer Principle) governs every default written in:
   Agnostic (identity layer) vs. Hard Default (quality layer)
@@ -61,15 +61,19 @@ STAGE 3 — The Build Loop (skills-kit/, exposed per supported runtime)
   survey     -> check plan-alignment, system integrity, prod-ready
       -> dredge    if something is actually broken
       -> watershed if it is a genuine multi-angle judgment call
+      -> verify    if a Layer 3 claim is blocked (Core/Standard only)
   moor       -> capture a UI pattern or invariant/token change, grounded
                 in the actual git diff (registry/invariant captures wait
-                for survey to pass first)
+                for survey to pass first, and check verify's recorded
+                verdict on Core/Standard)
   applicable operational perspectives are embedded inside existing skills
   remember save -> close the session
 
   charter -> delegate, survey -> moor, and remember save -> restore are
   enforced orderings; moor's registry/invariant captures require survey to
   have passed first (see moor's own file for the audit-mode exception).
+  survey -> verify is conditional, not enforced — only for a blocked
+  Layer 3 claim on Core/Standard.
 
   Loop repeats every session. remember restore opens the next one.
     |
@@ -157,8 +161,9 @@ than inside it.
 The tier resolved in Stage 1 determines the file shape. `AGENTS.md` is the
 canonical, runtime-neutral source of truth at every tier. Its one marked
 schema-2 Banka block declares the tier: Minimal keeps live state in the block
-and has no state folder; Core routes to four files under `/core/`; Standard
-routes to nine files under `/context/`. For Claude Code, `CLAUDE.md` is exactly
+and has no state folder; Core routes to the files under `/core/` (see
+`full-context-templates/core/`); Standard routes to the files under
+`/context/` (see `full-context-templates/standard/`). For Claude Code, `CLAUDE.md` is exactly
 the one-line `@AGENTS.md` import, so it does not duplicate state. Every default
 written into shared state is governed by §2.6's Layer Principle—Agnostic
 defaults (stack, language, styling) get contrasted, never picked for the user;
@@ -167,7 +172,7 @@ as settled fact.
 
 ## Stage 3 — The Build Loop (skills-kit/)
 
-The nine skills are exposed through the supported runtime's discovery location
+The Skills Kit is exposed through the supported runtime's discovery location
 and used across every Banka-enabled project regardless of tier. Each first
 resolves the marked schema-2 block in `AGENTS.md`, then follows its declared
 shape to Minimal's inline state, Core's `/core/`, or Standard's `/context/`.
@@ -175,7 +180,8 @@ Recognizable older CLAUDE-first projects may be read in compatibility mode but
 are not rewritten until an explicitly requested, previewed, and confirmed
 migration. Conflicting or incomplete state stops state-dependent work rather
 than inviting a guess. A typical session runs charter → optional delegate →
-build → survey → moor, with dredge or watershed used when routed there. Remember
+build → survey → moor, with dredge or watershed used when routed there, and
+verify when a Layer 3 claim is blocked (Core/Standard only). Remember
 closes and restores sessions after checking disk and version-control reality.
 Claude Code uses `/skill-name`; Codex uses `$skill-name`.
 
@@ -230,4 +236,6 @@ it; several rows are already enforced by `scripts/check-repo-integrity.sh`.
 | Release version | `protocol/Banka.md`'s title line, `README.md`, `CHANGELOG.md`, `VERSION`, the integrity script's version checks |
 | Existing-project release update | `protocol/Banka.md` §7's update procedure, `README.md`'s install/adopt/update prompts, `BANKA-ADOPTION-GUIDE.md` §6, release compatibility/action/schema notes in `CHANGELOG.md`, annotated release tags, the integrity script's update-path checks |
 | Session-state and delegation-queue bloat mechanism | `protocol/Banka.md` §2.9, `remember`/`moor`/`delegate` SKILL.md, `charter`'s Outcome Owner check, `scale`'s disambiguation note, the tier's `overflow/` folder shape, `full-context-templates/delegation-queue.md`'s own note |
+| Claim verification (`verify`) | `protocol/Banka.md` §4/§5 (`verified-index.md`), §7 (roster/provenance), `verify/SKILL.md`, `survey`'s Layer 3 routing, `moor`'s promotion check, the integrity script's skills list |
+| CONTRIBUTING.md adoption-time generation | `protocol/Banka.md` §8, `full-context-templates/project-entry/CONTRIBUTING.md`, the integrity script's project-entry template checks |
 | Downstream self-containment | `scripts/check-cold-downstream.sh`, any skill or template that could reference protocol-only content |
