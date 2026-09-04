@@ -31,20 +31,49 @@ never implements its own recommendation.
 
 ## Resolve Banka state first
 
-Read `../_shared/banka-state-resolution.md` (a sibling of this skill's own
-installed directory) and follow it in full before proceeding — it covers
-schema-2 detection, matching tier shapes, stop conditions, and legacy-state
-handling.
+Before reading or writing project state, inspect `AGENTS.md`, the complete
+contents of `CLAUDE.md`, `/core/`, `/context/`, and the required tier files.
+Active schema 2 requires one complete Banka block in `AGENTS.md` containing
+these exact comments exactly once and in this order: `<!-- BANKA:START -->`,
+`<!-- BANKA:STATE-SCHEMA: 2 -->`, exactly one of
+`<!-- BANKA:TIER: Minimal -->`, `<!-- BANKA:TIER: Core -->`, or
+`<!-- BANKA:TIER: Standard -->`, then `<!-- BANKA:END -->`. The declared tier
+must match the filesystem shape and required files. `CLAUDE.md` must be exactly
+`@AGENTS.md`; if it is missing, schema 2 is still active for a runtime that
+discovers `AGENTS.md` directly, but report that Claude Code compatibility is
+unavailable.
+
+A matching Minimal shape has neither `/core/` nor `/context/`. Core has
+`/core/` and its `overview.md`, `architecture.md`, `design.md`, `progress.md`,
+`session-notes.md`, `decisions-index.md`, and `verified-index.md`, with no
+`/context/`. Standard has `/context/` and its `project-overview.md`,
+`architecture.md`, `build-plan.md`, `code-standards.md`, `library-docs.md`,
+`ui-tokens.md`, `ui-rules.md`, `ui-registry.md`, `progress-tracker.md`,
+`session-notes.md`, `decisions-index.md`, and `verified-index.md`, with no
+`/core/`.
+
+Stop state-dependent work for competing authority, malformed/partial/duplicate
+or unknown Banka markers, a non-exact `CLAUDE.md` beside schema 2, an exact shim
+with missing authority, both state directories, tier mismatch, or missing
+required tier files. Do not choose, repair, or normalize any of these states.
+
+Without valid schema 2, recognize legacy Banka state only when `CLAUDE.md` has
+the `# Project Operating Protocol` heading and exactly one complete legacy tier
+shape, with or without an old AGENTS block pointing to it. If neither schema 2
+nor recognizable legacy state exists, treat the repository as
+unstructured/non-Banka — never assume Minimal, never create Banka state
+implicitly.
 
 watershed never writes, so the shared default (report the classification,
 read the chain when safe, never change Banka state) already matches
 watershed's own behavior with no further narrowing needed.
 
 For active or safely readable legacy state, use `/context/` for Standard,
-`/core/` for Core, and the Banka-owned `AGENTS.md` block for schema-2 Minimal or
-legacy `CLAUDE.md` for legacy Minimal. For an unstructured repository, use the
-supplied subject and relevant repository documentation, state that no Banka
-state was found, and do not invent project-specific invariants.
+`/core/` for Core, and the Banka-owned `AGENTS.md` block for schema-2
+Minimal or legacy `CLAUDE.md` for legacy Minimal. For an
+unstructured repository, use the supplied subject and relevant repository
+documentation, state that no Banka state was found, and do not invent
+project-specific invariants.
 
 ---
 

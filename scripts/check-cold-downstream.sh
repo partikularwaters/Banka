@@ -15,7 +15,7 @@ set -euo pipefail
 
 script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 repo_root=$(cd "$script_dir/.." && pwd)
-skills=(charter delegate dredge linis moor remember scale survey watershed)
+skills=(charter delegate dredge linis moor remember scale survey watershed verify)
 
 fail() {
   echo "ERROR: $1" >&2
@@ -27,16 +27,15 @@ trap 'rm -rf "$tmp_dir"' EXIT
 
 # --- Build the cold-downstream simulation ---------------------------------
 # Skills as they exist once installed standalone (~/.claude/skills/<name>/SKILL.md
-# or ~/.agents/skills/<name>/SKILL.md), plus the one thing that now legitimately
-# travels alongside them: the sibling _shared/ directory (Protocol Section 7) —
-# nothing else from this repo is present.
+# or ~/.agents/skills/<name>/SKILL.md) — nothing else from this repo is
+# present. A shared sibling file was tried and reverted (measured to cost
+# more per invocation than the duplication it removed); each skill is fully
+# self-contained again, and this simulation reflects that.
 mkdir -p "$tmp_dir/skills"
 for skill in "${skills[@]}"; do
   mkdir -p "$tmp_dir/skills/$skill"
   cp "$repo_root/skills-kit/$skill/SKILL.md" "$tmp_dir/skills/$skill/SKILL.md"
 done
-mkdir -p "$tmp_dir/skills/_shared"
-cp "$repo_root/skills-kit/_shared/banka-state-resolution.md" "$tmp_dir/skills/_shared/banka-state-resolution.md"
 
 # Rendered tier output, as a generated project actually receives it —
 # copying the templates' *content* into project-shaped paths, never the
@@ -49,6 +48,8 @@ cp "$repo_root/full-context-templates/delegation-queue.md" "$tmp_dir/project-cor
 cp "$repo_root/full-context-templates/delegation-queue.md" "$tmp_dir/project-standard/context/delegation-queue.md"
 cp "$repo_root/full-context-templates/scripts/check-banka-thresholds.sh" "$tmp_dir/project-core/scripts/check-banka-thresholds.sh"
 cp "$repo_root/full-context-templates/scripts/check-banka-thresholds.sh" "$tmp_dir/project-standard/scripts/check-banka-thresholds.sh"
+cp "$repo_root/full-context-templates/scripts/verify-claims.sh" "$tmp_dir/project-core/scripts/verify-claims.sh"
+cp "$repo_root/full-context-templates/scripts/verify-claims.sh" "$tmp_dir/project-standard/scripts/verify-claims.sh"
 
 # --- Check 1: nothing references full-context-templates/ ------------------
 # This directory structurally never exists outside this repo.
@@ -81,26 +82,20 @@ if grep -rl -E "Track A|Track B" "$tmp_dir/skills" >/dev/null 2>&1; then
   fail "Found 'Track A'/'Track B' protocol-internal jargon inside an installed skill file"
 fi
 
-# --- Check 3a: every state-resolver skill's ../_shared/ pointer actually
-# resolves against the simulated cold-install layout — not just present as
-# text, structurally real. dredge is checked separately below since it has
-# no dedicated heading.
-state_resolver_skills_downstream=(charter delegate linis moor remember scale survey watershed)
+# --- Check 3a: every state-resolver skill is fully self-contained in the
+# cold install — no ../_shared/ reference to anything that doesn't travel
+# with it, and real classification content present, not just a heading.
+state_resolver_skills_downstream=(charter delegate linis moor remember scale survey watershed verify)
+if grep -rl '_shared' "$tmp_dir/skills" >/dev/null 2>&1; then
+  fail "A cold-installed skill still references _shared/ — that directory no longer exists"
+fi
 for skill in "${state_resolver_skills_downstream[@]}"; do
   skill_file="$tmp_dir/skills/$skill/SKILL.md"
   grep -q '^## Resolve Banka state first$' "$skill_file" || \
     fail "$skill/SKILL.md has no '## Resolve Banka state first' heading in the cold install"
-  pointer_line=$(grep -o '\.\./_shared/[A-Za-z0-9_-]*\.md' "$skill_file" | head -n 1)
-  test -n "$pointer_line" || fail "$skill/SKILL.md has no ../_shared/ pointer in the cold install"
-  resolved_path=$(cd "$tmp_dir/skills/$skill" && cd "$(dirname "$pointer_line")" && pwd)/$(basename "$pointer_line")
-  test -f "$resolved_path" || fail "$skill/SKILL.md's pointer ($pointer_line) doesn't resolve to a real file in the cold install"
+  grep -q '^Before reading or writing project state' "$skill_file" || \
+    fail "$skill/SKILL.md's classification block is missing or malformed in the cold install"
 done
-
-dredge_file="$tmp_dir/skills/dredge/SKILL.md"
-dredge_pointer=$(grep -o '\.\./_shared/[A-Za-z0-9_-]*\.md' "$dredge_file" | head -n 1)
-test -n "$dredge_pointer" || fail "dredge/SKILL.md has no ../_shared/ pointer in the cold install"
-dredge_resolved=$(cd "$tmp_dir/skills/dredge" && cd "$(dirname "$dredge_pointer")" && pwd)/$(basename "$dredge_pointer")
-test -f "$dredge_resolved" || fail "dredge/SKILL.md's pointer ($dredge_pointer) doesn't resolve to a real file in the cold install"
 
 # --- Check 4: Core/Standard's rendered task-tracking file (progress.md /
 # progress-tracker.md) carries only rollup rows for the two files it split
@@ -141,12 +136,41 @@ for rendered in "$tmp_dir/project-standard/context/decisions-index.md" "$tmp_dir
   grep -qi "## Threshold Check" "$rendered" || fail "Missing the Threshold Check block in ${rendered#"$tmp_dir/"}"
 done
 
+# --- Check 4f: Core/Standard's rendered verified-index.md carries the
+# verify record mechanics -----------------------------------------------------
+for rendered in "$tmp_dir/project-standard/context/verified-index.md" "$tmp_dir/project-core/core/verified-index.md"; do
+  grep -qi "verified index" "$rendered" || fail "Missing the Verified Index table in ${rendered#"$tmp_dir/"}"
+  grep -qi "ticket/plan\|ticket.*plan" "$rendered" || fail "Missing the ticket/plan citation column in ${rendered#"$tmp_dir/"}"
+  grep -qi "commit" "$rendered" || fail "Missing the commit column in ${rendered#"$tmp_dir/"}"
+  grep -qi "verify-claims.sh" "$rendered" || fail "Missing a reference to the mechanical reconciliation script in ${rendered#"$tmp_dir/"}"
+  grep -qi "## Threshold Check" "$rendered" || fail "Missing the Threshold Check block in ${rendered#"$tmp_dir/"}"
+done
+
 # --- Check 4c: the mechanical threshold script itself renders and looks like
 # a real script, not just referenced in prose --------------------------------
 for script in "$tmp_dir/project-core/scripts/check-banka-thresholds.sh" "$tmp_dir/project-standard/scripts/check-banka-thresholds.sh"; do
   test -f "$script" || fail "Missing rendered check-banka-thresholds.sh at ${script#"$tmp_dir/"}"
   head -1 "$script" | grep -q '^#!' || fail "check-banka-thresholds.sh has no shebang line at ${script#"$tmp_dir/"}"
   grep -q "Threshold Check" "$script" || fail "check-banka-thresholds.sh doesn't emit the Threshold Check heading at ${script#"$tmp_dir/"}"
+done
+
+# --- Check 4g: verify-claims.sh renders and actually executes correctly
+# against a real git repo, mechanically — file/diff/run checks, not prose ----
+for project_dir in "$tmp_dir/project-core" "$tmp_dir/project-standard"; do
+  script="$project_dir/scripts/verify-claims.sh"
+  test -f "$script" || fail "Missing rendered verify-claims.sh at ${script#"$tmp_dir/"}"
+  head -1 "$script" | grep -q '^#!' || fail "verify-claims.sh has no shebang line at ${script#"$tmp_dir/"}"
+  ( cd "$project_dir" && git init -q && git add -A && git commit -qm init )
+  echo "changed" >> "$project_dir/verify-claims-probe.md"
+  output=$(cd "$project_dir" && bash scripts/verify-claims.sh \
+    --check-file verify-claims-probe.md \
+    --check-file does-not-exist.md \
+    --check-diff verify-claims-probe.md \
+    --run-test "true" \
+    --run-test "false") || fail "verify-claims.sh failed to execute cleanly in ${project_dir#"$tmp_dir/"}"
+  echo "$output" | grep -q '| MET |' || fail "verify-claims.sh never reported a real MET in ${project_dir#"$tmp_dir/"}"
+  echo "$output" | grep -q '| MISSING |' || fail "verify-claims.sh never reported a real MISSING in ${project_dir#"$tmp_dir/"}"
+  rm -f "$project_dir/verify-claims-probe.md"
 done
 
 # --- Check 4e: the threshold script actually executes cleanly against a

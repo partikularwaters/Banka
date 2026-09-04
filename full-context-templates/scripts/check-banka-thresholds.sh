@@ -92,12 +92,12 @@ elif [ -f "core/progress.md" ]; then
   row "Completed Actions (progress.md)" "$w" "$THRESHOLD"
 fi
 
-# Session Notes and Decisions Index: standalone files under context/ (Standard)
-# or core/ (Core) — Protocol Section 4/5's file split. Each is checked as a
-# whole file, not a section within progress.md/progress-tracker.md.
+# Session Notes, Decisions Index, and Verified Index: standalone files under
+# context/ (Standard) or core/ (Core). Each is checked as a whole file, not a
+# section within progress.md/progress-tracker.md.
 for base in context core; do
   [ -d "$base" ] || continue
-  for name in session-notes.md decisions-index.md; do
+  for name in session-notes.md decisions-index.md verified-index.md; do
     f="$base/$name"
     [ -f "$f" ] || continue
     w=$(wc -w < "$f" | tr -d ' ')

@@ -4,7 +4,7 @@ set -euo pipefail
 
 script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 repo_root=$(cd "$script_dir/.." && pwd)
-skills=(charter delegate dredge linis moor remember scale survey watershed)
+skills=(charter delegate dredge linis moor remember scale survey watershed verify)
 
 fail() {
   echo "ERROR: $1" >&2
@@ -54,7 +54,7 @@ fi
 
 project_entry_dir="$repo_root/full-context-templates/project-entry"
 project_entry_templates=(minimal-AGENTS.md core-AGENTS.md standard-AGENTS.md CLAUDE.md)
-state_resolver_skills=(charter delegate linis moor remember scale survey watershed)
+state_resolver_skills=(charter delegate linis moor remember scale survey watershed verify)
 
 require_literal() {
   local literal=$1
@@ -207,55 +207,35 @@ if rg -n -i '@CLAUDE\.md|AGENTS\.md[^\n]*(points? to|imports?)[^\n]*CLAUDE\.md|C
   fail "Found obsolete CLAUDE-authority claim; CLAUDE.md may only be a compatibility shim or legacy read-only state"
 fi
 
-shared_state_file="$repo_root/skills-kit/_shared/banka-state-resolution.md"
-test -f "$shared_state_file" || fail "Missing skills-kit/_shared/banka-state-resolution.md"
-
-require_literal '<!-- BANKA:START -->' "$shared_state_file"
-require_literal '<!-- BANKA:STATE-SCHEMA: 2 -->' "$shared_state_file"
-require_literal '<!-- BANKA:TIER: Minimal -->' "$shared_state_file"
-require_literal '<!-- BANKA:TIER: Core -->' "$shared_state_file"
-require_literal '<!-- BANKA:TIER: Standard -->' "$shared_state_file"
-require_literal '<!-- BANKA:END -->' "$shared_state_file"
-require_literal 'exactly once' "$shared_state_file"
-require_literal '@AGENTS.md' "$shared_state_file"
-require_literal 'compatibility-read-only' "$shared_state_file"
-require_literal '/core/' "$shared_state_file"
-require_literal '/context/' "$shared_state_file"
-require_literal 'unstructured/non-Banka' "$shared_state_file"
-for required_tier_file in overview.md architecture.md design.md progress.md \
-  session-notes.md decisions-index.md \
-  project-overview.md build-plan.md code-standards.md library-docs.md \
-  ui-tokens.md ui-rules.md ui-registry.md progress-tracker.md; do
-  require_literal "$required_tier_file" "$shared_state_file"
-done
-
-# Every state-resolver skill must carry an identical, byte-for-byte pointer
-# to the shared file — checked the same way Section 2.8 already checks the
+# Every state-resolver skill embeds its own full classification block
+# (schema-2 detection, tier shapes, stop conditions, legacy detection)
+# inline — duplication is a deliberate, checked exception (Section 2.8):
+# a shared file was tried and reverted after real measurement showed it
+# cost more per invocation than it saved; this check is what makes inline
+# duplication safe instead of just asserted. Extract each skill's block
+# (heading through the fixed "implicitly." close) and require it
+# byte-identical to charter's, the same way Section 2.8 already checks the
 # tier blocks against project-entry/*-AGENTS.md (extract, then cmp -s).
-extract_pointer_block() {
+extract_classification_block() {
   awk '
-    /^## Resolve Banka state first$/ { print; n=5; next }
-    n>0 { print; n--; next }
+    /^## Resolve Banka state first$/ { f=1; next }
+    f { print; if ($0 == "implicitly.") exit }
   ' "$1"
 }
 
-pointer_reference_file="$integrity_tmp_dir/pointer-reference.md"
-extract_pointer_block "$repo_root/skills-kit/charter/SKILL.md" > "$pointer_reference_file"
-grep -q '^Read `\.\./_shared/banka-state-resolution\.md`' "$pointer_reference_file" || \
-  fail "charter/SKILL.md's pointer block doesn't start as expected — extraction may be broken"
+classification_reference_file="$integrity_tmp_dir/classification-reference.md"
+extract_classification_block "$repo_root/skills-kit/charter/SKILL.md" > "$classification_reference_file"
+grep -q '^Before reading or writing project state' "$classification_reference_file" || \
+  fail "charter/SKILL.md's classification block doesn't start as expected — extraction may be broken"
 
 for skill in "${state_resolver_skills[@]}"; do
   skill_file="$repo_root/skills-kit/$skill/SKILL.md"
   require_literal '## Resolve Banka state first' "$skill_file"
-  pointer_block_file="$integrity_tmp_dir/pointer-$skill.md"
-  extract_pointer_block "$skill_file" > "$pointer_block_file"
-  cmp -s "$pointer_reference_file" "$pointer_block_file" || \
-    fail "skills-kit/$skill/SKILL.md's pointer to _shared/banka-state-resolution.md isn't byte-identical to the others"
+  classification_block_file="$integrity_tmp_dir/classification-$skill.md"
+  extract_classification_block "$skill_file" > "$classification_block_file"
+  cmp -s "$classification_reference_file" "$classification_block_file" || \
+    fail "skills-kit/$skill/SKILL.md's classification block isn't byte-identical to the others"
 done
-
-# dredge doesn't get its own heading — it points to the shared file only
-# conditionally, from its Context Contract's Conditional line.
-require_literal '../_shared/banka-state-resolution.md' "$repo_root/skills-kit/dredge/SKILL.md"
 
 for handoff_file in "$repo_root/skills-kit/delegate/SKILL.md" "$repo_root/full-context-templates/delegation-queue.md"; do
   grep -Fiq 'ready-to-paste' "$handoff_file" || fail "Missing ready-to-paste handoff requirement in ${handoff_file#$repo_root/}"
@@ -297,7 +277,7 @@ cmp -s "$delegate_batch_handoff_file" "$template_batch_handoff_file" || \
 
 user_skills_dir="$HOME/.agents/skills"
 if test -d "$user_skills_dir"; then
-  for skill in "${skills[@]}" "_shared"; do
+  for skill in "${skills[@]}"; do
     installed_skill="$user_skills_dir/$skill"
     if test -e "$installed_skill" || test -L "$installed_skill"; then
       canonical_target=$(cd "$repo_root/skills-kit/$skill" && pwd -P)

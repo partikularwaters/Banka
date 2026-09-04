@@ -32,10 +32,38 @@ pass the Cold Agent Test (Protocol §3.1) once the write completes.
 
 ## Resolve Banka state first
 
-Read `../_shared/banka-state-resolution.md` (a sibling of this skill's own
-installed directory) and follow it in full before proceeding — it covers
-schema-2 detection, matching tier shapes, stop conditions, and legacy-state
-handling.
+Before reading or writing project state, inspect `AGENTS.md`, the complete
+contents of `CLAUDE.md`, `/core/`, `/context/`, and the required tier files.
+Active schema 2 requires one complete Banka block in `AGENTS.md` containing
+these exact comments exactly once and in this order: `<!-- BANKA:START -->`,
+`<!-- BANKA:STATE-SCHEMA: 2 -->`, exactly one of
+`<!-- BANKA:TIER: Minimal -->`, `<!-- BANKA:TIER: Core -->`, or
+`<!-- BANKA:TIER: Standard -->`, then `<!-- BANKA:END -->`. The declared tier
+must match the filesystem shape and required files. `CLAUDE.md` must be exactly
+`@AGENTS.md`; if it is missing, schema 2 is still active for a runtime that
+discovers `AGENTS.md` directly, but report that Claude Code compatibility is
+unavailable.
+
+A matching Minimal shape has neither `/core/` nor `/context/`. Core has
+`/core/` and its `overview.md`, `architecture.md`, `design.md`, `progress.md`,
+`session-notes.md`, `decisions-index.md`, and `verified-index.md`, with no
+`/context/`. Standard has `/context/` and its `project-overview.md`,
+`architecture.md`, `build-plan.md`, `code-standards.md`, `library-docs.md`,
+`ui-tokens.md`, `ui-rules.md`, `ui-registry.md`, `progress-tracker.md`,
+`session-notes.md`, `decisions-index.md`, and `verified-index.md`, with no
+`/core/`.
+
+Stop state-dependent work for competing authority, malformed/partial/duplicate
+or unknown Banka markers, a non-exact `CLAUDE.md` beside schema 2, an exact shim
+with missing authority, both state directories, tier mismatch, or missing
+required tier files. Do not choose, repair, or normalize any of these states.
+
+Without valid schema 2, recognize legacy Banka state only when `CLAUDE.md` has
+the `# Project Operating Protocol` heading and exactly one complete legacy tier
+shape, with or without an old AGENTS block pointing to it. If neither schema 2
+nor recognizable legacy state exists, treat the repository as
+unstructured/non-Banka — never assume Minimal, never create Banka state
+implicitly.
 
 Promotion writes state, so scale's own legacy/missing-state handling is
 stricter than the shared default: on legacy state, report the classification
@@ -44,8 +72,8 @@ completes — never promote. If neither schema 2 nor recognizable legacy state
 exists, stop because there is no tier to promote.
 
 For active schema 2, use the declared tier: Standard cannot promote further;
-Core is eligible only for Core → Standard; Minimal is eligible only for Minimal
-→ Core. Before changing `AGENTS.md`, locate its one complete Banka block,
+Core is eligible only for Core → Standard; Minimal is eligible only for
+Minimal → Core. Before changing `AGENTS.md`, locate its one complete Banka block,
 update only that block, and preserve all content outside it. Keep `CLAUDE.md`
 exactly `@AGENTS.md` when it exists; it is never a project-state destination.
 
@@ -63,8 +91,8 @@ Thresholds — any one is sufficient:
 If triggered, perform the promotion:
 
 1. Create a `/core/` folder in the project root.
-2. Split the Minimal `AGENTS.md` block's inline project state into the six Core
-   files:
+2. Split the Minimal `AGENTS.md` block's inline project state into the seven
+   Core files:
    - Project Overview's Vision and Data Model → `core/overview.md`
    - Project Overview's Stack, Folder Matrix, and Absolute Invariants → `core/architecture.md`
    - Any UI-related content → `core/design.md`
@@ -75,11 +103,13 @@ If triggered, perform the promotion:
      preserving) → its own `core/decisions/NNNN-title/` record, with a row in
      `core/decisions-index.md`; a single-line settled fact with no real
      rationale goes to whichever owning file it belongs in instead.
+   - `core/verified-index.md` starts empty — Minimal has nothing to migrate
+     into it, since `verify` only runs on Core/Standard.
 3. Replace only the Banka-owned block in `AGENTS.md` with the Core router, set
-   its tier marker to Core, and make its Source of truth section list the six
+   its tier marker to Core, and make its Source of truth section list the seven
    `/core/` files. Preserve all content outside the block and keep `CLAUDE.md`
    exactly `@AGENTS.md`.
-4. Output all six new files and the proposed replacement Banka block in full.
+4. Output all seven new files and the proposed replacement Banka block in full.
    Explicitly list what moves from the Minimal block into each new file so the
    user can confirm before inline state is removed. Once confirmed, replace the
    block with the router; do not leave duplicated state behind.
@@ -87,7 +117,7 @@ If triggered, perform the promotion:
 ## Core → Standard
 
 Thresholds — any one is sufficient:
-1. The six `/core/` files combined exceed ~4,000 words (~25,000 characters).
+1. The seven `/core/` files combined exceed ~4,000 words (~25,000 characters).
 2. The project has split into a fundamentally distinct architectural environment (e.g., a mobile companion app or standalone service alongside this project).
 3. `core/design.md`'s Component Registry exceeds 15 complex, unique UI definitions.
 
@@ -105,16 +135,18 @@ If triggered, perform the promotion:
    - Remaining task-tracking content → `context/progress-tracker.md`
 6. `core/session-notes.md` → `context/session-notes.md`; `core/decisions-index.md`
    → `context/decisions-index.md`; `core/decisions/` → `context/decisions/`,
+   unchanged; `core/verified-index.md` → `context/verified-index.md`,
    unchanged.
 7. Replace only the Banka-owned block in `AGENTS.md` with the Standard router,
    set its tier marker to Standard, and make its Source of truth section list
-   all eleven `/context/` files. Preserve all content outside the block and keep
+   all twelve `/context/` files. Preserve all content outside the block and keep
    `CLAUDE.md` exactly `@AGENTS.md`. The Skills available note reflects that
    moor writes git-observed UI patterns to `context/ui-registry.md` and
-   invariant/token changes to their owning file, never session-state; and
-   remember uses `context/progress-tracker.md`, `context/session-notes.md`,
-   and `context/decisions-index.md`.
-8. Output all eleven new files and the proposed replacement Banka block in full.
+   invariant/token changes to their owning file, never session-state; remember
+   uses `context/progress-tracker.md`, `context/session-notes.md`, and
+   `context/decisions-index.md`; and verify writes to
+   `context/verified-index.md` only.
+8. Output all twelve new files and the proposed replacement Banka block in full.
    Explicitly list what moves from each `/core/` file into each new file so the
    user can confirm before anything is deleted. Once confirmed and equivalence
    is verified, delete `/core/`; never leave both state directories.

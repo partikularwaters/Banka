@@ -20,7 +20,7 @@ A handful of terms get used before the section that formally defines them. Quick
 | **Hard Default / Soft Suggestion / Agnostic** | Three registers governing how confidently a default gets stated — settled fact, a proposal to react to, or a real choice to contrast, never pick for the user. | Section 2.6 |
 | **Fill-In Discipline** | The five binding rules for how content gets written into a project's generated files. | Section 2.5 |
 | **Craft Layer** | A quality-layer domain (e.g. animation) where a strong outside authority exists — Agnostic until a project opts in, Hard Default after. | Section 7.6 (the standard), Section 7.7 (the reference instance) |
-| **Skills Kit** | The nine permanent Skills (`charter`, `survey`, `dredge`, `remember`, `moor`, `scale`, `delegate`, `watershed`, `linis`) — installed once per machine, used across every project. | Section 7 |
+| **Skills Kit** | The ten permanent Skills (`charter`, `survey`, `dredge`, `remember`, `moor`, `scale`, `delegate`, `watershed`, `linis`, `verify`) — installed once per machine, used across every project. | Section 7 |
 | **Context Contract** | A skill's explicit context boundary — what it requires, what's conditional, what it excludes by default, what it outputs, and what it may write. | Section 2.7 |
 | **One Home per Fact** | Every durable rule or fact has exactly one canonical definition; other files may reference or operationalize it, never redefine it. | Section 2.8 |
 | **Cold Agent Test** | Whether a fresh agent with no prior conversation can recover Banka's active state, scope, rules, and next action from disk alone. | Section 3.1 |
@@ -175,9 +175,9 @@ Answer yes or no to each:
 
 **Scoring:**
 - **0 yes → Minimal** (Section 3) is almost certainly sufficient — one canonical Banka state block in `AGENTS.md`, holding live project state inline with no state folder.
-- **1–2 yes → Core** (Section 4) is almost certainly sufficient — six focused files, no single-file crowding, no eleven-file overhead.
+- **1–2 yes → Core** (Section 4) is almost certainly sufficient — seven focused files, no single-file crowding, no twelve-file overhead.
 - **3 yes → borderline.** Lean Core by default — recommend it, but let the user decide. Starting leaner and promoting later (Section 6) costs less than over-building up front.
-- **4–5 yes → Standard** (Section 5) is recommended — the project has enough real complexity that splitting context into eleven focused files will save more time than it costs to maintain.
+- **4–5 yes → Standard** (Section 5) is recommended — the project has enough real complexity that splitting context into twelve focused files will save more time than it costs to maintain.
 
 State the tally and your recommendation plainly. The user makes the final call — never decide silently.
 
@@ -310,7 +310,7 @@ Every durable Banka rule or project fact has exactly one canonical home — the 
 
 This is not a new practice; it is already enforced mechanically. `scripts/check-repo-integrity.sh` verifies each project-entry `AGENTS.md` template is byte-identical to the tier block this protocol defines in Sections 3.3, 4, and 5 — the protocol is canonical, the templates are checked copies, never an independent source. The same script verifies the `delegate` skill's ready-to-paste handoff block is byte-identical to `full-context-templates/delegation-queue.md`'s copy of it, for the same reason.
 
-Each skill's own state-resolution preamble in Section 7's Skills Kit used to be this principle's one deliberate, checked exception — the load-bearing facts duplicated verbatim across every skill, because a skill installs standalone and nothing else from this repository travels alongside it. That reasoning no longer holds: the Skills Kit is itself installed as one unit (Section 7), never a single skill in isolation, so a shared file installed alongside the nine skills is exactly as portable as any one of them. The genuinely shared mechanics — schema-2 detection, matching tier shapes, stop conditions, legacy-state handling — now live in one real home, `skills-kit/_shared/banka-state-resolution.md`, installed and discovered the same way as every skill (Section 7). Every state-resolving skill points to it with an identical, mechanically-checked pointer sentence; what a skill does *with* the resolved classification — where it reads from, writes to, or reviews against — stays in that skill's own file, since that part was never actually shared to begin with. `dredge` is the one skill that never resolves state upfront; it names the shared file only in its Context Contract's Conditional line, consulted solely on its Hard Reset path.
+Each skill's own state-resolution preamble in Section 7's Skills Kit is this principle's one deliberate, checked exception — the load-bearing facts (schema-2 detection, stop conditions, matching tier shapes, legacy-state handling) duplicated verbatim across every skill. A shared file (`skills-kit/_shared/banka-state-resolution.md`) was tried instead, on the reasoning that the Skills Kit installs as one unit, so a shared sibling file is exactly as portable as any one skill. It was reverted after direct measurement: every invocation had to read the shared file's classification content in full, plus its own skill file, and the shared content itself — restructured into headers, a numbered list, and tables for scannability — turned out heavier per line than the terse prose it replaced. A representative skill's per-invocation read grew from roughly 360 words to roughly 880 at the point of reversion; moving the shared content back inline, denser, brought it back down. Portability was never actually the binding constraint — read cost per invocation was, and centralizing content doesn't reduce that unless the centralized version is at least as terse as what it replaced. What the shared-file attempt got right, and what survives it: duplication is safe only when it's actually checked, not merely asserted. `scripts/check-repo-integrity.sh` extracts each state-resolving skill's classification block and requires it byte-identical to the others (`cmp -s`), the same mechanism Section 2.8 already used for the `AGENTS.md` templates — so a future edit to one copy and not the others fails the check immediately, closing the gap that let all nine copies exist unverified in the first place. `dredge` is the one skill that never resolves state upfront; it checks Banka state only in its Hard Reset path, via `remember`, with no dedicated block of its own.
 
 ---
 
@@ -437,7 +437,7 @@ Standard tier's `code-standards.md` states one set of conventions for the whole 
 
 **Discovery.** `code-standards.md` carries one `## Area overrides` table — area path → override file path — populated only once a real override exists, never pre-declared. Any session already reading `code-standards.md`, which every skill that touches code already does, finds the pointer without a change to the shared state-resolution preamble duplicated across the Skills Kit. One home for the fact, minimal edit surface.
 
-**Maintenance.** No new skill — the fixed nine-skill roster (Section 7) is unchanged. `moor`'s single-capture mode gains one more destination: an outcome belonging to an area with an existing override file is captured there. `remember`'s existing "whichever file owns a globally-scoped fact a captured decision changes" language already covers writing to one, once one exists.
+**Maintenance.** No new skill — the fixed ten-skill roster (Section 7) is unchanged. `moor`'s single-capture mode gains one more destination: an outcome belonging to an area with an existing override file is captured there. `remember`'s existing "whichever file owns a globally-scoped fact a captured decision changes" language already covers writing to one, once one exists.
 
 Downstream projects never receive this document directly — the compact, self-contained version of this mechanism lives in `charter`'s and `moor`'s own SKILL.md, and in `code-standards.md`'s own template note. This section is the canonical full definition, maintained here for anyone editing Banka itself.
 
@@ -527,8 +527,8 @@ Claude Code follows the import to the same root authority that Codex discovers
 directly. This makes each tier one directed chain:
 
 - Minimal: `CLAUDE.md` → `AGENTS.md` (all live state is in the marked block).
-- Core: `CLAUDE.md` → `AGENTS.md` → the six files in `/core/`.
-- Standard: `CLAUDE.md` → `AGENTS.md` → the eleven files in `/context/`.
+- Core: `CLAUDE.md` → `AGENTS.md` → the seven files in `/core/`.
+- Standard: `CLAUDE.md` → `AGENTS.md` → the twelve files in `/context/`.
 
 `IDEA-SCOPE.md` remains an immutable origin record, not another live authority.
 
@@ -569,8 +569,8 @@ succeeded.
 | No valid schema-2 block and no recognizable legacy Banka authority | Unstructured/non-Banka repository. Never assume Minimal and never create Banka state implicitly. |
 
 For this matrix, Minimal's matching shape has neither `/core/` nor `/context/`;
-Core has `/core/`, not `/context/`, and its six files from Section 4; Standard
-has `/context/`, not `/core/`, and its eleven files from Section 5. Unrelated
+Core has `/core/`, not `/context/`, and its seven files from Section 4; Standard
+has `/context/`, not `/core/`, and its twelve files from Section 5. Unrelated
 project prose outside the marked `AGENTS.md` block is preserved and is not
 competing Banka state. A second Banka block is a conflict, not an extension.
 
@@ -686,11 +686,11 @@ not create a project-local copy. Follow each skill's own instructions exactly.
 
 ---
 
-## SECTION 4: CORE — SIX CORE STATE FILES
+## SECTION 4: CORE — SEVEN CORE STATE FILES
 
 Use this when the rubric points to Core. Generate
 `full-context-templates/project-entry/core-AGENTS.md` into `AGENTS.md`, the
-shared `CLAUDE.md` shim, and the six canonical templates under `/core/`:
+shared `CLAUDE.md` shim, and the seven canonical templates under `/core/`:
 
 ```
 project-root/
@@ -702,7 +702,8 @@ project-root/
     ├── design.md
     ├── progress.md          (task-tracking + Threshold Check, rollup only)
     ├── session-notes.md     (thread-tagged narrative, own Threshold Check)
-    └── decisions-index.md   (Logbook routing table, own Threshold Check)
+    ├── decisions-index.md   (Logbook routing table, own Threshold Check)
+    └── verified-index.md    (mechanically-checked verify record, own Threshold Check)
 ```
 
 The root block is the authority and router; domain state remains in `/core/`:
@@ -727,17 +728,19 @@ Read the Core file relevant to the work before acting:
 - `core/progress.md` — current status, milestones, and task tracking
 - `core/session-notes.md` — thread-tagged session narrative
 - `core/decisions-index.md` — routing table into the Logbook (`decisions/`)
+- `core/verified-index.md` — mechanically-checked record of what survey verdicts the repo actually shows
 
 If `IDEA-SCOPE.md` exists, consult it for original intent. Never overwrite it.
 
 ## Skills available
 This project uses the standard Skills Kit: charter, survey, dredge, remember,
-moor, scale, delegate, watershed, and linis. Install it once per runtime; do
-not create a project-local copy. Follow each skill's own instructions exactly.
+moor, scale, delegate, watershed, linis, and verify. Install it once per
+runtime; do not create a project-local copy. Follow each skill's own
+instructions exactly.
 <!-- BANKA:END -->
 ```
 
-The six canonical Core domain templates live under
+The seven canonical Core domain templates live under
 `full-context-templates/core/`. Fill those files directly. If they are not
 available, stop rather than reconstructing them from memory.
 
@@ -747,7 +750,7 @@ available, stop rather than reconstructing them from memory.
 
 Use this when the rubric points to Standard. Generate
 `full-context-templates/project-entry/standard-AGENTS.md` into `AGENTS.md`, the
-shared `CLAUDE.md` shim, and the eleven canonical templates under `/context/`:
+shared `CLAUDE.md` shim, and the twelve canonical templates under `/context/`:
 
 ```
 project-root/
@@ -764,7 +767,8 @@ project-root/
     ├── ui-registry.md
     ├── progress-tracker.md   (task-tracking + Threshold Check, rollup only)
     ├── session-notes.md      (thread-tagged narrative, own Threshold Check)
-    └── decisions-index.md    (Logbook routing table, own Threshold Check)
+    ├── decisions-index.md    (Logbook routing table, own Threshold Check)
+    └── verified-index.md     (mechanically-checked verify record, own Threshold Check)
 ```
 
 The root block is the authority and router; domain state remains in
@@ -794,18 +798,21 @@ Read the Standard file relevant to the work before acting:
 - `context/progress-tracker.md` — current status and task tracking
 - `context/session-notes.md` — thread-tagged session narrative
 - `context/decisions-index.md` — routing table into the Logbook (`decisions/`)
+- `context/verified-index.md` — mechanically-checked record of what survey verdicts the repo actually shows
 
 If `IDEA-SCOPE.md` exists, consult it for original intent. Never overwrite it.
 
 ## Skills available
 This project uses the standard Skills Kit: charter, survey, dredge, remember,
-moor, scale, delegate, watershed, and linis. Install it once per runtime; do
-not create a project-local copy. Follow each skill's own instructions exactly.
+moor, scale, delegate, watershed, linis, and verify. Install it once per
+runtime; do not create a project-local copy. Follow each skill's own
+instructions exactly.
 The moor skill writes git-observed UI patterns to `context/ui-registry.md`
 and invariant/token changes to their owning file, never session-state;
 remember updates task state in `context/progress-tracker.md`, session
 narrative in `context/session-notes.md`, and the Logbook routing table in
-`context/decisions-index.md`.
+`context/decisions-index.md`; verify writes to `context/verified-index.md`
+only.
 <!-- BANKA:END -->
 ```
 
@@ -835,7 +842,7 @@ Triggered when either:
 2. Any one domain (overview, architecture, design, or progress) has enough real
    content to crowd out the others in that block.
 
-Preview the mapping, then split the marked block's project state into the six
+Preview the mapping, then split the marked block's project state into the seven
 `/core/` files: overview and data model to `core/overview.md`; stack, structure,
 and invariants to `core/architecture.md`; UI content to `core/design.md`;
 status and task tracking to `core/progress.md`; session notes to
@@ -845,7 +852,9 @@ worth preserving — the same check Track A rule 1 applies at initial
 generation) becomes a Decision Record under `core/decisions/` with a row in
 `core/decisions-index.md`; a single-line settled fact with no real rationale
 goes to whichever owning file it belongs in instead, never into
-`decisions-index.md` directly. Replace only the marked Banka block
+`decisions-index.md` directly. `core/verified-index.md` starts empty — Minimal
+has no equivalent to migrate from, since `verify` only runs on Core/Standard.
+Replace only the marked Banka block
 with the Core router from Section 4, changing exactly
 `<!-- BANKA:TIER: Minimal -->` to `<!-- BANKA:TIER: Core -->`. Preserve all
 content outside the block, keep `CLAUDE.md` exactly `@AGENTS.md`, and show what
@@ -855,20 +864,21 @@ moved where before finalizing.
 
 Triggered when any of:
 
-1. The six `/core/` files combined exceed roughly 4,000 words (~25,000
+1. The seven `/core/` files combined exceed roughly 4,000 words (~25,000
    characters).
 2. The project has split into a genuinely distinct architectural environment.
 3. `core/design.md`'s Component Registry exceeds roughly 15 distinct reusable
    UI patterns.
 
-Preview the mapping, then split the six `/core/` files into the eleven
+Preview the mapping, then split the seven `/core/` files into the twelve
 Standard files: `core/overview.md` to `project-overview.md`;
 `core/architecture.md` mostly to `architecture.md`, with conventions to
 `code-standards.md` and library patterns to `library-docs.md`;
 `core/design.md` to `ui-tokens.md`, `ui-rules.md`, and `ui-registry.md`;
 `core/progress.md` to `build-plan.md` and `progress-tracker.md`;
 `core/session-notes.md` to `session-notes.md`; `core/decisions-index.md` to
-`decisions-index.md`, and `core/decisions/` to `decisions/`, unchanged. Move
+`decisions-index.md`, and `core/decisions/` to `decisions/`, unchanged;
+`core/verified-index.md` to `verified-index.md`, unchanged. Move
 the resulting files into `/context/` and remove the superseded `/core/`
 authority only after equivalence is verified. Replace only the marked Banka
 block with the Standard router from Section 5, changing exactly
@@ -880,7 +890,7 @@ and show what moved where before finalizing.
 
 ## SECTION 7: THE SKILLS KIT (one source, runtime-specific discovery)
 
-The nine Skills — `charter`, `survey`, `dredge`, `remember`, `moor`, `scale`, `delegate`, `watershed`, `linis` — never change per project. They are provided as a separate, standalone package: **Skills Kit**. Each skill's `SKILL.md` states its Context Contract (Section 2.7) near the top, after its frontmatter — a compact statement of what it requires, what's conditional, what it excludes by default, what it outputs, and what it may write.
+The ten Skills — `charter`, `survey`, `dredge`, `remember`, `moor`, `scale`, `delegate`, `watershed`, `linis`, `verify` — never change per project. They are provided as a separate, standalone package: **Skills Kit**. Each skill's `SKILL.md` states its Context Contract (Section 2.7) near the top, after its frontmatter — a compact statement of what it requires, what's conditional, what it excludes by default, what it outputs, and what it may write.
 
 ### Claude Code discovery
 
@@ -897,7 +907,7 @@ Install once at `~/.claude/skills/` for personal, machine-wide use:
 ├── delegate/SKILL.md
 ├── watershed/SKILL.md
 ├── linis/SKILL.md
-└── _shared/banka-state-resolution.md
+└── verify/SKILL.md
 ```
 
 Clone or download this repo, fetch tags, and check out the newest annotated
@@ -908,9 +918,7 @@ instead of installing from the default branch. Then ask Claude Code directly:
 
 ```
 Install the Banka Skills Kit from <path-to-clone>/skills-kit/ into
-~/.claude/skills/ — one folder per skill, copying each SKILL.md as-is, plus
-the sibling `_shared/` folder (copy `_shared/banka-state-resolution.md` too
-— every skill except dredge reads it before touching project state).
+~/.claude/skills/ — one folder per skill, copying each SKILL.md as-is.
 ```
 
 Claude Code performs the copy with its normal file tools. Invoke the installed
@@ -918,7 +926,7 @@ skills with `/skill-name`.
 
 **Before installing, check `~/.claude/commands/` and `~/.claude/skills/`, plus
 any old project-local `.claude/commands/` or `.claude/skills/` entries, for a
-file already using one of the nine skill names above.** If one exists, do not
+file already using one of the ten skill names above.** If one exists, do not
 remove it unilaterally — back it up, tell the user what was found, and let them
 decide whether to remove, rename, or keep it before installing over it.
 
@@ -933,12 +941,8 @@ default branch.
 
 Install the standard Banka kit once at the Codex user-level location,
 `~/.agents/skills/`. Link each directory from this package's `skills-kit/` into
-that location, **including the sibling `_shared/` directory** — a symlink is
-preferred so `skills-kit/` remains the only source of truth, and `_shared/`
-follows the exact same rule as every skill directory: every skill except
-`dredge` resolves state by reading `_shared/banka-state-resolution.md`
-through this link, so a project without it breaks resolution for all eight.
-A symlink must target this persistent checkout, never a temporary
+that location; a symlink is preferred so `skills-kit/` remains the only source
+of truth. A symlink must target this persistent checkout, never a temporary
 clone. Before linking, check the user-level directory and existing projects
 for a Banka skill with the same name — Codex can show duplicate same-named
 skills and does not merge them.
@@ -948,7 +952,7 @@ Repository-local discovery is reserved for skills that genuinely belong only to
 that repository. If a persistent checkout or symlinks cannot be used, copy each
 complete skill directory into `~/.agents/skills/` from a temporary checkout
 instead — never link to a temporary directory — and confirm every entry
-contains a readable `SKILL.md`, plus a copied `_shared/banka-state-resolution.md`.
+contains a readable `SKILL.md`.
 
 In Codex, explicitly invoke a Banka skill with `$` (for example `$charter`,
 `$survey`, or `$remember save`). A host may also show enabled skills in its
@@ -956,7 +960,7 @@ slash-command list, but Banka does not rely on a slash-command argument
 contract. `AGENTS.md` is the canonical project authority; it does not install
 or register skills.
 
-**Provenance, for clarity:** `charter`, `survey`, `dredge`, `remember`, `moor` are the original five. `scale`, `delegate`, `watershed`, and `linis` are Banka-native additions — `scale` operationalizes Section 6's promotion path as an actual runnable skill, `delegate` supports Section 7.5's Delegation Setup, `watershed` provides multi-perspective critique beyond a single survey, and `linis` ("clean," Filipino) removes narrative residue from settled files while preserving operational history and rationale.
+**Provenance, for clarity:** `charter`, `survey`, `dredge`, `remember`, `moor` are the original five. `scale`, `delegate`, `watershed`, `linis`, and `verify` are Banka-native additions — `scale` operationalizes Section 6's promotion path as an actual runnable skill, `delegate` supports Section 7.5's Delegation Setup, `watershed` provides multi-perspective critique beyond a single survey, `linis` ("clean," Filipino) removes narrative residue from settled files while preserving operational history and rationale, and `verify` mechanically reconciles a `survey` verdict against real repo evidence and resolves what it can of a `blocked` claim, writing the one durable record the rest of the Skills Kit checks instead of asking the conversation.
 
 **Every skill that reads project files resolves state with Section 3.1's full
 detection matrix.** The schema-2 marker declares the tier; the filesystem shape
@@ -990,9 +994,6 @@ The update has two independently assessed surfaces:
 - **Machine-level Skills Kit.** Inspect the selected runtime's user-level skill
   locations and classify each Banka skill as a standard copy, a symlink, a
   customized or conflicting entry, a duplicate project-local entry, or missing.
-  Classify `_shared/banka-state-resolution.md` the same way, alongside the nine
-  skills — every skill except `dredge` depends on it, so a missing or stale
-  copy silently breaks state resolution for eight of nine skills at once.
   A Codex symlink must target a persistent checkout, never a temporary clone.
   A temporary checkout is safe only when the skills are copied. Do not replace
   a customized or conflicting entry without showing the difference and getting

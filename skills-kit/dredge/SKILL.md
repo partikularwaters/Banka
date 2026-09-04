@@ -11,11 +11,8 @@ Not every problem is a bug. Not every bug needs debugging. Diagnose the failure 
 implicated file/function.
 
 **Conditional:** Banka state, only in the Hard Reset path, to check whether
-remember restore applies afterward — resolved via
-`../_shared/banka-state-resolution.md` (a sibling of this skill's own
-installed directory) if that check is actually needed, never read upfront ·
-wider codebase context, only if a first fix fails and re-diagnosis is
-needed.
+remember restore applies afterward · wider codebase context, only if a first
+fix fails and re-diagnosis is needed.
 
 **Excluded by default:** the codebase beyond what the diagnosis implicates ·
 no upfront state-resolution matrix — dredge doesn't run one on every
@@ -63,7 +60,7 @@ If the fix doesn't work: stop. Don't suggest another fix immediately — the roo
 
 ## Step 3B — Hard Reset
 
-Acknowledge plainly this isn't a failure, it's the correct response to a polluted context. Extract what's worth keeping (original feature intent, what's actually correct so far, what's been learned about what doesn't work) into a reset note. Check whether Banka state exists by reading `../_shared/banka-state-resolution.md` (a sibling of this skill's own installed directory) — the only point in this skill where that check happens. Instruct: save the note, end this session, start fresh, invoke the remember skill in restore mode if Banka state exists, and approach again with the reset note as context. Do not continue in this session.
+Acknowledge plainly this isn't a failure, it's the correct response to a polluted context. Extract what's worth keeping (original feature intent, what's actually correct so far, what's been learned about what doesn't work) into a reset note. Instruct: save the note, end this session, start fresh, invoke the remember skill in restore mode if Banka state exists, and approach again with the reset note as context. Do not continue in this session.
 
 ## Step 3C — Rethink
 

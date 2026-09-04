@@ -13,8 +13,9 @@ for the tier and capture type (see Step 1).
 
 **Conditional:** every existing UI component file in the project — audit
 mode only, to build the whole-codebase baseline · evidence that `survey`
-has passed this build, before capturing a UI pattern or an
-invariant/token change — audit mode is exempt.
+has passed this build, before capturing a UI pattern or an invariant/token
+change — on Core/Standard, `verified-index.md`; on Minimal, the
+conversation — audit mode is exempt.
 
 **Excluded by default:** width/height, layout mechanics, positioning,
 animation/transition timing, and responsive breakpoint variants — Step 2
@@ -32,22 +33,53 @@ never a file outside that resolved destination, and never session-state.
 
 ## Resolve Banka state first
 
-Read `../_shared/banka-state-resolution.md` (a sibling of this skill's own
-installed directory) and follow it in full before proceeding — it covers
-schema-2 detection, matching tier shapes, stop conditions, and legacy-state
-handling.
+Before reading or writing project state, inspect `AGENTS.md`, the complete
+contents of `CLAUDE.md`, `/core/`, `/context/`, and the required tier files.
+Active schema 2 requires one complete Banka block in `AGENTS.md` containing
+these exact comments exactly once and in this order: `<!-- BANKA:START -->`,
+`<!-- BANKA:STATE-SCHEMA: 2 -->`, exactly one of
+`<!-- BANKA:TIER: Minimal -->`, `<!-- BANKA:TIER: Core -->`, or
+`<!-- BANKA:TIER: Standard -->`, then `<!-- BANKA:END -->`. The declared tier
+must match the filesystem shape and required files. `CLAUDE.md` must be exactly
+`@AGENTS.md`; if it is missing, schema 2 is still active for a runtime that
+discovers `AGENTS.md` directly, but report that Claude Code compatibility is
+unavailable.
+
+A matching Minimal shape has neither `/core/` nor `/context/`. Core has
+`/core/` and its `overview.md`, `architecture.md`, `design.md`, `progress.md`,
+`session-notes.md`, `decisions-index.md`, and `verified-index.md`, with no
+`/context/`. Standard has `/context/` and its `project-overview.md`,
+`architecture.md`, `build-plan.md`, `code-standards.md`, `library-docs.md`,
+`ui-tokens.md`, `ui-rules.md`, `ui-registry.md`, `progress-tracker.md`,
+`session-notes.md`, `decisions-index.md`, and `verified-index.md`, with no
+`/core/`.
+
+Stop state-dependent work for competing authority, malformed/partial/duplicate
+or unknown Banka markers, a non-exact `CLAUDE.md` beside schema 2, an exact shim
+with missing authority, both state directories, tier mismatch, or missing
+required tier files. Do not choose, repair, or normalize any of these states.
+
+Without valid schema 2, recognize legacy Banka state only when `CLAUDE.md` has
+the `# Project Operating Protocol` heading and exactly one complete legacy tier
+shape, with or without an old AGENTS block pointing to it. If neither schema 2
+nor recognizable legacy state exists, treat the repository as
+unstructured/non-Banka — never assume Minimal, never create Banka state
+implicitly.
 
 moor requires a state destination to write into, so its own legacy/missing-state
 handling is stricter than the shared default: on legacy state, report the
 classification and stop until an explicitly requested, previewed, and
 confirmed migration completes — never write. If neither schema 2 nor
 recognizable legacy state exists, stop because no defined destination
-exists. Never create Banka state implicitly.
+exists.
 
-For active schema 2, resolve destinations from the declared tier: Standard uses
-the eleven files under `/context/`, Core uses the six files under `/core/`, and
-Minimal uses the Banka-owned block in `AGENTS.md`. A Minimal write changes only
-that block and preserves all content outside it.
+For active schema 2, resolve destinations from the declared tier: Standard
+uses one of `context/ui-registry.md`, `context/ui-tokens.md`,
+`context/architecture.md`, `context/code-standards.md`, or an area-override
+file (Standard only); Core uses one of `core/design.md` or
+`core/architecture.md`; Minimal uses the Banka-owned block in `AGENTS.md` —
+resolved per capture type, see Step 1. A Minimal write changes only
+the Banka-owned block and preserves all content outside it.
 
 UI consistency and institutional memory depend on every session capturing what
 it settled in a place a future session — possibly using a different
@@ -82,8 +114,12 @@ checked against — the registry for one, charter's invariant cross-check
 for the other. Capturing either before verification risks enshrining
 something wrong as settled. Confirm `survey` has passed this build —
 cleanly, or with findings resolved or explicitly accepted as intentional,
-not just run. Check the conversation for evidence; if unclear, stop and ask
-rather than assume either way. Audit mode is exempt — see below.
+not just run. On Core/Standard, check `verified-index.md` for a matching
+entry before capturing — not the conversation. If none exists yet, invoke
+`verify` now to create one, then proceed from its recorded verdict. On
+Minimal, where no `verified-index.md` exists, check the conversation for
+evidence; if unclear, stop and ask rather than assume either way. Audit
+mode is exempt — see below.
 
 The bullets above are this skill's own promotion check. If a captured
 pattern's notes run past a sentence or two, that's a decision-detail write
