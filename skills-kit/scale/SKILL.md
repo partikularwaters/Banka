@@ -93,18 +93,38 @@ If triggered, perform the promotion:
 1. Create a `/core/` folder in the project root.
 2. Split the Minimal `AGENTS.md` block's inline project state into the seven
    Core files:
-   - Project Overview's Vision and Data Model → `core/overview.md`
+   - Project Overview's Vision and Data Model → `core/overview.md`. A Core
+     template section with no Minimal-tier source (e.g. Features In/Out of
+     Scope, Success Criteria) gets a real, project-specific placeholder
+     statement — never silently omitted.
    - Project Overview's Stack, Folder Matrix, and Absolute Invariants → `core/architecture.md`
-   - Any UI-related content → `core/design.md`
-   - Current Status and task-tracking content → `core/progress.md`
-   - Session Notes → `core/session-notes.md`
+   - Any UI-related content → `core/design.md`. A project with no UI surface
+     gets an explicit statement to that effect (matching `design.md`'s own
+     template guidance that this is a valid, checkable fact, not a gap to
+     leave ambiguous) — never left blank or in placeholder brackets.
+   - Current Status and task-tracking content, including Next Immediate
+     Step, → `core/progress.md` — even though Minimal's template places Next
+     Immediate Step textually under its Session Notes heading, it belongs
+     with task tracking, not narrative, since Core's own `session-notes.md`
+     has no equivalent field for it.
+   - Session Notes narrative (Context, and any still-open item under Known
+     Issues / Open Decisions) → `core/session-notes.md`. An OPEN item
+     (Section 2.5's tag) is never a durable decision — it stays here exactly
+     as an open item, never promoted to the Logbook, however close it sits
+     to a settled decision that is.
    - Any inline decision clearing the Logbook's eligibility bar (Protocol
      Section 2.11 — a durable, standing fact carrying real reasoning worth
-     preserving) → its own `core/decisions/NNNN-title/` record, with a row in
+     preserving, not merely visible or resolved) → its own
+     `core/decisions/NNNN-title/` record, with a row in
      `core/decisions-index.md`; a single-line settled fact with no real
      rationale goes to whichever owning file it belongs in instead.
    - `core/verified-index.md` starts empty — Minimal has nothing to migrate
      into it, since `verify` only runs on Core/Standard.
+   - Carry the project's own content only. Never backfill a destination
+     file's generic instructional or scaffolding prose (e.g. `design.md`'s
+     "how to fill this in" guidance) — that exists for fresh tier
+     generation, not promotion, and inserting it here would misrepresent
+     Banka guidance as something this project decided.
 3. Replace only the Banka-owned block in `AGENTS.md` with the Core router, set
    its tier marker to Core, and make its Source of truth section list the seven
    `/core/` files. Preserve all content outside the block and keep `CLAUDE.md`
@@ -129,15 +149,25 @@ If triggered, perform the promotion:
    - Stack, folder matrix, invariants → `context/architecture.md`
    - Conventions → `context/code-standards.md`
    - Third-party library patterns → `context/library-docs.md`
-4. Split `core/design.md` across `context/ui-tokens.md`, `context/ui-rules.md`, and `context/ui-registry.md` (split by content type — tokens/colors/type scale to ui-tokens.md, layout/interaction patterns to ui-rules.md, the actual component list to ui-registry.md).
+4. Split `core/design.md` across `context/ui-tokens.md`, `context/ui-rules.md`, and `context/ui-registry.md` (split by content type — tokens/colors/type scale to ui-tokens.md, layout/interaction patterns to ui-rules.md, the actual component list to ui-registry.md). A project with no UI surface carries that same explicit statement forward into all three files, rather than each one separately going ambiguous or blank.
 5. Split `core/progress.md`:
    - Active Milestones and Completed Actions → `context/build-plan.md`
-   - Remaining task-tracking content → `context/progress-tracker.md`
-6. `core/session-notes.md` → `context/session-notes.md`; `core/decisions-index.md`
+   - Remaining task-tracking content, including Next Immediate Step →
+     `context/progress-tracker.md`
+6. `core/session-notes.md` → `context/session-notes.md` (any still-open item
+   stays exactly as an open item — Standard's larger file count doesn't
+   change what clears the Logbook's eligibility bar); `core/decisions-index.md`
    → `context/decisions-index.md`; `core/decisions/` → `context/decisions/`,
    unchanged; `core/verified-index.md` → `context/verified-index.md`,
    unchanged.
-7. Replace only the Banka-owned block in `AGENTS.md` with the Standard router,
+7. Every split above carries the project's own content only — never backfill
+   a Standard file's generic instructional or scaffolding prose (e.g.
+   `code-standards.md`'s Engineering Mindset section, or `ui-tokens.md`'s
+   "how to fill this in" pattern guidance). That scaffolding exists for
+   fresh tier generation, not promotion. A Standard template section with no
+   Core-tier source gets a real, project-specific placeholder statement
+   instead, same as Minimal → Core.
+8. Replace only the Banka-owned block in `AGENTS.md` with the Standard router,
    set its tier marker to Standard, and make its Source of truth section list
    all twelve `/context/` files. Preserve all content outside the block and keep
    `CLAUDE.md` exactly `@AGENTS.md`. The Skills available note reflects that
@@ -146,7 +176,17 @@ If triggered, perform the promotion:
    uses `context/progress-tracker.md`, `context/session-notes.md`, and
    `context/decisions-index.md`; and verify writes to
    `context/verified-index.md` only.
-8. Output all twelve new files and the proposed replacement Banka block in full.
+9. Output all twelve new files and the proposed replacement Banka block in full.
    Explicitly list what moves from each `/core/` file into each new file so the
    user can confirm before anything is deleted. Once confirmed and equivalence
    is verified, delete `/core/`; never leave both state directories.
+
+## Standard is the ceiling
+
+`scale` never promotes past Standard — there is no fourth tier. A project
+that has genuinely outgrown Standard needs a different mechanism entirely
+(multi-developer coordination, real governance, likely structured or
+database-backed state instead of markdown prose), not one more proportional
+step in this ladder. Banka does not attempt that internally; say so plainly
+rather than improvising a workaround, and point the developer to a
+genuinely different tool for that scale of project.

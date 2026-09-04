@@ -253,6 +253,14 @@ for skill in "${state_resolver_skills[@]}"; do
     fail "skills-kit/$skill/SKILL.md's classification block isn't byte-identical to the others"
 done
 
+for scale_file in "$repo_root/skills-kit/scale/SKILL.md" "$repo_root/protocol/Banka.md"; do
+  require_literal 'no UI surface' "$scale_file"
+  require_literal 'never backfill' "$scale_file"
+  require_literal 'never a durable decision' "$scale_file"
+done
+require_literal 'Standard is the ceiling' "$repo_root/skills-kit/scale/SKILL.md"
+require_literal '### Standard is the ceiling' "$repo_root/protocol/Banka.md"
+
 for handoff_file in "$repo_root/skills-kit/delegate/SKILL.md" "$repo_root/full-context-templates/delegation-queue.md"; do
   grep -Fiq 'ready-to-paste' "$handoff_file" || fail "Missing ready-to-paste handoff requirement in ${handoff_file#$repo_root/}"
   require_literal 'Work in [exact project path].' "$handoff_file"

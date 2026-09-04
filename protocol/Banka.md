@@ -843,18 +843,29 @@ Triggered when either:
    content to crowd out the others in that block.
 
 Preview the mapping, then split the marked block's project state into the seven
-`/core/` files: overview and data model to `core/overview.md`; stack, structure,
-and invariants to `core/architecture.md`; UI content to `core/design.md`;
-status and task tracking to `core/progress.md`; session notes to
-`core/session-notes.md`. Any inline decision that clears Section 2.11's
-Logbook eligibility bar (a durable, standing fact carrying real reasoning
-worth preserving — the same check Track A rule 1 applies at initial
-generation) becomes a Decision Record under `core/decisions/` with a row in
+`/core/` files: overview and data model to `core/overview.md` (a Core template
+section with no Minimal source, e.g. Features In/Out of Scope or Success
+Criteria, gets a real project-specific statement, never silently omitted);
+stack, structure, and invariants to `core/architecture.md`; UI content to
+`core/design.md`, or an explicit no UI surface statement if none exists —
+never left blank or in placeholder brackets; status and task tracking,
+including Next Immediate Step, to `core/progress.md` even though Minimal's
+template places it textually under Session Notes, since Core's
+`session-notes.md` has no equivalent field for it; remaining session
+narrative, including any still-open item, to `core/session-notes.md` — an
+OPEN item (Section 2.5's tag) is never a durable decision and is never
+promoted to the Logbook, however close it sits to a settled one that is. Any
+inline decision that clears Section 2.11's Logbook eligibility bar (a durable,
+standing fact carrying real reasoning worth preserving — the same check
+Track A rule 1 applies at initial generation, not merely visible or resolved)
+becomes a Decision Record under `core/decisions/` with a row in
 `core/decisions-index.md`; a single-line settled fact with no real rationale
 goes to whichever owning file it belongs in instead, never into
 `decisions-index.md` directly. `core/verified-index.md` starts empty — Minimal
 has no equivalent to migrate from, since `verify` only runs on Core/Standard.
-Replace only the marked Banka block
+Carry the project's own content only — never backfill a destination file's
+generic instructional or scaffolding prose, which exists for fresh tier
+generation, not promotion. Replace only the marked Banka block
 with the Core router from Section 4, changing exactly
 `<!-- BANKA:TIER: Minimal -->` to `<!-- BANKA:TIER: Core -->`. Preserve all
 content outside the block, keep `CLAUDE.md` exactly `@AGENTS.md`, and show what
@@ -874,17 +885,38 @@ Preview the mapping, then split the seven `/core/` files into the twelve
 Standard files: `core/overview.md` to `project-overview.md`;
 `core/architecture.md` mostly to `architecture.md`, with conventions to
 `code-standards.md` and library patterns to `library-docs.md`;
-`core/design.md` to `ui-tokens.md`, `ui-rules.md`, and `ui-registry.md`;
-`core/progress.md` to `build-plan.md` and `progress-tracker.md`;
-`core/session-notes.md` to `session-notes.md`; `core/decisions-index.md` to
+`core/design.md` to `ui-tokens.md`, `ui-rules.md`, and `ui-registry.md` —
+carrying a no UI surface statement into all three if that's what `design.md`
+holds, rather than each going ambiguous separately;
+`core/progress.md` to `build-plan.md` and `progress-tracker.md` (Next
+Immediate Step and remaining task tracking go to `progress-tracker.md`);
+`core/session-notes.md` to `session-notes.md`, any still-open item carried
+forward exactly as open — Standard's larger file count never changes what
+clears the Logbook's eligibility bar; `core/decisions-index.md` to
 `decisions-index.md`, and `core/decisions/` to `decisions/`, unchanged;
-`core/verified-index.md` to `verified-index.md`, unchanged. Move
+`core/verified-index.md` to `verified-index.md`, unchanged. As at Minimal →
+Core, carry the project's own content only — a Standard template section
+with no Core-tier source gets a real project-specific statement, and no
+split here backfills a destination file's generic instructional or
+scaffolding prose. Move
 the resulting files into `/context/` and remove the superseded `/core/`
 authority only after equivalence is verified. Replace only the marked Banka
 block with the Standard router from Section 5, changing exactly
 `<!-- BANKA:TIER: Core -->` to `<!-- BANKA:TIER: Standard -->`.
 Preserve all content outside the block, keep `CLAUDE.md` exactly `@AGENTS.md`,
 and show what moved where before finalizing.
+
+### Standard is the ceiling
+
+There is no fourth tier, and promotion never attempts to invent one. A
+project that has genuinely outgrown Standard needs a different mechanism
+entirely — multi-developer coordination, real governance, likely structured
+or database-backed state instead of markdown prose — not one more
+proportional step in this ladder. Every tier in this section shares the
+same single-agent-session, prose-based model; that model is what would
+strain under those demands, not just the file count. State this plainly to
+the developer and point them to a genuinely different tool for that scale
+of project, rather than improvising a workaround inside Banka.
 
 ---
 
