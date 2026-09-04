@@ -53,7 +53,7 @@ if rg -n 'SINGLE-FILE OUTPUT|neither exists\s+→ Minimal|`memory\.md`' \
 fi
 
 project_entry_dir="$repo_root/full-context-templates/project-entry"
-project_entry_templates=(minimal-AGENTS.md core-AGENTS.md standard-AGENTS.md CLAUDE.md)
+project_entry_templates=(minimal-AGENTS.md core-AGENTS.md standard-AGENTS.md CLAUDE.md CONTRIBUTING.md)
 state_resolver_skills=(charter delegate linis moor remember scale survey watershed verify)
 
 require_literal() {
@@ -154,6 +154,9 @@ done
 project_entry_file_count=$(find "$project_entry_dir" -mindepth 1 -maxdepth 1 -type f | wc -l | tr -d ' ')
 test "$project_entry_file_count" -eq "${#project_entry_templates[@]}" || \
   fail "Expected ${#project_entry_templates[@]} canonical project-entry templates, found $project_entry_file_count"
+
+require_literal 'Assisted-by: <provider or product> (<model, if known>)' \
+  "$project_entry_dir/CONTRIBUTING.md"
 
 for tier in Minimal Core Standard; do
   case "$tier" in

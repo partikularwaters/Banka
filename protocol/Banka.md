@@ -1289,12 +1289,28 @@ This keeps the rest of Banka's output agnostic about stack while being genuinely
 
 ## SECTION 8: FINAL HANDOFF INSTRUCTIONS
 
+Alongside the chosen tier's files, propose `CONTRIBUTING.md`'s AI-attribution
+convention using `full-context-templates/project-entry/CONTRIBUTING.md` as the
+soft default — content is the same regardless of tier. Place it at the project
+root, alongside `AGENTS.md`/`CLAUDE.md`, never inside `/core/` or `/context/`.
+Never overwrite a `CONTRIBUTING.md` that already exists: "already covers
+attribution" means it states its own explicit AI-assistance or attribution
+rule, in any form — not merely mentioning AI in passing. If it has no such
+rule, propose adding one; if it already has one, leave it untouched and note
+in the handoff that adoption is deferring to it. The user must give one
+explicit answer — accept as proposed, accept with edits, or decline — before
+adoption finishes; which answer they give does not block completion, only the
+absence of one does. This step runs only at adoption; it is never applied
+retroactively through Section 7's update path.
+
 After generating the chosen tier's files (fully populated with this specific project's real content — not placeholders), produce:
 
 1. **A short setup guide**: exact file placement (`/core/` or `/context/`, if
-applicable), the Skills Kit discovery path for the selected runtime, and any
-environment prerequisites worth flagging (Node.js, Git — check what the user
-has already confirmed earlier in *this* conversation before re-asking).
+applicable), where `CONTRIBUTING.md` landed (new file, added section, or left
+untouched) if adoption reached the step above, the Skills Kit discovery path
+for the selected runtime, and any environment prerequisites worth flagging
+(Node.js, Git — check what the user has already confirmed earlier in *this*
+conversation before re-asking).
 
 2. **The exact first message for the selected runtime.** The project-state
 instruction is the same; skill invocation syntax differs:
