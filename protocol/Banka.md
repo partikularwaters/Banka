@@ -608,7 +608,7 @@ Any operation needing a state destination stops.
 
 Migration is not adoption-by-detection and has no new skill or command. Two
 independent migrations exist, triggered separately, never combined into one
-confirmation: Legacy → Schema 2, below, and Schema 2 (pre-migration shape) →
+confirmation: Legacy → Schema 3, below, and Schema 2 (pre-migration shape) →
 Schema 3, following it. Use either sequence only after the user explicitly
 requests that specific migration.
 
@@ -662,28 +662,42 @@ not a fresh starting point — resume from step 3 below instead of restarting.
    migration — nothing else needs inspecting, since Core/Standard's other
    domain files are untouched by the schema-2/3 split.
 2. Determine the destination content: the inline Session Notes section
-   becomes `session-notes.md`; the inline Decisions Made section becomes
-   `decisions-index.md`'s Logbook routing table, with any entry that clears
-   Section 2.11's eligibility bar (a durable, standing fact carrying real
-   reasoning worth preserving) promoted to its own Decision Record under
-   `decisions/NNNN-title/` — the same treatment `scale`'s Minimal → Core
-   promotion already gives an inline decision. `verified-index.md` starts
-   empty; no prior equivalent exists to migrate from. The now-extracted
-   sections are removed from `progress.md`, which keeps only a rollup pointer
-   to each new file (Section 2.9's "Resulting structure").
-3. Preview all three new files in full and the trimmed `progress.md`, showing
-   exactly what moves where, before writing anything.
-4. Obtain explicit confirmation of that preview.
-5. Apply the confirmed transformation: write the three new files and the
-   trimmed `progress.md` first, and only once they're genuinely in place,
-   flip `BANKA:STATE-SCHEMA` from `2` to `3` in the marked `AGENTS.md` block.
-   The marker must never read `3` while any of the three new files could
-   still be missing — this sequencing, not any particular tool mechanic, is
-   what makes an interruption safe: it leaves the marker at `2` alongside
+   becomes `session-notes.md`; each entry in the inline Decisions Made
+   section is checked against Section 2.11's eligibility bar individually —
+   an entry that clears it (a durable, standing fact carrying real reasoning
+   worth preserving) is promoted to its own Decision Record under
+   `decisions/NNNN-title/` with a row in `decisions-index.md`; a single-line
+   settled fact with no real rationale goes to whichever owning file it
+   belongs in instead, never dropped and never left as a bare
+   `decisions-index.md` row with no record behind it — the same treatment
+   `scale`'s Minimal → Core promotion already gives an inline decision.
+   `verified-index.md` starts empty; no prior equivalent exists to migrate
+   from. The now-extracted sections are removed from `progress.md`, which
+   keeps only a rollup pointer to each new file (Section 2.9's "Resulting
+   structure").
+3. Check whether the project's own `scripts/` directory already has
+   `check-banka-thresholds.sh` and `verify-claims.sh` — a schema-2
+   pre-migration project predates both and will not have them. If either is
+   missing, copying it in from `full-context-templates/scripts/` is part of
+   this migration's preview and confirmation, not a separate step; schema
+   3's Threshold Check blocks and `verify` are non-functional without them.
+4. Preview all three new files in full, the trimmed `progress.md`, the
+   updated `AGENTS.md` Source of truth list (adding the three new files
+   alongside the existing ones, matching Section 4/5's canonical router
+   text), and any script being copied in — showing exactly what moves and
+   what's added, before writing anything.
+5. Obtain explicit confirmation of that preview.
+6. Apply the confirmed transformation: write the three new files, the
+   trimmed `progress.md`, the updated Source of truth list, and any copied
+   script first, and only once they're genuinely in place, flip
+   `BANKA:STATE-SCHEMA` from `2` to `3` in the marked `AGENTS.md` block. The
+   marker must never read `3` while any of the three new files could still
+   be missing — this sequencing, not any particular tool mechanic, is what
+   makes an interruption safe: it leaves the marker at `2` alongside
    whatever new files already exist, which Section 3.1's interrupted-migration
    row exists specifically to recognize, letting this same sequence resume
    from there rather than requiring a rollback.
-6. Re-run the full detection matrix. Migration completes only when the
+7. Re-run the full detection matrix. Migration completes only when the
    project classifies as Active schema 3 and passes the Cold Agent Test.
 
 ### 3.3 Minimal template
@@ -1022,10 +1036,16 @@ readable without the source clone that created it, but a *new* one cannot
 be created without it. Then, from that source clone: if
 `~/.banka/versions/<tag>/` does not already exist, create it with
 `git worktree add ~/.banka/versions/<tag> <tag>`; if it already exists (a
-prior install already created it) and `git worktree list` from the source
-clone confirms it as a valid, registered worktree for that tag, reuse it
-as-is rather than recreating it. If the path exists but is not a valid
-registered worktree (a stray file, an empty leftover directory, or a
+prior install already created it), confirm two things before reusing it
+as-is: `git worktree list` from the source clone shows it as a valid,
+registered worktree for that tag, and `git status` from inside the worktree
+itself reports a clean tree with no local modification (the "never write to
+a version worktree" rule is policy, not enforcement — a worktree that fails
+this check has been written to despite that rule, and reusing it silently
+would install altered content as if it were the real release). If either
+check fails, stop and report the conflict rather than reusing it or forcing
+a fresh creation over it. If the path exists but is not a valid registered
+worktree (a stray file, an empty leftover directory, or a
 corrupted/orphaned registration), stop rather than forcing creation over
 it — report the conflict and let the user resolve it (remove the stray path,
 or run `git worktree prune` in the source clone if it's an orphaned
@@ -1132,15 +1152,19 @@ report it; never fall back to the default branch.
 The update has two independently assessed surfaces:
 
 - **Machine-level Skills Kit.** Inspect the selected runtime's user-level skill
-  locations and classify each Banka skill as a standard copy, a symlink, a
-  customized or conflicting entry, a duplicate project-local entry, or missing.
-  A Codex symlink must target a persistent checkout, never a temporary clone.
-  A temporary checkout is safe only when the skills are copied. Do not replace
-  a customized or conflicting entry without showing the difference and getting
-  a specific decision from the user. Inspect a persistent source checkout's Git
-  status before moving it to another tag; never discard local changes to make an
-  update fit. Use a new clean persistent checkout when its provenance or working
-  tree is unsafe.
+  locations and classify each Banka skill as a version-worktree symlink, a
+  symlink into a mutable checkout (the prior design — see Section 7's shared
+  install mechanism), a standard copy, a customized or conflicting entry, a
+  duplicate project-local entry, or missing. Do not replace a customized or
+  conflicting entry without showing the difference and getting a specific
+  decision from the user. For a version-worktree symlink, resolve or create
+  `~/.banka/versions/<target-tag>/` per Section 7's worktree procedure (reuse
+  if it already exists, never mutate an existing one) and repoint the symlinks
+  to it — never move or retag the worktree the project is currently linked
+  from, since other projects may still depend on it staying exactly as it is.
+  For a symlink into a mutable checkout, migrating to the worktree-based
+  mechanism is itself a reportable, confirmable change under this update, not
+  automatic. A temporary checkout is safe only when the skills are copied.
 - **Managed project state.** Resolve `AGENTS.md`, the complete `CLAUDE.md`, both
   possible state directories, and the tier's required files through Section
   3.1. Preserve the tier, all project-specific content, all history, and all
@@ -1167,10 +1191,11 @@ Run the update in this order:
    for updates, or continue ordinary work is not permission to replace skills
    or mutate project state.
 5. Apply only the confirmed changes. Refresh standard Skills Kit copies from
-   the tagged release, or update a persistent Codex source checkout to the tag
-   and verify every symlink. Apply only release-required project-state changes;
-   do not re-adopt the project, change its tier, or rewrite its accumulated
-   knowledge to resemble a fresh template.
+   the tagged release, or resolve/create the target release's version
+   worktree and repoint symlinks to it, per the classification above. Apply
+   only release-required project-state changes; do not re-adopt the project,
+   change its tier, or rewrite its accumulated knowledge to resemble a fresh
+   template.
 6. Verify the tagged Banka checkout with `scripts/check-repo-integrity.sh`,
    verify skill discovery and the absence of unintended duplicates, re-run
    Section 3.1 against the project, and perform the Cold Agent Test. Report the

@@ -62,29 +62,32 @@ while [ "$#" -gt 0 ]; do
   case "$1" in
     --check-file)
       path="$2"
+      quoted_path=$(printf '%q' "$path")
       if [ -f "$path" ]; then
-        results+=("| \`--check-file $path\` | MET | file exists |")
+        results+=("| \`--check-file $quoted_path\` | MET | file exists |")
       else
-        results+=("| \`--check-file $path\` | MISSING | file not found |")
+        results+=("| \`--check-file $quoted_path\` | MISSING | file not found |")
       fi
       shift 2
       ;;
     --check-diff)
       path="$2"
+      quoted_path=$(printf '%q' "$path")
       verdict=$(diff_touches "$path")
-      results+=("| \`--check-diff $path\` | ${verdict%% —*} | ${verdict#*— } |")
+      results+=("| \`--check-diff $quoted_path\` | ${verdict%% —*} | ${verdict#*— } |")
       shift 2
       ;;
     --run-test)
       command_str="$2"
+      quoted_command=$(printf '%q' "$command_str")
       if output=$(eval "$command_str" 2>&1); then
-        results+=("| \`--run-test $command_str\` | MET | exited 0 |")
+        results+=("| \`--run-test $quoted_command\` | MET | exited 0 |")
       else
         exit_code=$?
         if [ "$exit_code" -eq 127 ]; then
-          results+=("| \`--run-test $command_str\` | BLOCKED | command not found |")
+          results+=("| \`--run-test $quoted_command\` | BLOCKED | command not found |")
         else
-          results+=("| \`--run-test $command_str\` | MISSING | exited $exit_code |")
+          results+=("| \`--run-test $quoted_command\` | MISSING | exited $exit_code |")
         fi
       fi
       shift 2

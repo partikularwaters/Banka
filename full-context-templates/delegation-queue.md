@@ -5,8 +5,8 @@
 This file is empty until the delegate skill is invoked against an approved charter plan. See the `delegate` skill for how tickets get written here.
 
 **Rule for any session reading this file:** resolve queue placement from a valid
-schema-2 `AGENTS.md` authority whose comments occur exactly once and in this
-order:
+`AGENTS.md` authority (schema 2 or schema 3 — both are active; see Protocol
+Section 3.1) whose comments occur exactly once and in this order:
 
 ```markdown
 <!-- BANKA:START -->
@@ -14,6 +14,9 @@ order:
 <!-- BANKA:TIER: Minimal -->
 <!-- BANKA:END -->
 ```
+
+(`STATE-SCHEMA` is `2` or `3` — this illustrates the marker format, not a
+required value.)
 
 The third comment is exactly one of `<!-- BANKA:TIER: Minimal -->`,
 `<!-- BANKA:TIER: Core -->`, or `<!-- BANKA:TIER: Standard -->`; it must match

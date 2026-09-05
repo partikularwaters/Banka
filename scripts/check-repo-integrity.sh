@@ -215,7 +215,7 @@ test "$(wc -l < "$project_entry_dir/CLAUDE.md" | tr -d ' ')" -eq 1 || \
 
 require_literal '## Source of truth' "$project_entry_dir/core-AGENTS.md"
 require_literal '## Source of truth' "$project_entry_dir/standard-AGENTS.md"
-require_literal 'Banka-owned schema-2 block in `AGENTS.md`' "$repo_root/full-context-templates/standard/code-standards.md"
+require_literal 'Banka-owned block in `AGENTS.md`' "$repo_root/full-context-templates/standard/code-standards.md"
 
 if rg -n -i '@CLAUDE\.md|AGENTS\.md[^\n]*(points? to|imports?)[^\n]*CLAUDE\.md|CLAUDE\.md[^\n]*(canonical|current|primary)[^\n]*(authority|source of truth|state)' \
   "$repo_root/README.md" "$repo_root/BANKA-ADOPTION-GUIDE.md" "$repo_root/system-map.md" \

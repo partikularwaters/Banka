@@ -180,7 +180,7 @@ existing content would be replaced rather than appended or status-updated.
 Before writing: promote durable, standing facts (architecture, invariants,
 conventions) to the file that owns them, never log them here.
 
-**Core/Standard — a durable decision carrying real reasoning worth
+**Schema-3 Core/Standard — a durable decision carrying real reasoning worth
 preserving goes to the Logbook (Protocol Section 2.11), never inline
 here.** Write its Decision Record (`decisions/NNNN-title/decision.md` +
 `rationale.md`), giving `decision.md` YAML frontmatter (`status`, `date`,
@@ -192,6 +192,14 @@ while its `status` frontmatter field stays plain data (`Superseded by
 <NNNN>`) since frontmatter isn't markdown-rendered. Also update its
 Decisions Index row to link to the new record. The earlier record's
 `rationale.md` is never rewritten, only the pointers to it.
+
+**Schema-2 pre-migration Core/Standard has no Logbook yet** — a durable
+decision stays a plain entry in `progress.md`/`progress-tracker.md`'s
+inline Decisions Made section instead, mark a superseded entry
+`[SUPERSEDED — see <new decision>]` in place there rather than opening a
+Decision Record. Never create `decisions/` or `decisions-index.md` on an
+unmigrated project — that would falsely present as an interrupted
+migration the next time state is resolved.
 
 **Minimal — no Logbook; decisions stay inline as before.** If a new
 decision reverses an earlier one, mark the earlier entry
