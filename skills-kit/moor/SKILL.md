@@ -35,45 +35,56 @@ never a file outside that resolved destination, and never session-state.
 
 Before reading or writing project state, inspect `AGENTS.md`, the complete
 contents of `CLAUDE.md`, `/core/`, `/context/`, and the required tier files.
-Active schema 2 requires one complete Banka block in `AGENTS.md` containing
+An active schema requires one complete Banka block in `AGENTS.md` containing
 these exact comments exactly once and in this order: `<!-- BANKA:START -->`,
-`<!-- BANKA:STATE-SCHEMA: 2 -->`, exactly one of
-`<!-- BANKA:TIER: Minimal -->`, `<!-- BANKA:TIER: Core -->`, or
+`<!-- BANKA:STATE-SCHEMA: 2 -->` or `<!-- BANKA:STATE-SCHEMA: 3 -->`, exactly
+one of `<!-- BANKA:TIER: Minimal -->`, `<!-- BANKA:TIER: Core -->`, or
 `<!-- BANKA:TIER: Standard -->`, then `<!-- BANKA:END -->`. The declared tier
-must match the filesystem shape and required files. `CLAUDE.md` must be exactly
-`@AGENTS.md`; if it is missing, schema 2 is still active for a runtime that
-discovers `AGENTS.md` directly, but report that Claude Code compatibility is
-unavailable.
+must match the filesystem shape required for that schema number. `CLAUDE.md`
+must be exactly `@AGENTS.md`; if it is missing, the active schema is still
+active for a runtime that discovers `AGENTS.md` directly, but report that
+Claude Code compatibility is unavailable.
 
-A matching Minimal shape has neither `/core/` nor `/context/`. Core has
-`/core/` and its `overview.md`, `architecture.md`, `design.md`, `progress.md`,
-`session-notes.md`, `decisions-index.md`, and `verified-index.md`, with no
-`/context/`. Standard has `/context/` and its `project-overview.md`,
-`architecture.md`, `build-plan.md`, `code-standards.md`, `library-docs.md`,
-`ui-tokens.md`, `ui-rules.md`, `ui-registry.md`, `progress-tracker.md`,
-`session-notes.md`, `decisions-index.md`, and `verified-index.md`, with no
-`/core/`.
+A matching Minimal shape has neither `/core/` nor `/context/`, identical under
+either schema number. Core has `/core/` with no `/context/`: schema 2 requires
+exactly `overview.md`, `architecture.md`, `design.md`, and `progress.md`;
+schema 3 additionally requires `session-notes.md`, `decisions-index.md`, and
+`verified-index.md`. Standard has `/context/` with no `/core/`: schema 2
+requires exactly `project-overview.md`, `architecture.md`, `build-plan.md`,
+`code-standards.md`, `library-docs.md`, `ui-tokens.md`, `ui-rules.md`,
+`ui-registry.md`, and `progress-tracker.md`; schema 3 additionally requires
+`session-notes.md`, `decisions-index.md`, and `verified-index.md`. Schema-2
+Core/Standard is a fully active, permanent classification, not a transitional
+one — nothing requires migrating to schema 3.
 
 Stop state-dependent work for competing authority, malformed/partial/duplicate
-or unknown Banka markers, a non-exact `CLAUDE.md` beside schema 2, an exact shim
-with missing authority, both state directories, tier mismatch, or missing
-required tier files. Do not choose, repair, or normalize any of these states.
+or unknown Banka markers, a non-exact `CLAUDE.md` beside an active schema, an
+exact shim with missing authority, both state directories, tier mismatch, or
+missing required tier files for the declared schema. A schema-2 Core/Standard
+project already showing one or more of schema 3's three additional files is
+mid-migration, not broken — stop and point to resuming or reverting the
+migration (Protocol Section 3.2), never treat it as ordinary incomplete state
+and never invent or discard content. Do not choose, repair, or normalize any
+of these states.
 
-Without valid schema 2, recognize legacy Banka state only when `CLAUDE.md` has
-the `# Project Operating Protocol` heading and exactly one complete legacy tier
-shape, with or without an old AGENTS block pointing to it. If neither schema 2
-nor recognizable legacy state exists, treat the repository as
-unstructured/non-Banka — never assume Minimal, never create Banka state
+Without a valid schema-2 or schema-3 block, recognize legacy Banka state only
+when `CLAUDE.md` has the `# Project Operating Protocol` heading and exactly
+one complete legacy tier shape, with or without an old AGENTS block pointing
+to it. Legacy's Core/Standard shape coincides with schema 2's own file count,
+but the two are distinguished by the marker, not the file count — check for a
+valid schema block first. If neither an active schema nor recognizable legacy
+state exists, treat the repository as unstructured/non-Banka — never assume
+Minimal, never create Banka state
 implicitly.
 
 moor requires a state destination to write into, so its own legacy/missing-state
 handling is stricter than the shared default: on legacy state, report the
 classification and stop until an explicitly requested, previewed, and
-confirmed migration completes — never write. If neither schema 2 nor
+confirmed migration completes — never write. If neither an active schema nor
 recognizable legacy state exists, stop because no defined destination
 exists.
 
-For active schema 2, resolve destinations from the declared tier: Standard
+For an active schema, resolve destinations from the declared tier: Standard
 uses one of `context/ui-registry.md`, `context/ui-tokens.md`,
 `context/architecture.md`, `context/code-standards.md`, or an area-override
 file (Standard only); Core uses one of `core/design.md` or
@@ -114,12 +125,13 @@ checked against — the registry for one, charter's invariant cross-check
 for the other. Capturing either before verification risks enshrining
 something wrong as settled. Confirm `survey` has passed this build —
 cleanly, or with findings resolved or explicitly accepted as intentional,
-not just run. On Core/Standard, check `verified-index.md` for a matching
-entry before capturing — not the conversation. If none exists yet, invoke
-`verify` now to create one, then proceed from its recorded verdict. On
-Minimal, where no `verified-index.md` exists, check the conversation for
-evidence; if unclear, stop and ask rather than assume either way. Audit
-mode is exempt — see below.
+not just run. On schema-3 Core/Standard, check `verified-index.md` for a
+matching entry before capturing — not the conversation. If none exists yet,
+invoke `verify` now to create one, then proceed from its recorded verdict.
+On Minimal, and on schema-2 (pre-migration) Core/Standard — neither has a
+`verified-index.md` to check — check the conversation for evidence instead;
+if unclear, stop and ask rather than assume either way. Audit mode is
+exempt — see below.
 
 The bullets above are this skill's own promotion check. If a captured
 pattern's notes run past a sentence or two, that's a decision-detail write

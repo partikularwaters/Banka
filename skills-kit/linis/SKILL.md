@@ -4,7 +4,7 @@ description: Clean up narrative residue in settled files after a milestone witho
 argument-hint: [optional — specific settled file(s); defaults to files changed in the current completed milestone]
 ---
 
-*Linis* — Filipino for "clean." Code and context files accumulate the residue of how they were built: a name here, a date there, a line quoting what someone said mid-session, a comment narrating an experiment instead of stating its settled result. None of that is wrong to have *during* a build — some of it is exactly what `remember` and the session-state file(s) (the Minimal Banka block in `AGENTS.md`; on Core, `core/progress.md`, `core/session-notes.md`, and `core/decisions-index.md`; on Standard, `context/progress-tracker.md`, `context/session-notes.md`, and `context/decisions-index.md`) are supposed to capture while work is active. But once a version ships or a milestone closes, that residue stops being useful context and starts being clutter a future session has to read past to find what actually matters.
+*Linis* — Filipino for "clean." Code and context files accumulate the residue of how they were built: a name here, a date there, a line quoting what someone said mid-session, a comment narrating an experiment instead of stating its settled result. None of that is wrong to have *during* a build — some of it is exactly what `remember` and the session-state file(s) (the Minimal Banka block in `AGENTS.md`; on schema-3 Core, `core/progress.md`, `core/session-notes.md`, and `core/decisions-index.md`; on schema-3 Standard, `context/progress-tracker.md`, `context/session-notes.md`, and `context/decisions-index.md`; on schema-2 pre-migration Core/Standard, `progress.md`/`progress-tracker.md` alone) are supposed to capture while work is active. But once a version ships or a milestone closes, that residue stops being useful context and starts being clutter a future session has to read past to find what actually matters.
 
 This skill does not touch correctness — it never changes what code does. It only changes how it's described.
 
@@ -32,35 +32,46 @@ removed.
 
 Before reading or writing project state, inspect `AGENTS.md`, the complete
 contents of `CLAUDE.md`, `/core/`, `/context/`, and the required tier files.
-Active schema 2 requires one complete Banka block in `AGENTS.md` containing
+An active schema requires one complete Banka block in `AGENTS.md` containing
 these exact comments exactly once and in this order: `<!-- BANKA:START -->`,
-`<!-- BANKA:STATE-SCHEMA: 2 -->`, exactly one of
-`<!-- BANKA:TIER: Minimal -->`, `<!-- BANKA:TIER: Core -->`, or
+`<!-- BANKA:STATE-SCHEMA: 2 -->` or `<!-- BANKA:STATE-SCHEMA: 3 -->`, exactly
+one of `<!-- BANKA:TIER: Minimal -->`, `<!-- BANKA:TIER: Core -->`, or
 `<!-- BANKA:TIER: Standard -->`, then `<!-- BANKA:END -->`. The declared tier
-must match the filesystem shape and required files. `CLAUDE.md` must be exactly
-`@AGENTS.md`; if it is missing, schema 2 is still active for a runtime that
-discovers `AGENTS.md` directly, but report that Claude Code compatibility is
-unavailable.
+must match the filesystem shape required for that schema number. `CLAUDE.md`
+must be exactly `@AGENTS.md`; if it is missing, the active schema is still
+active for a runtime that discovers `AGENTS.md` directly, but report that
+Claude Code compatibility is unavailable.
 
-A matching Minimal shape has neither `/core/` nor `/context/`. Core has
-`/core/` and its `overview.md`, `architecture.md`, `design.md`, `progress.md`,
-`session-notes.md`, `decisions-index.md`, and `verified-index.md`, with no
-`/context/`. Standard has `/context/` and its `project-overview.md`,
-`architecture.md`, `build-plan.md`, `code-standards.md`, `library-docs.md`,
-`ui-tokens.md`, `ui-rules.md`, `ui-registry.md`, `progress-tracker.md`,
-`session-notes.md`, `decisions-index.md`, and `verified-index.md`, with no
-`/core/`.
+A matching Minimal shape has neither `/core/` nor `/context/`, identical under
+either schema number. Core has `/core/` with no `/context/`: schema 2 requires
+exactly `overview.md`, `architecture.md`, `design.md`, and `progress.md`;
+schema 3 additionally requires `session-notes.md`, `decisions-index.md`, and
+`verified-index.md`. Standard has `/context/` with no `/core/`: schema 2
+requires exactly `project-overview.md`, `architecture.md`, `build-plan.md`,
+`code-standards.md`, `library-docs.md`, `ui-tokens.md`, `ui-rules.md`,
+`ui-registry.md`, and `progress-tracker.md`; schema 3 additionally requires
+`session-notes.md`, `decisions-index.md`, and `verified-index.md`. Schema-2
+Core/Standard is a fully active, permanent classification, not a transitional
+one — nothing requires migrating to schema 3.
 
 Stop state-dependent work for competing authority, malformed/partial/duplicate
-or unknown Banka markers, a non-exact `CLAUDE.md` beside schema 2, an exact shim
-with missing authority, both state directories, tier mismatch, or missing
-required tier files. Do not choose, repair, or normalize any of these states.
+or unknown Banka markers, a non-exact `CLAUDE.md` beside an active schema, an
+exact shim with missing authority, both state directories, tier mismatch, or
+missing required tier files for the declared schema. A schema-2 Core/Standard
+project already showing one or more of schema 3's three additional files is
+mid-migration, not broken — stop and point to resuming or reverting the
+migration (Protocol Section 3.2), never treat it as ordinary incomplete state
+and never invent or discard content. Do not choose, repair, or normalize any
+of these states.
 
-Without valid schema 2, recognize legacy Banka state only when `CLAUDE.md` has
-the `# Project Operating Protocol` heading and exactly one complete legacy tier
-shape, with or without an old AGENTS block pointing to it. If neither schema 2
-nor recognizable legacy state exists, treat the repository as
-unstructured/non-Banka — never assume Minimal, never create Banka state
+Without a valid schema-2 or schema-3 block, recognize legacy Banka state only
+when `CLAUDE.md` has the `# Project Operating Protocol` heading and exactly
+one complete legacy tier shape, with or without an old AGENTS block pointing
+to it. Legacy's Core/Standard shape coincides with schema 2's own file count,
+but the two are distinguished by the marker, not the file count — check for a
+valid schema block first. If neither an active schema nor recognizable legacy
+state exists, treat the repository as unstructured/non-Banka — never assume
+Minimal, never create Banka state
 implicitly.
 
 linis's own legacy handling is narrower than the shared default: it may
@@ -70,7 +81,7 @@ Banka state file, tier marker, state directory, queue, or runtime shim; if
 the proposal would do so, stop until an explicitly requested, previewed,
 and confirmed migration completes.
 
-For active schema 2, Standard state is in `/context/`, Core state is in
+For an active schema, Standard state is in `/context/`, Core state is in
 `/core/`, and Minimal state is in the Banka-owned `AGENTS.md` block. Use the
 supplied milestone/diff to resolve scope and do not create Banka state
 files. If a confirmed Minimal cleanup changes `AGENTS.md`, edit only its Banka-owned

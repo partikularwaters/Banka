@@ -310,7 +310,7 @@ Every durable Banka rule or project fact has exactly one canonical home — the 
 
 This is not a new practice; it is already enforced mechanically. `scripts/check-repo-integrity.sh` verifies each project-entry `AGENTS.md` template is byte-identical to the tier block this protocol defines in Sections 3.3, 4, and 5 — the protocol is canonical, the templates are checked copies, never an independent source. The same script verifies the `delegate` skill's ready-to-paste handoff block is byte-identical to `full-context-templates/delegation-queue.md`'s copy of it, for the same reason.
 
-Each skill's own state-resolution preamble in Section 7's Skills Kit is this principle's one deliberate, checked exception — the load-bearing facts (schema-2 detection, stop conditions, matching tier shapes, legacy-state handling) duplicated verbatim across every skill. A shared file (`skills-kit/_shared/banka-state-resolution.md`) was tried instead, on the reasoning that the Skills Kit installs as one unit, so a shared sibling file is exactly as portable as any one skill. It was reverted after direct measurement: every invocation had to read the shared file's classification content in full, plus its own skill file, and the shared content itself — restructured into headers, a numbered list, and tables for scannability — turned out heavier per line than the terse prose it replaced. A representative skill's per-invocation read grew from roughly 360 words to roughly 880 at the point of reversion; moving the shared content back inline, denser, brought it back down. Portability was never actually the binding constraint — read cost per invocation was, and centralizing content doesn't reduce that unless the centralized version is at least as terse as what it replaced. What the shared-file attempt got right, and what survives it: duplication is safe only when it's actually checked, not merely asserted. `scripts/check-repo-integrity.sh` extracts each state-resolving skill's classification block and requires it byte-identical to the others (`cmp -s`), the same mechanism Section 2.8 already used for the `AGENTS.md` templates — so a future edit to one copy and not the others fails the check immediately, closing the gap that let all nine copies exist unverified in the first place. `dredge` is the one skill that never resolves state upfront; it checks Banka state only in its Hard Reset path, via `remember`, with no dedicated block of its own.
+Each skill's own state-resolution preamble in Section 7's Skills Kit is this principle's one deliberate, checked exception — the load-bearing facts (schema detection, stop conditions, matching tier shapes, legacy-state handling) duplicated verbatim across every skill. A shared file (`skills-kit/_shared/banka-state-resolution.md`) was tried instead, on the reasoning that the Skills Kit installs as one unit, so a shared sibling file is exactly as portable as any one skill. It was reverted after direct measurement: every invocation had to read the shared file's classification content in full, plus its own skill file, and the shared content itself — restructured into headers, a numbered list, and tables for scannability — turned out heavier per line than the terse prose it replaced. A representative skill's per-invocation read grew from roughly 360 words to roughly 880 at the point of reversion; moving the shared content back inline, denser, brought it back down. Portability was never actually the binding constraint — read cost per invocation was, and centralizing content doesn't reduce that unless the centralized version is at least as terse as what it replaced. What the shared-file attempt got right, and what survives it: duplication is safe only when it's actually checked, not merely asserted. `scripts/check-repo-integrity.sh` extracts each state-resolving skill's classification block and requires it byte-identical to the others (`cmp -s`), the same mechanism Section 2.8 already used for the `AGENTS.md` templates — so a future edit to one copy and not the others fails the check immediately, closing the gap that let all nine copies exist unverified in the first place. `dredge` is the one skill that never resolves state upfront; it checks Banka state only in its Hard Reset path, via `remember`, with no dedicated block of its own.
 
 ---
 
@@ -493,8 +493,9 @@ Downstream projects never receive this document directly — the compact, self-c
 
 `AGENTS.md` is Banka's canonical, runtime-neutral root authority. Banka owns
 exactly one marked block in that file and preserves every byte outside the
-block. A schema-2 block has these four markers, each exactly once and in this
-order:
+block. A schema block has these four markers, each exactly once and in this
+order — `STATE-SCHEMA` is `2` or `3`; see Section 3.1 for what each requires
+of Core/Standard's file shape (Minimal is identical under either number):
 
 ```markdown
 <!-- BANKA:START -->
@@ -508,7 +509,7 @@ The tier value is exactly `Minimal`, `Core`, or `Standard`. The START marker
 opens the block, STATE-SCHEMA declares its contract, TIER declares its storage
 shape, and END closes it. Do not recognize misspellings, alternate comment
 forms, duplicate markers, nested blocks, or unknown schema/tier values as
-schema 2.
+a valid schema.
 
 When `AGENTS.md` does not exist, the selected project-entry template may create
 it. When it already exists, insert or replace only the one marked Banka block
@@ -558,19 +559,26 @@ succeeded.
 
 | Observed state | Classification and required behavior |
 | --- | --- |
-| One valid schema-2 block, its tier matches the filesystem shape, all required files exist, and `CLAUDE.md` is exactly `@AGENTS.md` | Active schema 2. Read and write only through the declared authority chain. |
-| Valid schema-2 `AGENTS.md`, its tier matches the filesystem shape, all required files exist, but `CLAUDE.md` is missing | Active schema 2 for runtimes that discover `AGENTS.md` directly. Codex-capable reads and writes operate normally. Report only that Claude Code compatibility is unavailable until the exact shim is added. |
-| Valid schema-2 `AGENTS.md`, but `CLAUDE.md` exists with any content other than the exact shim (including an empty file) | Competing or broken root integration. Stop; do not choose, merge, overwrite, or write state until an explicitly requested reconciliation is previewed and confirmed. |
-| No valid schema-2 block, but a legacy Banka `CLAUDE.md` authority exists (with or without an old AGENTS block that points to it) | Legacy compatibility-read-only. Read the legacy chain when a read-only operation can do so safely, identify it as legacy, and do not mutate or promote it until migration is explicitly requested, previewed, and confirmed. |
-| `CLAUDE.md` contains exactly `@AGENTS.md`, but `AGENTS.md` is missing or has no valid schema-2 block | Broken import/missing authority. Stop state-dependent work; the shim is not state. |
+| Valid schema-2 block, Core/Standard shape matches exactly the original four/nine files (none of schema 3's three additional files present), tier matches, `CLAUDE.md` exactly `@AGENTS.md` (Minimal has no separate schema-2 shape distinction — see below) | Active schema 2 (pre-migration shape). Fully active, not degraded or transitional — read and write through the declared authority chain indefinitely. `moor` and `verify` treat the absent Logbook/verified-index destinations the same way they already do for Minimal. Section 3.2 offers an optional, explicit migration to schema 3; nothing requires taking it. |
+| Valid schema-3 block, its tier matches the filesystem shape, all required files for that tier exist, and `CLAUDE.md` is exactly `@AGENTS.md` | Active schema 3. Read and write only through the declared authority chain. |
+| Schema marker still `2`, but one or more of schema 3's three additional files (`session-notes.md`, `decisions-index.md`, `verified-index.md` or their Standard equivalents) already exist alongside the original four/nine | Interrupted schema-2→3 migration. Stop; do not treat as broken and do not invent or discard content — resume the Section 3.2 migration sequence from its confirmed preview, or restore from version control to roll back cleanly. This row is checked before the general incomplete-state row below. |
+| Valid schema-2 or schema-3 `AGENTS.md`, its tier matches the filesystem shape, all required files for that schema exist, but `CLAUDE.md` is missing | Active for runtimes that discover `AGENTS.md` directly. Codex-capable reads and writes operate normally. Report only that Claude Code compatibility is unavailable until the exact shim is added. |
+| Valid schema-2 or schema-3 `AGENTS.md`, but `CLAUDE.md` exists with any content other than the exact shim (including an empty file) | Competing or broken root integration. Stop; do not choose, merge, overwrite, or write state until an explicitly requested reconciliation is previewed and confirmed. |
+| No valid schema-2 or schema-3 block, but a legacy Banka `CLAUDE.md` authority exists (with or without an old AGENTS block that points to it) | Legacy compatibility-read-only. Read the legacy chain when a read-only operation can do so safely, identify it as legacy, and do not mutate or promote it until migration is explicitly requested, previewed, and confirmed. |
+| `CLAUDE.md` contains exactly `@AGENTS.md`, but `AGENTS.md` is missing or has no valid schema-2 or schema-3 block | Broken import/missing authority. Stop state-dependent work; the shim is not state. |
 | `AGENTS.md` contains a malformed, partial, duplicate, nested, unknown-schema, or unknown-tier Banka marker/block | Conflicting Banka metadata. Stop state-dependent work; do not treat it as unstructured and do not normalize it implicitly. |
 | Both `/core/` and `/context/` exist | Competing state directories. Stop even if one matches the tier marker; never resolve this by directory precedence. |
-| The tier marker and storage shape disagree, or a declared Core/Standard directory or required domain file is missing | Tier mismatch/incomplete state. Stop state-dependent work and do not repair or invent missing content implicitly. |
-| No valid schema-2 block and no recognizable legacy Banka authority | Unstructured/non-Banka repository. Never assume Minimal and never create Banka state implicitly. |
+| The tier marker and storage shape disagree, or — relative to the marker's own declared schema number, and not matching the interrupted-migration row above — a declared Core/Standard directory or required domain file for that schema is missing | Tier mismatch/incomplete state. Stop state-dependent work and do not repair or invent missing content implicitly. |
+| No valid schema-2 or schema-3 block and no recognizable legacy Banka authority | Unstructured/non-Banka repository. Never assume Minimal and never create Banka state implicitly. |
 
-For this matrix, Minimal's matching shape has neither `/core/` nor `/context/`;
-Core has `/core/`, not `/context/`, and its seven files from Section 4; Standard
-has `/context/`, not `/core/`, and its twelve files from Section 5. Unrelated
+For this matrix, Minimal's matching shape has neither `/core/` nor `/context/` —
+true under either schema number, since Minimal's own shape is unaffected by
+the schema-2/3 split; a fresh Minimal generation writes 3 for consistency with
+new Core/Standard installs, but an existing schema-2 Minimal project needs no
+migration and no distinct treatment. Core has `/core/`, not `/context/`, and
+either its original four files (schema 2) or its seven files from Section 4
+(schema 3); Standard has `/context/`, not `/core/`, and either its original
+nine files (schema 2) or its twelve files from Section 5 (schema 3). Unrelated
 project prose outside the marked `AGENTS.md` block is preserved and is not
 competing Banka state. A second Banka block is a conflict, not an extension.
 
@@ -578,7 +586,12 @@ A legacy `CLAUDE.md` authority is recognizable only when it contains the
 `# Project Operating Protocol` heading and has exactly one complete legacy
 shape: neither state directory for Minimal, `/core/` with all four Core files
 and no `/context/` for Core, or `/context/` with all nine Standard files and no
-`/core/` for Standard. An old marked `AGENTS.md` block may point to that chain,
+`/core/` for Standard. This four/nine-file shape coincides with schema 2's
+own pre-migration shape above, but the two are distinguished by the marker,
+not the file count: legacy has no valid schema block at all, while schema-2
+pre-migration has one. Check for a valid schema-2 or schema-3 block first;
+only classify as legacy once that's absent. An old marked `AGENTS.md` block
+may point to that chain,
 but never outranks it. Missing legacy domain files are incomplete legacy state,
 not permission to improvise: stop state-dependent work and allow only explicit
 read-only inspection of content that exists. Evaluate every observation before
@@ -593,24 +606,37 @@ Any operation needing a state destination stops.
 
 ### 3.2 Explicit migration sequence
 
-Migration is not adoption-by-detection and has no new skill or command. Use
-this sequence only after the user explicitly requests migration:
+Migration is not adoption-by-detection and has no new skill or command. Two
+independent migrations exist, triggered separately, never combined into one
+confirmation: Legacy → Schema 2, below, and Schema 2 (pre-migration shape) →
+Schema 3, following it. Use either sequence only after the user explicitly
+requests that specific migration.
+
+**Legacy → Schema 3**
+
+Legacy migrates directly to schema 3 (the current canonical shape), never to
+schema 2 — there's no reason a fresh migration should intentionally land on
+the older, frozen shape. A project that specifically wants schema 2's
+smaller Core/Standard file count is not this sequence's concern; nothing in
+Banka offers that as a migration destination.
 
 1. Inspect `AGENTS.md`, `CLAUDE.md`, `/core/`, `/context/`, and the required
    domain files without editing; classify the repository with Section 3.1.
 2. Inventory all content outside any Banka block and all legacy Banka state.
    Surface missing files, duplicate blocks, competing state, dual directories,
    and tier mismatch before proposing a destination.
-3. Determine the one schema-2 tier from the legacy structure and preserved
-   state. Do not silently change tiers during migration.
+3. Determine the one tier from the legacy structure and preserved state. Do
+   not silently change tiers during migration.
 4. Preview the exact file-by-file result: the complete replacement Banka block,
    every legacy section's destination, the exact one-line `CLAUDE.md`, any
    directory move or removal, and all content that will remain untouched.
 5. Obtain explicit confirmation of that preview. A request to inspect, use a
    skill, or continue ordinary project work is not migration confirmation.
 6. Apply only the confirmed transformation: preserve content outside the
-   `AGENTS.md` block, establish one schema-2 block, preserve or move domain
-   state without loss, set the matching tier marker, and replace `CLAUDE.md`
+   `AGENTS.md` block, establish one schema-3 block, preserve or move domain
+   state without loss (Core/Standard's three schema-3-only files start from
+   whatever the legacy structure already recorded, or empty if it recorded
+   nothing), set the matching tier marker, and replace `CLAUDE.md`
    with exactly `@AGENTS.md`.
 7. Re-run the full detection matrix. Migration completes only when there is one
    matching authority chain and no legacy or competing Banka state remains,
@@ -622,6 +648,44 @@ If safe equivalence cannot be demonstrated, stop and ask the user to resolve
 the surfaced ambiguity. Never discard, merge, or prefer competing state by
 timestamp, file size, directory precedence, or runtime.
 
+**Schema 2 (pre-migration shape) → Schema 3**
+
+Core/Standard only — Minimal has no shape distinction between the two schema
+numbers, so it never needs this migration. Confirm via Section 3.1 that the
+project is genuinely schema-2 pre-migration shape (marker exactly `2`, only
+the original four/nine files present) before starting; a project already
+showing one or more of schema 3's three additional files is mid-migration,
+not a fresh starting point — resume from step 3 below instead of restarting.
+
+1. Read `core/progress.md` (or `context/progress-tracker.md`) in full. Its
+   inline Session Notes and Decisions Made sections are the source for this
+   migration — nothing else needs inspecting, since Core/Standard's other
+   domain files are untouched by the schema-2/3 split.
+2. Determine the destination content: the inline Session Notes section
+   becomes `session-notes.md`; the inline Decisions Made section becomes
+   `decisions-index.md`'s Logbook routing table, with any entry that clears
+   Section 2.11's eligibility bar (a durable, standing fact carrying real
+   reasoning worth preserving) promoted to its own Decision Record under
+   `decisions/NNNN-title/` — the same treatment `scale`'s Minimal → Core
+   promotion already gives an inline decision. `verified-index.md` starts
+   empty; no prior equivalent exists to migrate from. The now-extracted
+   sections are removed from `progress.md`, which keeps only a rollup pointer
+   to each new file (Section 2.9's "Resulting structure").
+3. Preview all three new files in full and the trimmed `progress.md`, showing
+   exactly what moves where, before writing anything.
+4. Obtain explicit confirmation of that preview.
+5. Apply the confirmed transformation: write the three new files and the
+   trimmed `progress.md` first, and only once they're genuinely in place,
+   flip `BANKA:STATE-SCHEMA` from `2` to `3` in the marked `AGENTS.md` block.
+   The marker must never read `3` while any of the three new files could
+   still be missing — this sequencing, not any particular tool mechanic, is
+   what makes an interruption safe: it leaves the marker at `2` alongside
+   whatever new files already exist, which Section 3.1's interrupted-migration
+   row exists specifically to recognize, letting this same sequence resume
+   from there rather than requiring a rollback.
+6. Re-run the full detection matrix. Migration completes only when the
+   project classifies as Active schema 3 and passes the Cold Agent Test.
+
 ### 3.3 Minimal template
 
 Use this when the rubric points to Minimal. Generate
@@ -632,7 +696,7 @@ shim alongside it.
 
 ```markdown
 <!-- BANKA:START -->
-<!-- BANKA:STATE-SCHEMA: 2 -->
+<!-- BANKA:STATE-SCHEMA: 3 -->
 <!-- BANKA:TIER: Minimal -->
 # Project Operating Protocol
 
@@ -710,7 +774,7 @@ The root block is the authority and router; domain state remains in `/core/`:
 
 ```markdown
 <!-- BANKA:START -->
-<!-- BANKA:STATE-SCHEMA: 2 -->
+<!-- BANKA:STATE-SCHEMA: 3 -->
 <!-- BANKA:TIER: Core -->
 # Project Operating Protocol
 
@@ -776,7 +840,7 @@ The root block is the authority and router; domain state remains in
 
 ```markdown
 <!-- BANKA:START -->
-<!-- BANKA:STATE-SCHEMA: 2 -->
+<!-- BANKA:STATE-SCHEMA: 3 -->
 <!-- BANKA:TIER: Standard -->
 # Project Operating Protocol
 
@@ -827,8 +891,10 @@ available, stop rather than improvising replacements.
 A project can outgrow its current tier. Do not promote automatically: act only
 when explicitly asked or when the current tier's threshold is actually met,
 and always promote exactly one tier at a time. Before editing, require an active
-schema-2 chain under Section 3.1; legacy state must complete the confirmed
-migration sequence first. Every promotion below must leave the project passing
+schema chain under Section 3.1; legacy state must complete the confirmed
+migration sequence first, and a schema-2 pre-migration Core or Standard
+project must complete the schema-2→3 migration first — promotion always
+produces schema 3's file shape. Every promotion below must leave the project passing
 the Cold Agent Test (Section 3.1) — a fresh session opening the promoted
 project should recover tier, scope, state, and next action exactly as
 reliably as before the promotion.
@@ -1005,10 +1071,11 @@ or register skills.
 **Provenance, for clarity:** `charter`, `survey`, `dredge`, `remember`, `moor` are the original five. `scale`, `delegate`, `watershed`, `linis`, and `verify` are Banka-native additions — `scale` operationalizes Section 6's promotion path as an actual runnable skill, `delegate` supports Section 7.5's Delegation Setup, `watershed` provides multi-perspective critique beyond a single survey, `linis` ("clean," Filipino) removes narrative residue from settled files while preserving operational history and rationale, and `verify` mechanically reconciles a `survey` verdict against real repo evidence and resolves what it can of a `blocked` claim, writing the one durable record the rest of the Skills Kit checks instead of asking the conversation.
 
 **Every skill that reads project files resolves state with Section 3.1's full
-detection matrix.** The schema-2 marker declares the tier; the filesystem shape
-must corroborate it. Directory presence alone never selects a tier, and
-`CLAUDE.md` alone is either the exact import shim, a legacy compatibility-read
-source, or a conflict — never schema-2 Minimal state. Skills that can operate
+detection matrix.** The schema marker declares the tier; the filesystem shape
+required for that schema number must corroborate it. Directory presence
+alone never selects a tier, and `CLAUDE.md` alone is either the exact import
+shim, a legacy compatibility-read source, or a conflict — never active
+Minimal state on its own. Skills that can operate
 read-only from an explicit subject may continue where Section 3.1 permits while
 stating the resolved classification. Skills that require a state destination
 stop rather than creating one implicitly.

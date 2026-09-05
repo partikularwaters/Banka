@@ -189,8 +189,8 @@ for tier in Minimal Core Standard; do
 
   test "$(exact_line_count '<!-- BANKA:START -->' "$template")" -eq 1 || \
     fail "Expected one exact BANKA:START marker in ${template#$repo_root/}"
-  test "$(exact_line_count '<!-- BANKA:STATE-SCHEMA: 2 -->' "$template")" -eq 1 || \
-    fail "Expected one exact schema-2 marker in ${template#$repo_root/}"
+  test "$(exact_line_count '<!-- BANKA:STATE-SCHEMA: 3 -->' "$template")" -eq 1 || \
+    fail "Expected one exact schema-3 marker in ${template#$repo_root/}"
   test "$(exact_line_count "<!-- BANKA:TIER: $tier -->" "$template")" -eq 1 || \
     fail "Expected one exact $tier tier declaration in ${template#$repo_root/}"
   test "$(exact_line_count '<!-- BANKA:END -->' "$template")" -eq 1 || \

@@ -1,5 +1,5 @@
 <!-- BANKA:START -->
-<!-- BANKA:STATE-SCHEMA: 2 -->
+<!-- BANKA:STATE-SCHEMA: 3 -->
 <!-- BANKA:TIER: Core -->
 # Project Operating Protocol
 
