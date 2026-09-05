@@ -990,6 +990,49 @@ of project, rather than improvising a workaround inside Banka.
 
 The ten Skills — `charter`, `survey`, `dredge`, `remember`, `moor`, `scale`, `delegate`, `watershed`, `linis`, `verify` — never change per project. They are provided as a separate, standalone package: **Skills Kit**. Each skill's `SKILL.md` states its Context Contract (Section 2.7) near the top, after its frontmatter — a compact statement of what it requires, what's conditional, what it excludes by default, what it outputs, and what it may write.
 
+### Shared install mechanism: per-tag worktrees, not a mutable checkout
+
+Both runtimes below symlink into `~/.banka/versions/<tag>/`, a fixed,
+shared location holding one immutable `git worktree` per installed release —
+never directly into whatever a developer's own working clone happens to have
+checked out. This is deliberate, not incidental: an earlier design symlinked
+straight into that working clone, which was simple but coupled every project
+on the machine to whatever that one mutable directory currently contained —
+checking out a different branch there for unrelated work would silently
+change what every linked project saw, with no version pin, no warning, and
+no way for two projects to sit on two different releases independently. An
+external audit surfaced this, and a five-perspective review confirmed it as
+a real, unmitigated gap before this section was rewritten. A `git worktree`
+gives each installed release its own permanent, never-mutated path while
+still sharing one underlying object store — no duplicated history, no manual
+re-copy step, and no coupling between one developer's ordinary git work and
+what an already-installed project sees.
+
+**Creating or reusing a version worktree (both runtimes):** clone this
+package to a source directory anywhere convenient — it is never symlinked to
+directly and can be reused across installs — fetch tags, and resolve the
+newest annotated stable `vMAJOR.MINOR.PATCH` tag by semantic-version order;
+verify it is annotated and its commit's `VERSION` matches the tag, and never
+install from newer, unreleased default-branch commits. If no valid stable
+tag exists, stop instead of installing from the default branch. If the
+source clone itself is missing (deleted, moved, or its volume unavailable)
+and no version worktree already covers the needed tag, re-clone it fresh at
+a new source directory before continuing — an existing worktree stays
+readable without the source clone that created it, but a *new* one cannot
+be created without it. Then, from that source clone: if
+`~/.banka/versions/<tag>/` does not already exist, create it with
+`git worktree add ~/.banka/versions/<tag> <tag>`; if it already exists (a
+prior install already created it) and `git worktree list` from the source
+clone confirms it as a valid, registered worktree for that tag, reuse it
+as-is rather than recreating it. If the path exists but is not a valid
+registered worktree (a stray file, an empty leftover directory, or a
+corrupted/orphaned registration), stop rather than forcing creation over
+it — report the conflict and let the user resolve it (remove the stray path,
+or run `git worktree prune` in the source clone if it's an orphaned
+registration) before retrying. Never write to a version worktree once
+created — it is a read-only artifact from every consuming project's point
+of view.
+
 ### Claude Code discovery
 
 Install once at `~/.claude/skills/` for personal, machine-wide use:
@@ -1008,57 +1051,45 @@ Install once at `~/.claude/skills/` for personal, machine-wide use:
 └── verify/SKILL.md
 ```
 
-Clone this package to a persistent directory owned by the current user, fetch
-tags, and check out the newest annotated stable `vMAJOR.MINOR.PATCH` tag by
-semantic-version order — verify it is annotated and its commit's `VERSION`
-matches the tag, and never install from newer, unreleased default-branch
-commits. If no valid stable tag exists, stop instead of installing from the
-default branch.
+Resolve `~/.banka/versions/<tag>/` per the shared mechanism above. Link each
+directory from that worktree's `skills-kit/` into `~/.claude/skills/`; a
+symlink is preferred so the version worktree remains the only source of
+truth. A symlink must target that worktree, never the source clone and never
+a temporary directory. Before linking, check `~/.claude/commands/`,
+`~/.claude/skills/`, and any old project-local `.claude/commands/` or
+`.claude/skills/` entries for a file already using one of the ten skill
+names above. If one exists, do not remove it unilaterally — back it up, tell
+the user what was found, and let them decide whether to remove, rename, or
+keep it before installing over it.
 
-Install the standard Banka kit once at `~/.claude/skills/`. Link each
-directory from this package's `skills-kit/` into that location; a symlink is
-preferred so `skills-kit/` remains the only source of truth. A symlink must
-target this persistent checkout, never a temporary clone. Before linking,
-check `~/.claude/commands/`, `~/.claude/skills/`, and any old project-local
-`.claude/commands/` or `.claude/skills/` entries for a file already using one
-of the ten skill names above. If one exists, do not remove it unilaterally —
-back it up, tell the user what was found, and let them decide whether to
-remove, rename, or keep it before installing over it.
-
-If a persistent checkout or symlinks cannot be used, copy each complete skill
-directory into `~/.claude/skills/` from a temporary checkout instead — never
+If a version worktree or symlinks cannot be used, copy each complete skill
+directory into `~/.claude/skills/` from the resolved tag instead — never
 link to a temporary directory — and confirm every entry contains a readable
 `SKILL.md`.
 
 Invoke the installed skills with `/skill-name`.
 
-Symlinking is the new preferred default for a fresh install; it does not
-apply retroactively to an existing copy-based install. An existing
-Banka-managed project only changes through the confirmed update procedure
-below, which previews every change — including a mechanism change like this
-one — before applying anything.
+Symlinking is the preferred default for a fresh install; it does not apply
+retroactively to an existing install using either the prior mutable-checkout
+symlink or a plain copy. An existing Banka-managed project only changes
+through the confirmed update procedure below, which previews every change —
+including a mechanism change like this one — before applying anything.
 
 ### Codex discovery
 
-Clone this package to a persistent directory owned by the current user, fetch
-tags, and check out the newest annotated stable `vMAJOR.MINOR.PATCH` tag by
-semantic-version order — verify it is annotated and its commit's `VERSION`
-matches the tag, and never install from newer, unreleased default-branch
-commits. If no valid stable tag exists, stop instead of installing from the
-default branch.
-
-Install the standard Banka kit once at the Codex user-level location,
-`~/.agents/skills/`. Link each directory from this package's `skills-kit/` into
-that location; a symlink is preferred so `skills-kit/` remains the only source
-of truth. A symlink must target this persistent checkout, never a temporary
-clone. Before linking, check the user-level directory and existing projects
-for a Banka skill with the same name — Codex can show duplicate same-named
-skills and does not merge them.
+Resolve `~/.banka/versions/<tag>/` per the shared mechanism above. Install
+the standard Banka kit once at the Codex user-level location,
+`~/.agents/skills/`. Link each directory from that worktree's `skills-kit/`
+into that location; a symlink is preferred so the version worktree remains
+the only source of truth. A symlink must target that worktree, never the
+source clone and never a temporary directory. Before linking, check the
+user-level directory and existing projects for a Banka skill with the same
+name — Codex can show duplicate same-named skills and does not merge them.
 
 Do not install the standard Banka kit under a project's `.agents/skills/`.
 Repository-local discovery is reserved for skills that genuinely belong only to
-that repository. If a persistent checkout or symlinks cannot be used, copy each
-complete skill directory into `~/.agents/skills/` from a temporary checkout
+that repository. If a version worktree or symlinks cannot be used, copy each
+complete skill directory into `~/.agents/skills/` from the resolved tag
 instead — never link to a temporary directory — and confirm every entry
 contains a readable `SKILL.md`.
 

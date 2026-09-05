@@ -109,10 +109,14 @@ Also orthogonal:
 
 Runtime discovery (user-level, shared by every repository):
 
-  ~/.agents/skills/*  -> symlinks to Banka/skills-kit/* (Codex)
-  ~/.claude/skills/*  -> symlinks to Banka/skills-kit/* (Claude Code)
-  Symlinking is the fresh-install default for both; an existing copy-based
-  install changes only through the confirmed update procedure (Protocol §7).
+  ~/.agents/skills/*  -> symlinks to ~/.banka/versions/<tag>/skills-kit/* (Codex)
+  ~/.claude/skills/*  -> symlinks to ~/.banka/versions/<tag>/skills-kit/* (Claude Code)
+  Each installed release gets its own immutable git worktree at a fixed,
+  shared path — never a symlink straight into a developer's own mutable
+  working clone, which would couple every project to whatever that clone
+  currently has checked out. Symlinking is the fresh-install default for
+  both; an existing install (mutable-checkout symlink or copy) changes only
+  through the confirmed update procedure (Protocol §7).
   $skill-name invokes a skill in Codex; Claude Code uses /skill-name.
 ```
 

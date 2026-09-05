@@ -312,6 +312,12 @@ verify_user_skills_dir() {
         test -d "$installed_skill" || fail "$installed_skill does not resolve"
         diff -qr "$canonical_target" "$installed_skill" >/dev/null || \
           fail "$installed_skill's symlink target has different content than skills-kit/$skill — it may point at a stale or unrelated checkout"
+        installed_target=$(cd "$installed_skill" && pwd -P)
+        versions_root="$HOME/.banka/versions"
+        case "$installed_target" in
+          "$versions_root"/*) ;;
+          *) echo "WARNING: $installed_skill resolves outside ~/.banka/versions/ — it likely still points at a mutable working clone rather than a pinned version worktree. Not a failure (this may predate the worktree-based install), but running the update procedure is recommended (Protocol Section 7)." ;;
+        esac
         echo "Verified installed Banka skill link: $installed_skill"
       else
         test -d "$installed_skill" || fail "$installed_skill is neither a skill directory nor a symlink"

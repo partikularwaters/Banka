@@ -195,27 +195,35 @@ Paste this into a fresh Claude Code session — no pre-cloning needed, the agent
 does it:
 
 ```
-Clone https://github.com/partikularwaters/Banka.git to a persistent directory
-owned by the current user, fetch tags, and check out the newest annotated stable
-vMAJOR.MINOR.PATCH tag by semantic-version order. Verify that the tag is
-annotated and its commit's VERSION matches the tag, and do not use newer
-unreleased commits from the default branch. If no valid stable tag exists, stop
-instead of falling back to the default branch. Then install its Skills Kit:
-link each of these ten skills-kit/<skill> directories into
-~/.claude/skills/<skill>/: charter, delegate, dredge, linis, moor, remember,
-scale, survey, verify, watershed. If a persistent checkout or symlinks cannot be used,
-copy from a temporary checkout instead; never link to a temporary directory.
-Before installing, check ~/.claude/commands/, ~/.claude/skills/, and, if this
-is a specific project, its own .claude/commands/ and .claude/skills/, for any
-existing file using one of these ten names. If you find one, don't delete it
-unilaterally — back it up and ask me how to reconcile it before installing
-over it.
+Clone https://github.com/partikularwaters/Banka.git to a source directory
+(anywhere convenient — it's never linked to directly), fetch tags, and check
+out the newest annotated stable vMAJOR.MINOR.PATCH tag by
+semantic-version order. Verify that the tag is annotated and its commit's VERSION matches the
+tag, and do not use newer unreleased commits from the default branch.
+If no valid stable tag exists, stop instead of falling back to the default branch.
+If the source clone is missing and no version worktree already covers this
+tag, re-clone it fresh before continuing. From that source clone, create
+~/.banka/versions/<tag>/ with `git worktree add ~/.banka/versions/<tag>
+<tag>` if it doesn't already exist; if it exists, confirm with `git worktree
+list` that it's a valid registered worktree for this tag and reuse it as-is
+(never recreate it) — if the path exists but isn't a valid worktree, stop
+and report the conflict rather than forcing creation over it. Then install
+its Skills Kit: link each of these ten skills-kit/<skill> directories from
+that worktree into ~/.claude/skills/<skill>/: charter, delegate, dredge,
+linis, moor, remember, scale, survey, verify, watershed. If a version
+worktree or symlinks cannot be used, copy from the resolved tag instead;
+never link to a temporary directory. Before installing, check ~/.claude/commands/,
+~/.claude/skills/, and, if this is a specific project, its own
+.claude/commands/ and .claude/skills/, for any existing file using one of
+these ten names. If you find one, don't delete it unilaterally — back it up
+and ask me how to reconcile it before installing over it.
 ```
 
 Invoke skills with `/skill-name`, for example `/charter` or `/remember restore`.
-Symlinking is the new default for a fresh install only — it doesn't apply
-retroactively to an existing copy-based install, which changes only through
-the confirmed [Updating Banka](#updating-banka) procedure below.
+Symlinking is the preferred default for a fresh install only — it doesn't apply
+retroactively to an existing install (mutable-checkout symlink or copy),
+which changes only through the confirmed [Updating Banka](#updating-banka)
+procedure below.
 
 Full install details and rationale: [protocol/Banka.md](protocol/Banka.md), Section 7.
 
@@ -225,17 +233,24 @@ Paste this into a fresh Codex session — no pre-cloning needed, the agent does
 it:
 
 ```
-Clone https://github.com/partikularwaters/Banka.git to a persistent directory
-owned by the current user, fetch tags, and check out the newest annotated stable
-vMAJOR.MINOR.PATCH tag by semantic-version order. Verify that the tag is
-annotated and its commit's VERSION matches the tag, and do not use newer
-unreleased commits from the default branch. If no valid stable tag exists, stop
-instead of falling back to the default branch. Then install its Skills Kit for the
-current user: link each of these ten skills-kit/<skill> directories into
-~/.agents/skills/<skill>/: charter, delegate, dredge, linis, moor, remember,
-scale, survey, verify, watershed. If a persistent checkout or symlinks cannot be used,
-copy from a temporary checkout instead; never link to a temporary directory.
-Before installing, check
+Clone https://github.com/partikularwaters/Banka.git to a source directory
+(anywhere convenient — it's never linked to directly), fetch tags, and check
+out the newest annotated stable vMAJOR.MINOR.PATCH tag by
+semantic-version order. Verify that the tag is annotated and its commit's VERSION matches the
+tag, and do not use newer unreleased commits from the default branch.
+If no valid stable tag exists, stop instead of falling back to the default branch.
+If the source clone is missing and no version worktree already covers this
+tag, re-clone it fresh before continuing. From that source clone, create
+~/.banka/versions/<tag>/ with `git worktree add ~/.banka/versions/<tag>
+<tag>` if it doesn't already exist; if it exists, confirm with `git worktree
+list` that it's a valid registered worktree for this tag and reuse it as-is
+(never recreate it) — if the path exists but isn't a valid worktree, stop
+and report the conflict rather than forcing creation over it. Then install
+its Skills Kit for the current user: link each of these ten skills-kit/<skill>
+directories from that worktree into ~/.agents/skills/<skill>/: charter,
+delegate, dredge, linis, moor, remember, scale, survey, verify, watershed.
+If a version worktree or symlinks cannot be used, copy from the resolved
+tag instead; never link to a temporary directory. Before installing, check
 ~/.agents/skills/ and the projects I use for an existing Banka skill with the
 same name — Codex can show duplicate same-named skills and does not merge
 them, so migrate or remove an old project-local copy only after confirming
