@@ -183,7 +183,7 @@ Flag anything inconsistent or surprising found during extraction.
 
 ## Audit Mode
 
-Scans the whole codebase, finds conflicts, establishes a clean baseline before any further single-component capturing happens. Exempt from Step 1's survey-first precondition — this catalogs an already-shipped codebase's existing patterns, not fresh, unverified work.
+Scans the whole codebase, finds conflicts, establishes a clean baseline before any further single-component capturing happens. Exempt from Step 1's survey-first precondition — this catalogs an already-shipped codebase's existing patterns, not fresh, unverified work. This means a genuine multi-component scan across the codebase, never a stand-in for single-capture mode's verification check on one file — a real audit has variations and conflicts to compare across files by construction; an "audit" with nothing to compare isn't one.
 
 1. **Scan** every UI component file. Build a complete picture of current visual patterns in use.
 2. **Identify conflicts** — for each property, list every variation found (with file references) and a recommendation on which to standardize on. Flag every hardcoded value found.
