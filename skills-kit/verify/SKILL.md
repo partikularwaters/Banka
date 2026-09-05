@@ -24,9 +24,9 @@ never repeated here · anything not verifiable through
 **Outputs:** one durable row in `verified-index.md` — ticket/plan citation,
 commit, claims checked, verdict, date.
 
-**Write authority:** `verified-index.md` only (Core/Standard), append-only
-— never `survey`'s report, never code, never a file another skill already
-owns.
+**Write authority:** `verified-index.md` and its own `overflow/verified/`
+(Core/Standard), append-only — never `survey`'s report, never code, never a
+file another skill already owns.
 
 ## Resolve Banka state first
 
@@ -120,15 +120,41 @@ The script's MET / MISSING / BLOCKED verdict is the answer — never
 substitute your own read of whether a change "looks right" for what it
 actually reports.
 
+**What each verdict actually proves, and what it doesn't:** `MET` means the
+specified evidence exists — a file is present, a diff touched a path, a
+command exited `0`. It never means the claim is semantically or
+behaviorally true. A `--run-test MET` confirms the command succeeded; it
+does not confirm the test meaningfully exercises the claim being verified
+— a vacuous or empty test would report the same `MET`. That gap is a
+property of the project's own test, not something this step can add from
+outside it; Step 1's refusal to invent a run command that isn't already
+there is the same discipline applied earlier. Never present a `MET` as
+proof the claim is correct — only as proof this specific evidence exists.
+
 ## Step 3 — Write the record
 
-Append one row to `verified-index.md`: the next sequential ID, the ticket
-number or charter-plan citation this traces to, the commit checked at, a
-one-line description of the claims checked, the verdict (if the script's
-checks disagree, state the worst case — `MISSING` beats `MET`, `BLOCKED`
-beats a false `MET` — never round up), and the date. Re-run
-`scripts/check-banka-thresholds.sh` afterward so `verified-index.md`'s own
-Threshold Check reflects what was just written.
+Append one row to `verified-index.md` with these fields:
+
+- **ID** — the next sequential number.
+- **Ticket/Plan** — the ticket number or charter-plan citation this traces to.
+- **Commit** — the commit checked at.
+- **Claims checked** — a one-line description.
+- **Invocation** — the exact `--check-file`/`--check-diff`/`--run-test` line
+  copied verbatim from the script's own output (e.g. `` `--check-file
+  src/foo.ts` `` or `` `--check-diff core/design.md` ``) — never paraphrased,
+  never re-typed from memory, so a future session can re-run the identical
+  check.
+- **Verdict** — if the script's checks disagree, state the worst case:
+  `MISSING` beats `MET`, `BLOCKED` beats a false `MET`, never round up.
+- **Date.**
+
+Re-run `scripts/check-banka-thresholds.sh` afterward so `verified-index.md`'s
+own Threshold Check reflects what was just written. Once the table crosses
+~2,000 words, start `overflow/verified/01-verified-index.md` (next:
+`02-...`, same convention as `decisions-index.md`'s own pagination) and link
+to it from the live table — this file's overflow is verify's own to
+maintain, the same way `remember` maintains overflow only for the files it
+writes.
 
 ## Step 4 — Confirm
 
@@ -145,4 +171,8 @@ rule `survey`'s own `blocked` verdict already follows.
 
 ## The Rule
 
-Never write what you believe — write what the script showed. A verified record that can't be mechanically re-derived is just another opinion with a timestamp.
+Never write what you believe — write what the script showed, and record the
+exact invocation that showed it. A verified record that can't be
+mechanically re-derived is just another opinion with a timestamp — and a
+`MET` that gets read as "correct" instead of "evidence found" is exactly
+that opinion, wearing a mechanical record's authority it hasn't earned.

@@ -309,9 +309,9 @@ verify_user_skills_dir() {
     if test -e "$installed_skill" || test -L "$installed_skill"; then
       canonical_target=$(cd "$repo_root/skills-kit/$skill" && pwd -P)
       if test -L "$installed_skill"; then
-        installed_target=$(cd "$installed_skill" && pwd -P) || fail "$installed_skill does not resolve"
-        test "$installed_target" = "$canonical_target" || \
-          fail "$installed_skill resolves outside skills-kit/$skill"
+        test -d "$installed_skill" || fail "$installed_skill does not resolve"
+        diff -qr "$canonical_target" "$installed_skill" >/dev/null || \
+          fail "$installed_skill's symlink target has different content than skills-kit/$skill — it may point at a stale or unrelated checkout"
         echo "Verified installed Banka skill link: $installed_skill"
       else
         test -d "$installed_skill" || fail "$installed_skill is neither a skill directory nor a symlink"

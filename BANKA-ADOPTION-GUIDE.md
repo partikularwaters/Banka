@@ -177,7 +177,9 @@ covers completion, not entry. Banka adoption is complete only when:
   needed;
 - current state, decisions, risks, owner dependencies, and next actions are
   durably recorded;
-- existing project knowledge has been preserved or deliberately reconciled; and
+- existing project knowledge has been preserved or deliberately reconciled;
+- the developer has given one explicit answer — accept, edit, or decline —
+  on `CONTRIBUTING.md`'s proposed AI-attribution convention ([protocol/Banka.md](protocol/Banka.md) §8); and
 - a new session can recover the project's Banka-managed state sufficiently to
   continue safely (the Cold Agent Test, [protocol/Banka.md](protocol/Banka.md#section-3-runtime-authority-and-minimal-state) §3.1).
 

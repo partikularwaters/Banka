@@ -48,7 +48,9 @@ diff_touches() {
     return
   fi
   if git diff --name-only HEAD~1 -- "$path" 2>/dev/null | grep -q .; then
-    echo "MET — most recent commit touches $path"
+    local sha
+    sha=$(git rev-parse --short HEAD)
+    echo "MET — commit $sha touches $path"
     return
   fi
   echo "MISSING — no uncommitted change or recent commit touches $path"

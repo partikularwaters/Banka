@@ -381,7 +381,7 @@ This is what Banka generates *inside a project you build* — not this repo's ow
 | Standard files — see `full-context-templates/standard/` for the current list | `/context/` | Standard-tier generation; restructured by `scale` on promotion |
 | `delegation-queue.md` | project root (Minimal/Core) or `/context/` (Standard) | `delegate` |
 | UI patterns | `ui-registry.md` (Standard) / `core/design.md` (Core) / inline (Minimal) | `moor` |
-| Session state | `progress.md`, `progress-tracker.md`, or the marked `AGENTS.md` block's Session Notes | `remember` |
+| Session state | `progress.md`/`session-notes.md`/`decisions-index.md` (Core), `progress-tracker.md`/`session-notes.md`/`decisions-index.md` (Standard), or the marked `AGENTS.md` block's Session Notes (Minimal) | `remember` |
 | `verified-index.md` | `/core/` (Core) or `/context/` (Standard) | `verify` |
 | `CONTRIBUTING.md` | project root | Section 8 — adoption-time only, soft default |
 
