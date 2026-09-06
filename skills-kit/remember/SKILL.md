@@ -10,10 +10,11 @@ AI has no memory between sessions. Every new session starts blank. This skill fi
 **Required:** the resolved session-state file(s) (tier-dependent — see
 "Resolve Banka state first" below) · current git log/status, checked before trusting
 this conversation · AGENTS.md/CLAUDE.md and the tier's required files, to
-resolve state · on Core/Standard, `scripts/check-banka-thresholds.sh`'s
+resolve state · on schema-3 Core/Standard, `scripts/check-banka-thresholds.sh`'s
 output, invoked first and read every call, save and restore alike (Protocol
 Section 2.9) — never trust a self-estimate of a section's size over the
-actual count.
+actual count. Schema-2 pre-migration Core/Standard predates the script
+(Section 3.2) and self-estimates instead, same as Minimal.
 
 **Conditional:** IDEA-SCOPE.md and the rest of the tier's Source-of-truth
 files, restore mode, when they exist · the resolved delegation queue, when
@@ -120,7 +121,7 @@ No argument given → ask which is meant.
 
 ### Before writing anything: measure, then check for concurrent drift
 
-On Core/Standard, run `scripts/check-banka-thresholds.sh` first, before anything else — its report is the actual word counts, not an estimate. Read the resulting `## Threshold Check` block(s) so the rest of this save is informed by real numbers, not a guess about whether a section has gotten long.
+On schema-3 Core/Standard, run `scripts/check-banka-thresholds.sh` first, before anything else — its report is the actual word counts, not an estimate. Read the resulting `## Threshold Check` block(s) so the rest of this save is informed by real numbers, not a guess about whether a section has gotten long. Schema-2 pre-migration Core/Standard predates the script (Section 3.2) and self-estimates instead, same as Minimal.
 
 If this project uses version control, run the equivalent of `git log` and `git status` **before** trusting anything this conversation believes about the project's current state. If a commit exists that this conversation didn't make, another session touched this project since — read what actually changed from disk/git, not from this conversation's assumptions, before writing the save. This applies every single time, not just when something seems off.
 
@@ -240,12 +241,13 @@ Covers`, each a real link). A still-open phase's entries stay live
 regardless of size — the same "never act against unsettled work" boundary
 as Session Notes. The ~2,000-word figure is again only a fallback: if
 `Completed`/`Completed Actions` crosses it while the phase is still open,
-flag it oversized with no clean cut point and stop. **Never hand-update the
-running-total line next to Current Phase** — it's a mechanical count
-(`scripts/check-banka-thresholds.sh`, run first per the Save Mode step
-above), not a narrative one; after archiving, re-run the script and copy its
-computed total in verbatim, the same as the Threshold Check block itself.
-Unlike Session Notes or
+flag it oversized with no clean cut point and stop. **On schema-3
+Core/Standard, never hand-update the running-total line next to Current
+Phase** — it's a mechanical count (`scripts/check-banka-thresholds.sh`, run
+first per the Save Mode step above), not a narrative one; after archiving,
+re-run the script and copy its computed total in verbatim, the same as the
+Threshold Check block itself. Schema-2 pre-migration Core/Standard predates
+the script (Section 3.2) and self-counts instead. Unlike Session Notes or
 the Decisions Index, this never needs its own file — the routing index
 lives inside `progress.md`/`progress-tracker.md` itself. Minimal has no
 In Progress/Up Next/Blocked split and defers this entirely to `scale`'s own
@@ -290,10 +292,12 @@ If version control is in use, run its equivalent of `git log --oneline -10` and 
 
 ### Step 2 — Read everything available
 
-On Core/Standard, run `scripts/check-banka-thresholds.sh` and read its
-`## Threshold Check` report before anything else — if something is already
-over threshold and unaddressed, that's worth surfacing to the developer
-immediately at restore, not discovered only at the next save.
+On schema-3 Core/Standard, run `scripts/check-banka-thresholds.sh` and read
+its `## Threshold Check` report before anything else — if something is
+already over threshold and unaddressed, that's worth surfacing to the
+developer immediately at restore, not discovered only at the next save.
+Schema-2 pre-migration Core/Standard predates the script (Section 3.2) and
+has no report to read here.
 
 Read the resolved session-state file(s) first: the Banka-owned `AGENTS.md`
 block's Current Status and Session Notes for Minimal; for schema-3 Core,
