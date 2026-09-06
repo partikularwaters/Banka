@@ -118,7 +118,10 @@ Invoke `scripts/verify-claims.sh` with one `--check-file`, `--check-diff`,
 or `--run-test` flag per claim resolved in Step 1. Read its exact output.
 The script's MET / MISSING / BLOCKED verdict is the answer — never
 substitute your own read of whether a change "looks right" for what it
-actually reports.
+actually reports. If the printed invocation itself looks mangled or has
+unreadable escape sequences, that's a known re-quoting limitation in a
+non-UTF-8 locale (see the script's own header note) — it doesn't mean the
+check failed; read the verdict normally and carry the caveat into Step 3.
 
 **What each verdict actually proves, and what it doesn't:** `MET` means the
 specified evidence exists — a file is present, a diff touched a path, a

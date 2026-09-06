@@ -342,7 +342,7 @@ The tier-resolved `delegation-queue.md` (root for Minimal/Core, `context/delegat
 
 **Reference integrity.** Before any of Track B's three archiving/superseding operations actually moves or retires a file — a Session Notes thread, an overflow file being superseded by the next numbered one, a ticket's full spec, or a Decision Record being marked Superseded (Section 2.11) — search this project's own Banka-generated files (session-state, `delegation-queue.md`, `decisions/`) for every link pointing at the exact path about to change, and update each one in the same operation, never move-and-hope. This is fully mechanical for Banka's own artifacts: nothing outside a project is ever expected to hardcode a path into them, so unlike a general-purpose reference-integrity check, there is no external-consumer case to ask a human about — the in-project search is the whole check.
 
-**Mechanical verification.** Every Track B check above is a threshold judgment, and a prose instruction asking a session to notice when a section has grown too long is not reliable on its own — nothing about writing one more entry naturally prompts stepping back to total a whole section's word count, and there is no confirmed evidence this class of check has ever fired autonomously without something external prompting it. The fix is to stop trusting an LLM's self-estimate for the *measurement* itself: Core and Standard projects install `scripts/check-banka-thresholds.sh` (Core/Standard tier generation and `scale` promotion; Minimal is excluded, same reasoning as the Logbook — outgrowing "no extra files" is itself the promotion signal). It counts words per tracked section against these provisional thresholds, plus a checked-item count for Completed's running total (Track B check 2), and prints a report — it never archives, splits, or fixes anything itself, only measures. Critically, it runs independent of any AI session: a developer can invoke it directly from a terminal, or wire it into a git hook, so the measurement no longer depends on any session remembering to take it.
+**Mechanical verification.** Every Track B check above is a threshold judgment, and a prose instruction asking a session to notice when a section has grown too long is not reliable on its own — nothing about writing one more entry naturally prompts stepping back to total a whole section's word count, and there is no confirmed evidence this class of check has ever fired autonomously without something external prompting it. The fix is to stop trusting an LLM's self-estimate for the *measurement* itself: Schema-3 Core and Standard projects install `scripts/check-banka-thresholds.sh` (schema-3 tier generation, `scale` promotion, and Section 3.2's schema-2→3 migration for a project that predates it; Minimal is excluded, same reasoning as the Logbook — outgrowing "no extra files" is itself the promotion signal). It counts words per tracked section against these provisional thresholds, plus a checked-item count for Completed's running total (Track B check 2), and prints a report — it never archives, splits, or fixes anything itself, only measures. Critically, it runs independent of any AI session: a developer can invoke it directly from a terminal, or wire it into a git hook, so the measurement no longer depends on any session remembering to take it.
 
 Each file it covers carries its own `## Threshold Check` block, reporting only that file's own count — never one global table naming every tracked file, so the shape survives a future split unchanged. `progress.md`/`progress-tracker.md` no longer holds Session Notes or Decisions Index content itself (Section 4/5's file split put each in its own file, checked independently); it instead carries a rollup row for each, so a session reading only the task-tracking file never loses visibility into the other two. Completed, unlike those two, was never split into its own file (Track B check 2 above), so its row is a direct in-file section count, not a rollup:
 
@@ -655,8 +655,15 @@ numbers, so it never needs this migration. Confirm via Section 3.1 that the
 project is genuinely schema-2 pre-migration shape (marker exactly `2`, only
 the original four/nine files present) before starting; a project already
 showing one or more of schema 3's three additional files is mid-migration,
-not a fresh starting point. Re-do steps 1 through 3 to establish exactly
-what already exists (do not assume the prior session's intent), then
+not a fresh starting point. Check each of the three destination files —
+`session-notes.md`, `decisions-index.md`, `verified-index.md` — for
+existence and completeness independently; do not infer this only from
+`progress.md`'s current content, since a fully-trimmed `progress.md` looks
+identical whether all three destinations are genuinely complete or one was
+simply never created (`verified-index.md` in particular has no content
+derived from `progress.md` at all, so nothing in step 1's read would ever
+flag it as missing). Re-do steps 1 through 3 to establish exactly what
+still needs to happen (do not assume the prior session's intent), then
 re-preview from step 4 before writing anything further — never resume
 straight into step 6's write from an assumption about what an earlier,
 interrupted session already decided.
