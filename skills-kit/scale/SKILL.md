@@ -7,10 +7,9 @@ argument-hint: (usually no argument needed)
 CRITICAL: Do not execute a promotion unless the user explicitly requested this command, OR one of the current tier's thresholds is actually met (see below). **Always promote exactly one tier at a time** — even if it looks like both tiers' thresholds are already met, promote to the next tier up, confirm it's correct, then separately re-check whether a second promotion is also warranted. Never jump from Minimal straight to Standard in one pass.
 
 **Note:** this skill's "promotion" is tier-level (Minimal→Core→Standard) only.
-Protocol §2.9 defines a separate, within-tier "promotion check" — moving a
-durable fact from session-state to its owning file — that `remember` and
-`moor` perform directly. It is not a tier promotion and this skill has no
-role in it.
+`remember` and `moor` use a separate, within-tier "promotion check": moving a
+durable fact from session-state to the file that owns it. That is not a tier
+promotion and this skill has no role in it.
 
 ## Context Contract
 
@@ -28,7 +27,9 @@ replacement `AGENTS.md` block, shown before anything is finalized.
 **Write authority:** the marked `AGENTS.md` block, plus the tier's target
 directory and files — only after the user confirms the shown mapping, and
 only for the single tier step being promoted. A promoted project must still
-pass the Cold Agent Test (Protocol §3.1) once the write completes.
+pass the Cold Agent Test once the write completes: a fresh session must recover
+the tier, original scope, current state, governing rules, and next action from
+disk alone.
 
 ## Resolve Banka state first
 
@@ -110,7 +111,9 @@ Thresholds — any one is sufficient:
 If triggered, perform the promotion:
 
 1. Create a `/context/` folder in the project root.
-2. Split `core/overview.md` → `context/project-overview.md`.
+2. Split `core/overview.md`: purpose, target user, scope, and success criteria →
+   `context/project-overview.md`; its concrete Data Model → the canonical Data
+   Model section in `context/architecture.md`.
 3. Split `core/architecture.md` across the Standard files:
    - Stack, folder matrix, invariants → `context/architecture.md`
    - Conventions → `context/code-standards.md`
@@ -118,7 +121,10 @@ If triggered, perform the promotion:
 4. Split `core/design.md` across `context/ui-tokens.md`, `context/ui-rules.md`, and `context/ui-registry.md` (split by content type — tokens/colors/type scale to ui-tokens.md, layout/interaction patterns to ui-rules.md, the actual component list to ui-registry.md).
 5. Split `core/progress.md`:
    - Active Milestones and Completed Actions → `context/build-plan.md`
-   - Session Memory Bank and any Known Issues / Open Decisions → `context/progress-tracker.md`
+   - Current Phase, Session Memory Bank (including Next Immediate Step), and any
+     Known Issues / Open Decisions → `context/progress-tracker.md`
+   - Before previewing the result, account for every source section explicitly;
+     no heading or entry in `core/progress.md` may be left without a destination
 6. Replace only the Banka-owned block in `AGENTS.md` with the Standard router,
    set its tier marker to Standard, and make its Source of truth section list
    all nine `/context/` files. Preserve all content outside the block and keep
@@ -126,6 +132,7 @@ If triggered, perform the promotion:
    moor writes to `context/ui-registry.md` or `context/progress-tracker.md`, and
    remember uses `context/progress-tracker.md`.
 7. Output all nine new files and the proposed replacement Banka block in full.
-   Explicitly list what moves from each `/core/` file into each new file so the
-   user can confirm before anything is deleted. Once confirmed and equivalence
+   Explicitly list what moves from each `/core/` file into each new file,
+   including Current Phase and Next Immediate Step, so the user can confirm
+   before anything is deleted. Once confirmed and equivalence
    is verified, delete `/core/`; never leave both state directories.

@@ -193,9 +193,10 @@ and project-specific instructions.
 
 When moving an already managed project to a newer Banka release, use the
 protocol's [Updating an existing Banka-managed project](protocol/Banka.md#updating-an-existing-banka-managed-project)
-procedure. An update is not another adoption: it refreshes the machine-level
-Skills Kit and changes project state only when the target release explicitly
-requires it.
+procedure. An update is not another adoption: it refreshes each independent
+machine-level Skills Kit copy once, verifies any additional runtime linked to
+that primary installation, and changes project state only when the target
+release explicitly requires it.
 
 ASMP or Docking may be used again if a future condition genuinely requires
 them, but they are not recurring Banka ceremony.

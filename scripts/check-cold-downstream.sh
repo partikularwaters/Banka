@@ -30,8 +30,7 @@ trap 'rm -rf "$tmp_dir"' EXIT
 # or ~/.agents/skills/<name>/SKILL.md) — nothing else from this repo alongside them.
 mkdir -p "$tmp_dir/skills"
 for skill in "${skills[@]}"; do
-  mkdir -p "$tmp_dir/skills/$skill"
-  cp "$repo_root/skills-kit/$skill/SKILL.md" "$tmp_dir/skills/$skill/SKILL.md"
+  cp -R "$repo_root/skills-kit/$skill" "$tmp_dir/skills/$skill"
 done
 
 # Rendered tier output, as a generated project actually receives it —
@@ -58,10 +57,23 @@ banned_patterns=(
   "matching Protocol"
   "see Protocol §"
   "see protocol/Banka.md"
+  "Protocol §"
+  "Section 7.7"
+  "Section 7.5"
+  "Section 2.6"
+  "Section 2.5"
+  "Fill-In Discipline"
+  "Context Transfer Protocol"
 )
 for pattern in "${banned_patterns[@]}"; do
-  if grep -rl -- "$pattern" "$tmp_dir/skills" >/dev/null 2>&1; then
-    fail "Found unresolvable downstream reference pattern in an installed skill: '$pattern'"
+  if grep -rl -- "$pattern" "$tmp_dir" >/dev/null 2>&1; then
+    fail "Found unresolvable downstream reference pattern in cold-installed content: '$pattern'"
+  fi
+done
+
+for template in "$repo_root/full-context-templates/core/progress.md" "$repo_root/full-context-templates/standard/progress-tracker.md"; do
+  if grep -Fx '## Overflow Index' "$template" >/dev/null 2>&1; then
+    fail "${template#$repo_root/} pre-declares an active Overflow Index before an overflow file exists"
   fi
 done
 
@@ -103,5 +115,18 @@ moor_file="$tmp_dir/skills/moor/SKILL.md"
 if grep -A3 -i "write-shape check applies" "$moor_file" | grep -qi "link"; then
   fail "moor's write-shape guidance instructs creating a link to a second file — moor's Context Contract restricts it to one resolved write destination; this needs explicit delegation language (e.g. hand off to remember), not an instruction to create a link to a file moor has no authority to write"
 fi
+
+# --- Check 8: copy-first and link-later discovery preserve one complete kit --
+mkdir -p "$tmp_dir/runtime-primary" "$tmp_dir/runtime-linked"
+for skill in "${skills[@]}"; do
+  cp -R "$repo_root/skills-kit/$skill" "$tmp_dir/runtime-primary/$skill"
+  diff -qr "$repo_root/skills-kit/$skill" "$tmp_dir/runtime-primary/$skill" >/dev/null || \
+    fail "Primary runtime copy differs from skills-kit/$skill"
+  ln -s "$tmp_dir/runtime-primary/$skill" "$tmp_dir/runtime-linked/$skill"
+  test -f "$tmp_dir/runtime-linked/$skill/SKILL.md" || \
+    fail "Linked runtime cannot discover $skill/SKILL.md through the primary copy"
+  test ! -L "$tmp_dir/runtime-primary/$skill" || \
+    fail "Primary runtime installation for $skill must be a real directory"
+done
 
 echo "Cold-downstream simulation passed: nothing installed cold references what only exists in this repo, and the rendered session-state files carry complete overflow mechanics."

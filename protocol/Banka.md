@@ -1,4 +1,4 @@
-# Banka 2.0.0
+# Banka 2.0.1
 **Scoping-to-Agent Handoff Protocol**
 
 > **TO THE AI AGENT READING THIS:**
@@ -310,7 +310,7 @@ Every durable Banka rule or project fact has exactly one canonical home — the 
 
 This is not a new practice; it is already enforced mechanically. `scripts/check-repo-integrity.sh` verifies each project-entry `AGENTS.md` template is byte-identical to the tier block this protocol defines in Sections 3.3, 4, and 5 — the protocol is canonical, the templates are checked copies, never an independent source. The same script verifies the `delegate` skill's ready-to-paste handoff block is byte-identical to `full-context-templates/delegation-queue.md`'s copy of it, for the same reason.
 
-Where a fact must appear in more than one file for a skill to remain self-contained and portable — each skill's own state-resolution preamble in Section 7's Skills Kit is the clearest case — exact duplication of the load-bearing facts is checked by the repository's integrity tooling rather than left to manual consistency or rewritten into a single shared block. This is a deliberate, checked exception to "one home," not a gap in the principle: skill portability is itself a Banka invariant (Section 7), and a runtime include or generation step would trade one problem for another. Do not deduplicate a self-contained skill's required content merely to reduce line count.
+Where a fact must appear in more than one file for a skill to remain self-contained and portable — each state-resolving skill's own detection preamble in Section 7's Skills Kit is the clearest case — the repository's integrity tooling checks for selected marker literals, tier filenames, and detection phrases. It does not compare complete tier-shape definitions or stop-condition semantics; those still require manual review against Section 3.1. Skill-specific behavior after classification may differ, so these preambles are not byte-identical. This is a deliberate, partially checked exception to "one home": skill portability is itself a Banka invariant (Section 7), and a runtime include or generation step would trade one problem for another.
 
 ---
 
@@ -352,7 +352,7 @@ context/                              (Standard; Core: core/, same shape)
           of swept superseded entries)
 ```
 
-The `overflow/` folder and Overflow Index section are created the first time any threshold above actually fires — never pre-declared empty in a new project's generated files.
+The `overflow/` folder and Overflow Index section are created together the first time any overflow file is needed — whether the write-shape check routes a long rationale there immediately or a size/supersession threshold fires later. Never pre-declare an empty index in a new project's generated files.
 
 Downstream projects never receive this document directly — the compact, self-contained version of these rules lives in each tier's session-state template (its own "Keeping this section lean" note), which `remember` and `moor` read and apply. This section is the canonical full definition, maintained here for anyone editing Banka itself.
 
@@ -531,7 +531,8 @@ You are acting as a Senior Technical Lead & Project Manager for this project.
 
 ## Session Notes
 **Context:** [Enough settled context for a fresh session to continue safely.]
-**Known Issues / Open Decisions:** [Visible open items using Section 2.5's tag.]
+**Known Issues / Open Decisions:** [Mark each unresolved item visibly as
+`[OPEN — <what is needed>]` rather than smoothing it into hedge prose.]
 **Next Immediate Step:** [The first concrete action.]
 
 **Keeping this section lean:** promote durable, standing facts into this
@@ -647,8 +648,8 @@ You are acting as a Senior Technical Lead & Project Manager for this project.
 
 ## Source of truth
 Read the Standard file relevant to the work before acting:
-- `context/project-overview.md` — purpose, users, scope, and data model
-- `context/architecture.md` — stack, structure, data flows, and invariants
+- `context/project-overview.md` — purpose, users, scope, and product-level data overview
+- `context/architecture.md` — canonical stack, data model, structure, data flows, and invariants
 - `context/build-plan.md` — phased feature roadmap
 - `context/code-standards.md` — checkable implementation conventions
 - `context/library-docs.md` — project-specific third-party library patterns
@@ -714,8 +715,9 @@ Triggered when any of:
    UI patterns.
 
 Preview the mapping, then split the four `/core/` files into the nine Standard
-files: `core/overview.md` to `project-overview.md`; `core/architecture.md`
-mostly to `architecture.md`, with conventions to `code-standards.md` and
+files: `core/overview.md`'s purpose, users, scope, and success criteria to
+`project-overview.md`, with its concrete Data Model moving to
+`architecture.md`; `core/architecture.md` mostly to `architecture.md`, with conventions to `code-standards.md` and
 library patterns to `library-docs.md`; `core/design.md` to `ui-tokens.md`,
 `ui-rules.md`, and `ui-registry.md`; `core/progress.md` to `build-plan.md` and
 `progress-tracker.md`. Move the resulting files into `/context/` and remove the
@@ -730,6 +732,16 @@ and show what moved where before finalizing.
 ## SECTION 7: THE SKILLS KIT (one source, runtime-specific discovery)
 
 The nine Skills — `charter`, `survey`, `dredge`, `remember`, `moor`, `scale`, `delegate`, `watershed`, `linis` — never change per project. They are provided as a separate, standalone package: **Skills Kit**. Each skill's `SKILL.md` states its Context Contract (Section 2.7) near the top, after its frontmatter — a compact statement of what it requires, what's conditional, what it excludes by default, what it outputs, and what it may write.
+
+**Optional second-runtime sharing:** when Banka is already installed as real
+directories for one supported runtime, a user who deliberately wants another
+runtime to share that same installed copy may link each second-runtime skill
+directory to the first runtime's corresponding Banka directory. Link only to a
+verified real directory, never to another symlink, a temporary checkout, or a
+development clone. The first runtime is then the primary installation: update
+it once and verify every linked runtime afterward. If that primary installation
+is moved or removed, stop and ask whether to restore it or replace the broken
+links with independent copies.
 
 ### Claude Code discovery
 
@@ -752,15 +764,18 @@ Clone or download this repo, fetch tags, and check out the newest annotated
 stable `vMAJOR.MINOR.PATCH` tag by semantic-version order — verify it is
 annotated and its commit's `VERSION` matches the tag, and never install from
 newer, unreleased default-branch commits. If no valid stable tag exists, stop
-instead of installing from the default branch. Then ask Claude Code directly:
+instead of installing from the default branch. Before copying, check the
+collision locations below and run `scripts/check-repo-integrity.sh` in the
+selected checkout. Then ask Claude Code directly:
 
 ```
 Install the Banka Skills Kit from <path-to-clone>/skills-kit/ into
-~/.claude/skills/ — one folder per skill, copying each SKILL.md as-is.
+~/.claude/skills/ — one complete directory per skill, copied as-is.
 ```
 
 Claude Code performs the copy with its normal file tools. Invoke the installed
-skills with `/skill-name`.
+skills with `/skill-name`. Compare every installed skill directory with the
+selected release before removing a temporary source checkout.
 
 **Before installing, check `~/.claude/commands/` and `~/.claude/skills/`, plus
 any old project-local `.claude/commands/` or `.claude/skills/` entries, for a
@@ -770,27 +785,24 @@ decide whether to remove, rename, or keep it before installing over it.
 
 ### Codex discovery
 
-Clone this package to a persistent directory owned by the current user, fetch
-tags, and check out the newest annotated stable `vMAJOR.MINOR.PATCH` tag by
-semantic-version order — verify it is annotated and its commit's `VERSION`
-matches the tag, and never install from newer, unreleased default-branch
-commits. If no valid stable tag exists, stop instead of installing from the
-default branch.
+Clone this package to a temporary directory, fetch tags, and check out the
+newest annotated stable `vMAJOR.MINOR.PATCH` tag by semantic-version order —
+verify it is annotated and its commit's `VERSION` matches the tag, and never
+install from newer, unreleased default-branch commits. If no valid stable tag
+exists, stop instead of installing from the default branch.
 
-Install the standard Banka kit once at the Codex user-level location,
-`~/.agents/skills/`. Link each directory from this package's `skills-kit/` into
-that location; a symlink is preferred so `skills-kit/` remains the only source
-of truth. A symlink must target this persistent checkout, never a temporary
-clone. Before linking, check the user-level directory and existing projects
-for a Banka skill with the same name — Codex can show duplicate same-named
-skills and does not merge them.
+Before copying, check the user-level directory and existing projects for a
+Banka skill with the same name — Codex can show duplicate same-named skills and
+does not merge them — and run `scripts/check-repo-integrity.sh` in the selected
+checkout. Then install the standard Banka kit once at the Codex user-level
+location, `~/.agents/skills/`, by copying each complete directory from this
+package's `skills-kit/` into that location. The temporary checkout may be
+removed after the installed directories are verified against it.
 
 Do not install the standard Banka kit under a project's `.agents/skills/`.
 Repository-local discovery is reserved for skills that genuinely belong only to
-that repository. If a persistent checkout or symlinks cannot be used, copy each
-complete skill directory into `~/.agents/skills/` from a temporary checkout
-instead — never link to a temporary directory — and confirm every entry
-contains a readable `SKILL.md`.
+that repository. Confirm every installed entry contains a readable `SKILL.md`.
+
 
 In Codex, explicitly invoke a Banka skill with `$` (for example `$charter`,
 `$survey`, or `$remember save`). A host may also show enabled skills in its
@@ -800,8 +812,8 @@ or register skills.
 
 **Provenance, for clarity:** `charter`, `survey`, `dredge`, `remember`, `moor` are the original five. `scale`, `delegate`, `watershed`, and `linis` are Banka-native additions — `scale` operationalizes Section 6's promotion path as an actual runnable skill, `delegate` supports Section 7.5's Delegation Setup, `watershed` provides multi-perspective critique beyond a single survey, and `linis` ("clean," Filipino) removes narrative residue from settled files while preserving operational history and rationale.
 
-**Every skill that reads project files resolves state with Section 3.1's full
-detection matrix.** The schema-2 marker declares the tier; the filesystem shape
+**Every skill that reads or writes Banka project state resolves state with
+Section 3.1's full detection matrix.** The schema-2 marker declares the tier; the filesystem shape
 must corroborate it. Directory presence alone never selects a tier, and
 `CLAUDE.md` alone is either the exact import shim, a legacy compatibility-read
 source, or a conflict — never schema-2 Minimal state. Skills that can operate
@@ -829,16 +841,18 @@ report it; never fall back to the default branch.
 
 The update has two independently assessed surfaces:
 
-- **Machine-level Skills Kit.** Inspect the selected runtime's user-level skill
-  locations and classify each Banka skill as a standard copy, a symlink, a
-  customized or conflicting entry, a duplicate project-local entry, or missing.
-  A Codex symlink must target a persistent checkout, never a temporary clone.
-  A temporary checkout is safe only when the skills are copied. Do not replace
-  a customized or conflicting entry without showing the difference and getting
-  a specific decision from the user. Inspect a persistent source checkout's Git
-  status before moving it to another tag; never discard local changes to make an
-  update fit. Use a new clean persistent checkout when its provenance or working
-  tree is unsafe.
+- **Machine-level Skills Kit.** Inspect the user-level skill locations for the
+  selected runtime and any intentionally linked runtime. Classify each Banka
+  skill as a standard copy, a symlink to a
+  primary runtime installation, a legacy source-checkout symlink, a customized
+  or conflicting entry, a duplicate project-local entry, or missing. Resolve
+  every symlink before acting. A standard shared-runtime link points only to a
+  verified real Banka skill directory, never another symlink, a temporary
+  checkout, or a development clone. For a legacy source-checkout symlink,
+  preview conversion to a real primary copy and recommend it; do not move or
+  edit its source checkout, and leave the link untouched if the user declines.
+  Do not replace a customized or conflicting entry without showing the
+  difference and getting a specific decision from the user.
 - **Managed project state.** Resolve `AGENTS.md`, the complete `CLAUDE.md`, both
   possible state directories, and the tier's required files through Section
   3.1. Preserve the tier, all project-specific content, all history, and all
@@ -864,16 +878,36 @@ Run the update in this order:
 4. Obtain explicit confirmation of that preview. A request to inspect, check
    for updates, or continue ordinary work is not permission to replace skills
    or mutate project state.
-5. Apply only the confirmed changes. Refresh standard Skills Kit copies from
-   the tagged release, or update a persistent Codex source checkout to the tag
-   and verify every symlink. Apply only release-required project-state changes;
+5. Apply only the confirmed changes. Refresh each independent standard Skills
+   Kit copy from the tagged release exactly once. When another runtime links to
+   that primary installation, do not copy over the link; verify it after the
+   primary copy is refreshed. Apply only release-required project-state changes;
    do not re-adopt the project, change its tier, or rewrite its accumulated
    knowledge to resemble a fresh template.
-6. Verify the tagged Banka checkout with `scripts/check-repo-integrity.sh`,
-   verify skill discovery and the absence of unintended duplicates, re-run
+6. After the tag and `VERSION` have been verified separately, run
+   `scripts/check-repo-integrity.sh` to verify the checkout's repository
+   contents. Compare every refreshed primary copy with the tagged `skills-kit/`,
+   verify all linked runtimes, skill discovery, and the absence of unintended
+   duplicates, re-run
    Section 3.1 against the project, and perform the Cold Agent Test. Report the
    release now in use, the state schema, what changed, what remained untouched,
    and any customized item deliberately left unresolved.
+
+**Interrupted copy or failed comparison:** if copying stops partway through or
+any final installed-content comparison fails, report the affected installation
+as mixed or incomplete and unusable, including every runtime linked to it.
+Do not invoke Banka skills from it until recovery completes. Keep the verified
+source checkout (or obtain and verify the same exact tag again), then re-copy
+every Banka skill in the affected standard kit from that same release, not only
+the directories known to have failed. Restore exact directory contents,
+including removing stale release files within the approved replacement scope;
+preserve customized or conflicting entries excluded from the confirmed preview.
+If recovery would require replacing an excluded entry, stop and obtain a
+specific decision before doing so. Repeat the complete directory comparisons
+and linked-runtime verification; resume skill use only when all comparisons
+and linked checks pass. If recovery fails again, report the remaining failures
+and keep the installation out of use. This recovery does not authorize project
+state changes beyond the confirmed update preview.
 
 Beginning with the release that introduces this procedure, every new changelog
 entry states four things: compatibility impact, required consumer action,

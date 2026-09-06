@@ -24,8 +24,8 @@ confirmation · restore mode — a conversational restore summary.
 
 **Write authority:** save mode only — the resolved session-state file, by
 section, plus whichever file owns a globally-scoped fact a captured decision
-changes, plus the tier's `overflow/` files and Overflow Index when the size
-thresholds above are crossed. Restore mode: none.
+changes, plus the tier's `overflow/` files and Overflow Index when write shape,
+supersession, or size requires overflow. Restore mode: none.
 
 ## Resolve Banka state first
 
@@ -125,7 +125,8 @@ conventions) to the file that owns them, never log them here. If a new
 decision reverses an earlier one, mark the earlier entry
 `[SUPERSEDED — see <new decision>]` in place. If a decision's rationale
 runs past a sentence or two, write a one-line entry plus a link to
-`overflow/decisions/`, not an inline paragraph. Tag Session Notes entries by
+`overflow/decisions/`, not an inline paragraph. This write-shape rule applies
+from the first write, without waiting for a size threshold. Tag Session Notes entries by
 the distinct line of work they belong to, not one flat narrative — a third
 concurrently open thread gets a soft prompt to confirm it's genuinely
 active; a fourth needs a stated one-line reason in writing before it's
@@ -138,10 +139,13 @@ independently, archive only a thread with a genuine settled boundary to
 open; an overflow file itself crossing ~2,000 words — start the next
 sequentially numbered file in the same subfolder; the Decisions section
 crossing ~1,500 words — recommend a dedicated decisions file. Always
-preview before applying, act only when a real threshold is crossed or
-explicitly requested. Each overflow file gets its own short Contents note
-at the top; the live file's Overflow Index (file, type, what it covers)
-tracks all of them and is created the first time any of this fires.
+preview these corrective actions before applying them, and act on them only
+when a real threshold is crossed or explicitly requested. This restriction
+does not delay the write-shape rule above. Each overflow file gets its own
+short Contents note at the top. Create the overflow folder and the live
+file's Overflow Index (file, type, what it covers) together when the first
+overflow file is needed, including an immediate write-shape detail file;
+the index tracks every overflow file. Never pre-declare an empty index.
 
 If the resolved session-state file predates this convention, the rules
 above still apply from this point forward — write the guidance above into

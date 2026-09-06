@@ -97,10 +97,12 @@ Files not to touch: [exact Files not to touch field from Ticket N].
 
 Do not: [exact Do not field from Ticket N].
 
+Verification commands: [exact Verification commands field from Ticket N].
+
 Read Ticket [N]'s full spec in the queue before starting — it carries the
 exact Done when condition this handoff does not repeat.
 
-When finished, run every verification command in Ticket [N] and report:
+When finished, run every verification command above and report:
 1. files changed;
 2. completion against each Done when condition;
 3. verification commands and results;

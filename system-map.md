@@ -102,9 +102,10 @@ Also orthogonal:
   linis — scoped cleanup pass, run once a version ships or a milestone
   closes. Never run against active work.
 
-Codex discovery (user-level, shared by every repository):
+Runtime discovery (user-level, shared by every repository):
 
-  ~/.agents/skills/* -> symlinks to Banka/skills-kit/*
+  First runtime -> complete copied Banka skill directories
+  Optional additional runtime -> links to that verified primary installation
   $skill-name invokes a skill in Codex; Claude Code uses /skill-name.
 ```
 
@@ -195,12 +196,15 @@ complete the confirmed migration sequence before promotion.
 ## Existing-project release updates (§7)
 
 An update starts from an annotated stable release tag and treats the
-machine-level Skills Kit separately from managed project state. It inspects
-both, reports compatibility and state-schema impact, previews every mutation,
-and waits for confirmation. Standard skills are then refreshed and project
-state changes only when the release requires it. The process finishes by
-verifying runtime discovery, Section 3.1's authority chain, and the Cold Agent
-Test; it never substitutes for adoption, promotion, or legacy migration.
+machine-level Skills Kit separately from managed project state. It identifies
+independent copied installations and any additional runtimes linked to them,
+reports compatibility and state-schema impact, previews every mutation, and
+waits for confirmation. Each primary copy is refreshed once; linked runtimes
+are verified rather than overwritten. Project state changes only when the
+release requires it. The process finishes by comparing installed content with
+the tagged kit, verifying runtime discovery, Section 3.1's authority chain, and
+the Cold Agent Test; it never substitutes for adoption, promotion, or legacy
+migration.
 
 ## Orthogonal: Craft Layer Modules (§7.6 / §7.7) and linis
 

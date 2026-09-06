@@ -16,8 +16,8 @@ structure is the primary reliability benefit. It can also reduce unnecessary
 context because future sessions have fewer ambiguous places to search, but
 that is a consequence—not a promise of universal token efficiency.
 
-**Release:** Banka 2.0.0. This release version identifies the Banka package;
-the separate state schema identifies the on-disk project format. Banka 2.0.0
+**Release:** Banka 2.0.1. This release version identifies the Banka package;
+the separate state schema identifies the on-disk project format. Banka 2.0.1
 uses state schema 2. See [VERSION](VERSION) and [CHANGELOG.md](CHANGELOG.md).
 
 **New here?** Jump straight to [Getting started](#getting-started) to begin.
@@ -189,6 +189,14 @@ instead of adopting the project again.
 `skills-kit/` is the canonical source for all nine skills. Choose the discovery
 path for the runtime you use.
 
+If Banka is already installed as real directories for one supported runtime,
+an experienced multi-runtime user may instead link a second runtime's Banka
+skill directories to that first installation. Link only to the real primary
+installation — never another symlink, a temporary checkout, or a Banka clone
+used for development. Updating the primary copy updates both runtimes; moving
+or deleting it breaks the linked runtime. Independent copies remain supported
+when the runtimes should not share updates.
+
 ### Claude Code
 
 Paste this into a fresh Claude Code session — no pre-cloning needed, the agent
@@ -200,13 +208,17 @@ fetch tags, and check out the newest annotated stable vMAJOR.MINOR.PATCH tag
 by semantic-version order. Verify that the tag is annotated and its commit's
 VERSION matches the tag, and do not use newer unreleased commits from the
 default branch. If no valid stable tag exists, stop instead of falling back to
-the default branch. Then install its Skills Kit: copy each skills-kit/*/SKILL.md into
-~/.claude/skills/<skill-name>/SKILL.md as-is. Before installing, check
+the default branch. Before installing, check
 ~/.claude/commands/, ~/.claude/skills/, and, if this is a specific project,
 its own .claude/commands/ and .claude/skills/, for any existing file using
 one of these nine names: charter, delegate, dredge, linis, moor, remember,
 scale, survey, watershed. If you find one, don't delete it unilaterally —
 back it up and ask me how to reconcile it before installing over it.
+Run scripts/check-repo-integrity.sh in the selected checkout to verify the
+repository contents. Then copy each complete skills-kit/<skill-name>/ directory
+into ~/.claude/skills/<skill-name>/ as-is. Verify every installed skill
+directory exactly matches the selected release before removing the temporary
+checkout.
 ```
 
 Invoke skills with `/skill-name`, for example `/charter` or `/remember restore`.
@@ -219,30 +231,31 @@ Paste this into a fresh Codex session — no pre-cloning needed, the agent does
 it:
 
 ```
-Clone https://github.com/partikularwaters/Banka.git to a persistent directory
-owned by the current user, fetch tags, and check out the newest annotated stable
+Clone https://github.com/partikularwaters/Banka.git to a temporary directory,
+fetch tags, and check out the newest annotated stable
 vMAJOR.MINOR.PATCH tag by semantic-version order. Verify that the tag is
 annotated and its commit's VERSION matches the tag, and do not use newer
 unreleased commits from the default branch. If no valid stable tag exists, stop
-instead of falling back to the default branch. Then install its Skills Kit for the
-current user: link each of these nine skills-kit/<skill> directories into
-~/.agents/skills/<skill>/: charter, delegate, dredge, linis, moor, remember,
-scale, survey, watershed. If a persistent checkout or symlinks cannot be used,
-copy from a temporary checkout instead; never link to a temporary directory.
-Before installing, check
+instead of falling back to the default branch. Before installing, check
 ~/.agents/skills/ and the projects I use for an existing Banka skill with the
 same name — Codex can show duplicate same-named skills and does not merge
 them, so migrate or remove an old project-local copy only after confirming
-it isn't customized. Confirm every installed entry contains a readable
-SKILL.md.
+it isn't customized. Run scripts/check-repo-integrity.sh in the selected
+checkout to verify the repository contents. Then copy each complete
+skills-kit/<skill> directory into ~/.agents/skills/<skill>/ for these nine
+skills: charter, delegate, dredge, linis, moor, remember, scale, survey,
+watershed. Confirm every installed entry contains a readable SKILL.md and
+exactly matches the selected release before removing the temporary checkout.
 ```
+
 
 Invoke skills with `$skill-name`, for example `$charter` or `$remember restore`.
 
-Run `scripts/check-repo-integrity.sh` from the cloned checkout to verify all
-nine canonical `SKILL.md` files and names, confirm repository-local Banka
-duplicates have not been reintroduced, check the generated Banka block
-markers, and scan for known obsolete terminology.
+The install prompts run `scripts/check-repo-integrity.sh` before removing the
+source checkout. It verifies repository contents — all nine canonical
+`SKILL.md` files and names, project-entry blocks, and known obsolete terminology
+— while the separate tag/`VERSION` checks establish release provenance and the
+post-copy comparison verifies the installation.
 
 The Banka source repository is not itself a Banka-enabled application project:
 it intentionally has no project-state `AGENTS.md`, `CLAUDE.md`, `/core/`, or
@@ -288,9 +301,16 @@ the default branch. Read that release's VERSION, CHANGELOG.md, and the complete
 Treat this as an update, not adoption, tier promotion, or implicit migration.
 
 Before changing anything, inspect this project's AGENTS.md, complete CLAUDE.md,
-/core/, /context/, required tier files, and the runtime's installed Banka
-skills. Classify each installed skill as a standard copy, symlink, customized
-or conflicting entry, duplicate project-local entry, or missing. If the
+/core/, /context/, required tier files, and the installed Banka skills for the
+runtime or intentionally shared runtimes I use. Classify each installed skill
+as a standard copy, a symlink to a
+primary runtime installation, a legacy source-checkout symlink, customized or
+conflicting, a duplicate project-local entry, or missing. Resolve every
+symlink before acting. A standard shared-runtime link may point only to a
+verified real Banka skill directory, never another symlink, a temporary
+checkout, or a development clone. Preview conversion of a legacy
+source-checkout symlink to a real primary copy, but leave it untouched if I
+decline. If the
 project's current Banka release cannot be established from durable evidence,
 label the baseline unknown and compare its actual contents to the target
 release instead of guessing.
@@ -302,7 +322,9 @@ project-specific state and history, content outside the marked Banka block, and
 customized skills. Do not replace skills, mutate project state, change tiers,
 or migrate legacy authority until I explicitly confirm the preview. After
 confirmation, apply only the approved changes and run the protocol's full
-verification and Cold Agent Test.
+verification and Cold Agent Test. Refresh each independent primary copy once,
+compare it exactly with the tagged skills-kit/, and verify every linked runtime
+afterward instead of copying over its links.
 ```
 
 ## The build loop

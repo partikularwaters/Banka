@@ -1,5 +1,30 @@
 # Changelog
 
+## 2.0.1 — 2026-09-06
+
+**Compatibility impact:** Patch. New Skills Kit installs copy complete skill
+directories into the first runtime instead of preferring Codex symlinks to a
+source checkout. Experienced multi-runtime users may link an additional runtime
+to that verified primary installation.
+**Required consumer action:** none for existing installations. The new behavior
+applies when installing or explicitly updating; existing symlinks are inspected
+and preserved unless the user confirms conversion.
+**Project-state migration:** none. Existing Minimal, Core, and Standard project
+state remains valid.
+**State-schema impact:** none — state schema stays 2.
+
+- Makes installation copy-first and removes the need for a persistent Banka
+  source checkout for ordinary users.
+- Defines optional link-later sharing between runtimes without allowing links
+  to temporary directories, development clones, or other links.
+- Adds exact installed-content comparison to update verification while keeping
+  repository integrity and release-provenance responsibilities distinct. Defines
+  full-kit recovery from the same verified tag after interrupted copies or
+  failed comparisons, with skill use paused until verification passes.
+- Fixes confirmed delegation, promotion, survey-evidence, downstream-reference,
+  template-ownership, and session-overflow inconsistencies found in the v2.0.0
+  hardening survey.
+
 ## 2.0.0 — 2026-08-30
 
 **Compatibility impact:** Major. The Skills Kit install, project-adoption,

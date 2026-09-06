@@ -37,17 +37,14 @@ looking current; write long rationale as a one-line entry plus a link to
 narrative by the distinct line of work it belongs to, not one flat story
 (3rd concurrent thread: pause and confirm; 4th: state why in writing).
 
-If this crosses ~2,000 words of narrative or ~1,500 of decisions, or a
-superseded entry gets swept, move the excess into `overflow/session-notes/`
-or `overflow/decisions/` respectively (creating whichever doesn't exist
-yet; each numbered sequentially — `01-...`, then `02-...` once `01-...`
-itself crosses ~2,000 words) — never force a split against still-active
-work. Add or update:
+Create overflow content whenever a long rationale needs its own detail file, a
+superseded entry is swept, or this crosses ~2,000 words of narrative or ~1,500
+words of decisions. Use `overflow/session-notes/` for narrative and
+`overflow/decisions/` for decision detail; number files sequentially (`01-...`,
+then `02-...` once the first itself crosses ~2,000 words). Never force a split
+against still-active work.
 
-## Overflow Index
-| File | Type | Covers |
-| --- | --- | --- |
-| `overflow/session-notes/01-session-notes.md` | narrative | [what it covers] |
-| `overflow/decisions/01-decisions-detail.md` | decision detail | [what it covers] |
-
-Each overflow file carries its own short Contents note at its own top.
+When the first overflow file is created, add an `## Overflow Index` section to
+this file at the same time. Its table schema is `File | Type | Covers`, with one
+row per overflow file. Do not add the section before an overflow file exists.
+Each overflow file carries its own short Contents note at its top.

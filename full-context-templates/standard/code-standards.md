@@ -2,9 +2,13 @@
 
 # Code Standards
 
-Implementation rules for the entire project. Followed in every session without exception — this is what prevents pattern drift across sessions and execution models when Delegation Setup (Section 7.5) is in use.
+Implementation rules for the entire project. Followed in every session without
+exception — this is what prevents pattern drift across sessions and execution
+models when work is delegated.
 
-**Every rule in this file must pass the checkability test** (Fill-In Discipline, Section 2.5, rule 2): could a session check real code against this and get a clear yes/no? A rule that only *sounds* like guidance gets rewritten concrete or removed — it does not stay in as filler.
+**Every rule in this file must pass the checkability test:** could a session
+check real code against this and get a clear yes/no? A rule that only *sounds*
+like guidance gets rewritten concrete or removed — it does not stay as filler.
 
 ---
 
@@ -42,7 +46,9 @@ Implementation rules for the entire project. Followed in every session without e
 
 ## File and Folder Naming
 
-**Register: Soft Suggestion.** Convention, not correctness (Section 2.6) — reasonable teams land differently. The values below are this protocol's default; if the project (or an existing codebase being onboarded) already has a real, consistent convention that differs, keep the existing one rather than forcing a switch.
+**Register: Soft Suggestion.** Convention, not correctness — reasonable teams
+land differently. If the project already has a real, consistent convention that
+differs from the examples below, keep it rather than forcing a switch.
 
 - Folders: kebab-case
 - Component/class files: PascalCase
@@ -53,7 +59,9 @@ Implementation rules for the entire project. Followed in every session without e
 
 ## Component / Module Structure
 
-**Register: mixed — the import/export order below is Soft Suggestion (Section 2.6's File/folder-naming row: convention, not correctness); the two rules under it are Hard Default (Section 2.6's registry) — state as settled, not as a proposal to react to.**
+**Register: mixed.** Import/export order is a convention. UI/logic separation is
+a stack-independent, checkable requirement. Styling syntax depends on the
+selected stack and must follow the project's documented token mechanism.
 
 State the actual import → logic → export order this project follows, e.g.:
 
@@ -61,8 +69,12 @@ State the actual import → logic → export order this project follows, e.g.:
 [imports] → [types/interfaces] → [component or function body] → [exports]
 ```
 
-- **Hard Default:** No inline styles — all styling goes through `ui-tokens.md`/`ui-rules.md`, never a one-off style attribute with hardcoded values. (Generalizes the same Hard Default as "never hardcode a hex color — reference a named constant.")
-- **Hard Default:** No business logic inside UI components — UI components render and dispatch; logic lives in the layer this project's `architecture.md` designates for it. (Section 2.6 registry: UI/logic separation.)
+- **Project policy:** use the styling mechanism selected in `ui-tokens.md` and
+  `ui-rules.md`. Inline style syntax is allowed only when that mechanism requires
+  it; raw color, spacing, and radius values remain prohibited.
+- **Hard Default:** No business logic inside UI components — UI components
+  render and dispatch; logic lives in the layer this project's
+  `architecture.md` designates for it.
 
 ---
 
@@ -114,7 +126,9 @@ see Database / Data Access below.
 **Pattern B — Local encrypted file storage (no server database):**
 - Never read or write a data file directly from a UI component — always through the project's data-access layer, which handles encryption/decryption
 - Every write is atomic where the underlying storage allows it — never leave a partially-written file on failure
-- State this project's actual encryption approach here explicitly (e.g. "AES-256-GCM, key derived via scrypt from the master password") — this is exactly the kind of Absolute Invariant that belongs in `architecture.md` too, not just here; keep both in sync
+- `architecture.md` is the canonical home for this project's actual encryption
+  algorithm, key derivation, and storage invariant. Reference that invariant
+  here; do not repeat its definition.
 
 **Pattern C — No persistent data layer (stateless / in-memory only):**
 - State this explicitly rather than leaving the section blank
@@ -123,7 +137,8 @@ see Database / Data Access below.
 
 ## Error Handling
 
-**Register: Hard Default** (Section 2.6 registry). State these as settled, not as a proposal to react to — the only thing to confirm with the user is whether this project needs anything *added* to the list, never whether to keep what's here.
+**Register: Hard Default.** State these as settled; only confirm whether this
+project needs another checkable rule added.
 
 - Never an empty catch block — always log or handle
 - User-facing errors are human-readable — never a raw exception message or stack trace shown to the end user
@@ -133,7 +148,11 @@ see Database / Data Access below.
 
 ## Delegation Tiering (see the `delegate` skill for the full mechanism)
 
-**Register: Hard Default** for the underlying rule (Section 2.6 registry — delegation readiness); the specific items in each list below are this project's own instantiation of it, not universal. `Junior-safe` and `Senior-required` describe the minimum execution capability and judgment the work needs, not a particular model product. A same or stronger model may execute Junior-safe work; Senior-required work never runs in a Junior-only mode.
+**Register: Hard Default** for delegation readiness; the specific items below
+are this project's own instantiation, not universal. `Junior-safe` and
+`Senior-required` describe the minimum execution capability and judgment the
+work needs, not a particular model product. A same or stronger model may
+execute Junior-safe work; Senior-required work never runs in a Junior-only mode.
 
 **Junior-safe by default in this project:**
 - Adding a new field to an existing form that already has a matching pattern
@@ -151,7 +170,7 @@ see Database / Data Access below.
 
 ## Comments
 
-**Register: Hard Default** (Section 2.6 registry — comment policy). State as settled.
+**Register: Hard Default.** State as settled.
 
 - No comments restating what the code does — code should read clearly enough not to need that
 - Comments only for *why* — a non-obvious decision, a workaround, a constraint that isn't visible from the code alone
@@ -177,4 +196,5 @@ Approved dependencies for this project — do not install anything outside this 
 
 - `[package]` — `[purpose]`
 
-If the Design Craft Add-on (Section 7.7) is installed, its `pick-ui-library` skill governs which UI/component libraries are trustworthy to add — defer to it rather than picking one ad hoc.
+If an external Design Craft Add-on with a `pick-ui-library` skill is installed,
+defer UI/component-library selection to it rather than choosing ad hoc.
