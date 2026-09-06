@@ -55,8 +55,16 @@ adoption workflow.
 An existing or brownfield project must also have sufficient current evidence
 that it is ready for Banka adoption.
 
-When that readiness has not already been established, apply the current
-canonical Banka Docking Protocol against the existing project. Do not duplicate
+Recognizing a project as brownfield triggers a readiness check, not an automatic
+Docking run. If sufficient current readiness evidence already exists, proceed
+without sourcing or running Docking again.
+
+Otherwise, retrieve and read the current canonical
+[Banka Docking Protocol](https://github.com/partikularwaters/banka-docking-protocol)
+and apply it against the existing project. Docking is Banka's canonical
+brownfield adapter and a conditional adoption dependency. Permanent installation
+is not required. If the protocol cannot be retrieved or read, report the blocker
+and pause adoption rather than inventing its assessment rules. Do not duplicate
 Docking's assessment rules or readiness workflow inside Banka.
 
 If Docking determines that scope is not decision-ready, complete the required
@@ -105,10 +113,10 @@ Once adoption is complete, normal Banka operation begins.
   underdeveloped. Section 0 governs whether scope is sufficient to enter Banka;
   Section 1.5 then normalizes available scope and fills only proportional gaps
   before the complexity rubric runs.
-- It does not duplicate the Skills — `charter`, `survey`, `dredge`, `remember`,
-  and `moor` are part of a permanent, reusable toolkit the user installs once
-  (see Section 7). This protocol never regenerates or rewrites them. It only
-  decides what *project-specific context* those skills should read.
+- It does not duplicate the Skills Kit, the permanent, reusable toolkit the
+  user installs once (see Section 7). This protocol never regenerates or
+  rewrites its skills. It only decides what *project-specific context* they
+  should read.
 
 ---
 

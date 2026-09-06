@@ -137,26 +137,30 @@ status are Banka Docking's own terms, not Banka's — Docking's protocol defines
 both precisely; Banka only requires that the evidence exist, however it was
 established.
 
-A specific preparation method is not required. The requirement is that the
-project's readiness has been sufficiently established.
+Existing readiness evidence may come from another valid method. When that
+evidence is missing or inadequate, Banka uses its canonical adapter, Docking.
 
 ## Related protocols
 
-The following protocols are optional. Banka does not require them when
-decision-ready scope and sufficient readiness evidence already exist through
-other means.
+Banka requires decision-ready scope and, for existing projects, sufficient
+current readiness evidence. Companion protocols need not run when those
+conditions are already satisfied.
 
 **ASMP ([Adaptive Scope Mapping Protocol](https://github.com/partikularwaters/adaptive-scope-mapping-protocol))** defines decision-ready scope from
 unclear, evolving, or incomplete intent. It is one method for creating
 decision-ready scope before Banka adoption.
 
 **Docking ([Banka Docking Protocol](https://github.com/partikularwaters/banka-docking-protocol))** verifies readiness evidence for existing or
-brownfield projects. It is one method for preparing a project whose current
-state has not yet been sufficiently established.
+brownfield projects. It is Banka's canonical brownfield adapter: when readiness
+evidence is missing or inadequate, the agent must retrieve, read, and apply the
+current canonical protocol before adoption continues. This does not require
+permanent installation.
 
 **ASMP defines scope. Docking verifies readiness. Banka adopts and operates.**
 
-These protocols remain independently useful and are not dependencies of Banka.
+Both protocols remain independently useful. ASMP is an optional scoping method;
+Docking is a conditional adoption dependency, not a requirement for ongoing
+Banka operation. See [the adoption rules](protocol/Banka.md#section-0-project-assessment).
 
 ## The skills
 

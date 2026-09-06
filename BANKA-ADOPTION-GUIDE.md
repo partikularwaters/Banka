@@ -70,6 +70,7 @@ Ready for Banka
    |
    v
 Banka adoption
+```
 
 ## 1. Establish decision-ready scope
 
@@ -98,8 +99,11 @@ already establishes readiness for Banka.
 [Banka Docking Protocol](https://github.com/partikularwaters/banka-docking-protocol)
 is Banka's canonical preparation protocol for existing-project adoption.
 
-When Docking is required, apply its current canonical protocol against the
-existing project. Docking establishes project reality, identifies only the
+If sufficient current readiness evidence already exists, proceed without
+sourcing or running Docking again. Otherwise, retrieve, read, and apply its
+current canonical protocol against the existing project. Permanent installation
+is not required. If it cannot be retrieved or read, report the blocker and pause
+adoption. Docking establishes project reality, identifies only the
 readiness work required before handoff, and records its result in
 `ADOPTION-ASSESSMENT.md`.
 
@@ -109,7 +113,7 @@ If Docking determines that scope is inadequate, complete scope clarification
 first and then return to Docking. Do not bypass the remaining Docking workflow
 by proceeding directly from scope clarification to Banka.
 
-Resume Banka adoption only when Docking establishes `Ready for Banka` and the
+When Docking is required, resume Banka adoption only when it establishes `Ready for Banka` and the
 owner chooses to continue — reaching that status permits adoption to begin; it
 does not mean adoption is complete ([protocol/Banka.md](protocol/Banka.md#section-0-project-assessment) §0.4).
 

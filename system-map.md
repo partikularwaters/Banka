@@ -125,7 +125,9 @@ another valid scope source is equally acceptable.
 Existing or brownfield projects have an additional readiness evidence
 requirement — Docking's own term, precisely defined in its own protocol. When
 current evidence does not already establish readiness, Banka routes the
-project through the current Banka Docking Protocol. Docking may itself
+project through the current Banka Docking Protocol. The agent retrieves and
+reads this canonical brownfield adapter when needed; permanent installation is
+not required. Docking may itself
 identify scope that is unclear or not decision-ready; when that happens,
 complete the required scope clarification and then return to Docking. Banka
 adoption resumes only after Docking establishes `Ready for Banka` and the owner
