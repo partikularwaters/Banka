@@ -4,7 +4,7 @@ description: Clean up narrative residue in settled files after a milestone witho
 argument-hint: [optional — specific settled file(s); defaults to files changed in the current completed milestone]
 ---
 
-*Linis* — Filipino for "clean." Code and context files accumulate the residue of how they were built: a name here, a date there, a line quoting what someone said mid-session, a comment narrating an experiment instead of stating its settled result. None of that is wrong to have *during* a build — some of it is exactly what `remember` and the session-state file(s) (the Minimal Banka block in `AGENTS.md`; on schema-3 Core, `core/progress.md`, `core/session-notes.md`, and `core/decisions-index.md`; on schema-3 Standard, `context/progress-tracker.md`, `context/session-notes.md`, and `context/decisions-index.md`; on schema-2 pre-migration Core/Standard, `progress.md`/`progress-tracker.md` alone) are supposed to capture while work is active. But once a version ships or a milestone closes, that residue stops being useful context and starts being clutter a future session has to read past to find what actually matters.
+*Linis* — Filipino for "clean." Code and context files accumulate the residue of how they were built: a name here, a date there, a line quoting what someone said mid-session, a comment narrating an experiment instead of stating its settled result. None of that is wrong to have *during* a build — some of it is exactly what `remember` and the session-state file(s) (the Minimal Banka block in `AGENTS.md`; where `SPLIT-STATE` is present, `core/progress.md`, `core/session-notes.md`, and `core/decisions-index.md` for Core or the `context/` equivalents for Standard; where `SPLIT-STATE` is absent on Core/Standard, `progress.md`/`progress-tracker.md` alone) are supposed to capture while work is active. But once a version ships or a milestone closes, that residue stops being useful context and starts being clutter a future session has to read past to find what actually matters.
 
 This skill does not touch correctness — it never changes what code does. It only changes how it's described.
 
@@ -20,9 +20,9 @@ from the session-state file and the version-control diff.
 runs against unsettled code, by design, regardless of requested scope.
 
 **Outputs:** every proposed cleanup, listed for approval before any file is
-touched · on schema-3 Core/Standard, `scripts/check-banka-thresholds.sh`'s
-report, appended to the same proposal, informational only — schema-2
-pre-migration Core/Standard predates the script (Section 3.2) and has no
+touched · where `SPLIT-STATE` is present, `scripts/check-banka-thresholds.sh`'s
+report, appended to the same proposal, informational only — where
+`SPLIT-STATE` is absent the script is not present (Section 3.2) and has no
 equivalent report to append.
 
 **Write authority:** only the confirmed settled file(s) in scope, and only
@@ -156,7 +156,7 @@ Do not silently rewrite files. Show the proposed changes as a before/after diff 
 
 Wait for confirmation. Then apply exactly what was shown — no additional changes introduced during application that weren't in the proposal.
 
-**On schema-3 Core/Standard, also run `scripts/check-banka-thresholds.sh` as a standard part of this pass** and append anything over threshold to the proposal, clearly separated from the narrative-cleanup findings above — informational only, `linis` doesn't archive or split, it surfaces the finding for the developer to act on via `remember`/`dredge`. This is a natural fit for `linis`'s own cadence (a milestone/version boundary, repo-wide) and closes the loop on Protocol Section 2.9's mechanical verification, independent of whether any other skill happened to catch it first. Schema-2 pre-migration Core/Standard predates the script (Section 3.2) — this step simply does not apply there.
+**Where `SPLIT-STATE` is present, also run `scripts/check-banka-thresholds.sh` as a standard part of this pass** and append anything over threshold to the proposal, clearly separated from the narrative-cleanup findings above — informational only, `linis` doesn't archive or split, it surfaces the finding for the developer to act on via `remember`/`dredge`. This is a natural fit for `linis`'s own cadence (a milestone/version boundary, repo-wide) and closes the loop on Protocol Section 2.9's mechanical verification, independent of whether any other skill happened to catch it first. Where `SPLIT-STATE` is absent the script is not present (Section 3.2) — this step simply does not apply there.
 
 ## Delegation note
 

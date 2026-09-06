@@ -125,11 +125,11 @@ checked against — the registry for one, charter's invariant cross-check
 for the other. Capturing either before verification risks enshrining
 something wrong as settled. Confirm `survey` has passed this build —
 cleanly, or with findings resolved or explicitly accepted as intentional,
-not just run. On schema-3 Core/Standard, check `verified-index.md` for a
+not just run. Where `SPLIT-STATE` is present, check `verified-index.md` for a
 matching entry before capturing — not the conversation. If none exists yet,
 invoke `verify` now to create one, then proceed from its recorded verdict.
-On Minimal, and on schema-2 (pre-migration) Core/Standard — neither has a
-`verified-index.md` to check — check the conversation for evidence instead;
+Where `SPLIT-STATE` is absent — neither Minimal nor a Core/Standard project
+before migration has a `verified-index.md` to check — check the conversation for evidence instead;
 if unclear, stop and ask rather than assume either way. Audit mode is
 exempt — see below.
 

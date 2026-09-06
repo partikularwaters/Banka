@@ -25,7 +25,7 @@ never repeated here · anything not verifiable through
 commit, claims checked, verdict, date.
 
 **Write authority:** `verified-index.md` and its own `overflow/verified/`
-(schema-3 Core/Standard), append-only — never `survey`'s report, never code, never a
+(where `SPLIT-STATE` is present), append-only — never `survey`'s report, never code, never a
 file another skill already owns.
 
 ## Resolve Banka state first
