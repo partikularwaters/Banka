@@ -131,10 +131,12 @@ missing_tag_stop_count=$(grep -Fic 'If no valid stable tag exists' "$repo_root/R
 test "$missing_tag_stop_count" -eq 4 || \
   fail "Expected the missing-tag stop condition in all four README prompts, found $missing_tag_stop_count"
 
-if rg -n -U 'temporary directory,\nthen install its Skills Kit for the current user: link' "$repo_root/README.md" >/dev/null; then
-  fail "Codex installation must never symlink Banka skills from a temporary checkout"
-fi
-require_literal 'never link to a temporary directory' "$repo_root/README.md"
+require_literal 'Then copy each complete' "$repo_root/README.md"
+require_literal 'skills-kit/<skill> directory into ~/.agents/skills/<skill>/' "$repo_root/README.md"
+require_literal 'by copying each complete directory from this' "$repo_root/protocol/Banka.md"
+require_literal "package's \`skills-kit/\` into that location" "$repo_root/protocol/Banka.md"
+require_literal 'Optional second-runtime sharing' "$repo_root/protocol/Banka.md"
+require_literal 'never another symlink, a temporary checkout, or a Banka clone' "$repo_root/README.md"
 
 integrity_tmp_dir=$(mktemp -d)
 trap 'rm -rf "$integrity_tmp_dir"' EXIT
@@ -250,28 +252,5 @@ extract_handoff_block "$repo_root/skills-kit/delegate/SKILL.md" > "$delegate_han
 extract_handoff_block "$repo_root/full-context-templates/delegation-queue.md" > "$template_handoff_file"
 cmp -s "$delegate_handoff_file" "$template_handoff_file" || \
   fail "Delegate and delegation-queue ready-to-paste handoff blocks differ"
-
-user_skills_dir="$HOME/.agents/skills"
-if test -d "$user_skills_dir"; then
-  for skill in "${skills[@]}"; do
-    installed_skill="$user_skills_dir/$skill"
-    if test -e "$installed_skill" || test -L "$installed_skill"; then
-      canonical_target=$(cd "$repo_root/skills-kit/$skill" && pwd -P)
-      if test -L "$installed_skill"; then
-        installed_target=$(cd "$installed_skill" && pwd -P) || fail "$installed_skill does not resolve"
-        test "$installed_target" = "$canonical_target" || \
-          fail "$installed_skill resolves outside skills-kit/$skill"
-        echo "Verified installed Banka skill link: $installed_skill"
-      else
-        test -d "$installed_skill" || fail "$installed_skill is neither a skill directory nor a symlink"
-        diff -qr "$canonical_target" "$installed_skill" >/dev/null || \
-          fail "$installed_skill is not an exact copy of skills-kit/$skill"
-        echo "Verified installed Banka skill copy: $installed_skill"
-      fi
-    else
-      echo "Installed Banka skill link not present (repository package remains valid): $installed_skill"
-    fi
-  done
-fi
 
 echo "Banka repository integrity check passed."
