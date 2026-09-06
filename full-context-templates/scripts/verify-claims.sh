@@ -30,12 +30,16 @@ cd "$repo_root"
 usage() {
   cat <<'EOF'
 Usage:
+  verify-claims.sh --revision <commit> --check-file <path>
+  verify-claims.sh --revision <commit> --check-diff <path>
   verify-claims.sh --check-file <path> [--check-file <path> ...]
   verify-claims.sh --check-diff <path> [--check-diff <path> ...]
   verify-claims.sh --run-test "<command>" [--run-test "<command>" ...]
 
 Flags may be combined and repeated. Each check is reported on its own line,
 mechanically — no check here ever judges correctness, only presence.
+--revision must come first; file/diff checks use that committed tree.
+Live checks and test runs are observations, not historical replay evidence.
 EOF
 }
 
@@ -44,10 +48,55 @@ if [ "$#" -eq 0 ]; then
   exit 1
 fi
 
+revision=""
+prefix=""
+if [ "$1" = "--revision" ]; then
+  if [ "$#" -lt 3 ]; then usage >&2; exit 1; fi
+  requested_revision="$2"
+  if ! revision=$(git rev-parse --verify --end-of-options "$requested_revision^{commit}" 2>/dev/null); then
+    echo "BLOCKED — revision unavailable: $requested_revision" >&2
+    exit 1
+  fi
+  prefix="--revision $revision "
+  shift 2
+fi
+
+# Validate all arguments before running any test command.
+args=("$@")
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --check-file|--check-diff|--run-test)
+      if [ "$#" -lt 2 ]; then usage >&2; exit 1; fi
+      if [ "$1" = "--run-test" ] && [ -n "$revision" ]; then
+        echo "--revision supports file/diff checks only; run tests separately as live observations." >&2
+        exit 1
+      fi
+      shift 2 ;;
+    -h|--help) usage; exit 0 ;;
+    *) echo "Unknown flag: $1" >&2; exit 1 ;;
+  esac
+done
+set -- "${args[@]}"
+
 # Uncommitted changes, else the most recent commit — same "actual diff, not
 # memory" resolution moor's own git-grounding already uses.
 diff_touches() {
   local path="$1"
+  if [ -n "$revision" ]; then
+    if ! git rev-parse --verify -q "$revision^" >/dev/null 2>&1; then
+      echo "BLOCKED — parent unavailable (first commit or shallow history)"
+    elif git diff --quiet "$revision^" "$revision" -- ":(literal)$path"; then
+      echo "MISSING — commit $revision does not touch $path"
+    else
+      local diff_status=$?
+      if [ "$diff_status" -eq 1 ]; then
+        echo "MET — commit $revision touches $path"
+      else
+        echo "BLOCKED — cannot read commit diff"
+      fi
+    fi
+    return
+  fi
   if ! git rev-parse --git-dir >/dev/null 2>&1; then
     echo "BLOCKED — not a git repository"
     return
@@ -76,10 +125,16 @@ while [ "$#" -gt 0 ]; do
     --check-file)
       path="$2"
       quoted_path=$(printf '%q' "$path")
-      if [ -f "$path" ]; then
-        results+=("| \`--check-file $quoted_path\` | MET | file exists |")
+      if [ -n "$revision" ]; then
+        if [ "$(git cat-file -t "$revision:$path" 2>/dev/null || true)" = "blob" ]; then
+          results+=("| \`${prefix}--check-file $quoted_path\` | MET | file exists at $revision |")
+        else
+          results+=("| \`${prefix}--check-file $quoted_path\` | MISSING | file not found at $revision |")
+        fi
+      elif [ -f "$path" ]; then
+        results+=("| \`--check-file $quoted_path\` | MET | live observation: file exists |")
       else
-        results+=("| \`--check-file $quoted_path\` | MISSING | file not found |")
+        results+=("| \`--check-file $quoted_path\` | MISSING | live observation: file not found |")
       fi
       shift 2
       ;;
@@ -87,7 +142,9 @@ while [ "$#" -gt 0 ]; do
       path="$2"
       quoted_path=$(printf '%q' "$path")
       verdict=$(diff_touches "$path")
-      results+=("| \`--check-diff $quoted_path\` | ${verdict%% —*} | ${verdict#*— } |")
+      detail="${verdict#*— }"
+      if [ -z "$revision" ]; then detail="live observation: $detail"; fi
+      results+=("| \`${prefix}--check-diff $quoted_path\` | ${verdict%% —*} | $detail |")
       shift 2
       ;;
     --run-test)
@@ -119,6 +176,9 @@ done
 
 echo "## Claim Check"
 echo "_Last run: $(date +%Y-%m-%d). Run \`bash scripts/verify-claims.sh\` with the same flags to refresh._"
+if [ -z "$revision" ]; then
+  echo "_Live observation only: working files, history, dependencies, and external state are not preserved._"
+fi
 echo
 echo "| Check | Result | Detail |"
 echo "| --- | --- | --- |"

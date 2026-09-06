@@ -220,4 +220,7 @@ if grep -A3 -i "write-shape check applies" "$moor_file" | grep -qi "link"; then
   fail "moor's write-shape guidance instructs creating a link to a second file — moor's Context Contract restricts it to one resolved write destination; this needs explicit delegation language (e.g. hand off to remember), not an instruction to create a link to a file moor has no authority to write"
 fi
 
+# The queue has a per-file report destination, including cold installs.
+grep -q '^## Threshold Check$' "$repo_root/full-context-templates/delegation-queue.md" || fail "Queue lacks its Threshold Check block"
+
 echo "Cold-downstream simulation passed: nothing installed cold references what only exists in this repo, and the rendered session-state files carry complete overflow mechanics."

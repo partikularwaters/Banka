@@ -25,7 +25,7 @@ never repeated here · anything not verifiable through
 commit, claims checked, verdict, date.
 
 **Write authority:** `verified-index.md` and its own `overflow/verified/`
-(Core/Standard), append-only — never `survey`'s report, never code, never a
+(schema-3 Core/Standard), append-only — never `survey`'s report, never code, never a
 file another skill already owns.
 
 ## Resolve Banka state first
@@ -114,8 +114,17 @@ Never invent a run command that isn't already there.
 
 ## Step 2 — Run the script, never estimate
 
-Invoke `scripts/verify-claims.sh` with one `--check-file`, `--check-diff`,
-or `--run-test` flag per claim resolved in Step 1. Read its exact output.
+For committed file/diff evidence, invoke `scripts/verify-claims.sh --revision
+<commit> --check-file <repository-relative-path>` or `--check-diff <path>`.
+The output pins the full commit SHA; diff checks compare it with its first
+parent. Missing commits or parents are BLOCKED, never reconstructed.
+
+Run `--run-test` separately, without `--revision`. Uncommitted file/diff
+checks also omit `--revision`. These are live observations: record the dirty
+paths and relevant runtime/dependency details, and mark replay unavailable.
+A commit SHA alone does not preserve dirty files or a test environment.
+Never use a pinned check to claim an uncommitted change was verified.
+Read the script's exact output.
 The script's MET / MISSING / BLOCKED verdict is the answer — never
 substitute your own read of whether a change "looks right" for what it
 actually reports. If the printed invocation itself looks mangled or has
@@ -136,17 +145,23 @@ proof the claim is correct — only as proof this specific evidence exists.
 
 ## Step 3 — Write the record
 
-Append one row to `verified-index.md` with these fields:
+Append rows to `verified-index.md` with these fields. Add Evidence scope to
+older tables; mark prior rows `legacy observation — replay not established`
+unless their inputs were explicitly pinned. Never infer preserved evidence.
 
 - **ID** — the next sequential number.
 - **Ticket/Plan** — the ticket number or charter-plan citation this traces to.
-- **Commit** — the commit checked at.
+- **Commit** — the full SHA checked, or `unavailable` outside Git.
+- **Evidence scope** — `commit-pinned` for revision-based file/diff checks;
+  otherwise `live observation — replay unavailable`, with dirty paths and
+  relevant runtime/dependency details. Keep different scopes in separate rows.
 - **Claims checked** — a one-line description.
-- **Invocation** — the exact `--check-file`/`--check-diff`/`--run-test` line
+- **Invocation** — the exact flags, including `--revision <full-sha>` when used,
   copied verbatim from the script's own output (e.g. `` `--check-file
   src/foo.ts` `` or `` `--check-diff core/design.md` ``) — never paraphrased,
-  never re-typed from memory, so a future session can re-run the identical
-  check. If the script's own output shows mangled or unreadable escape
+  never re-typed from memory. Pinned checks replay against the named Git
+  objects while available; live invocations repeat the command only, not its
+  historical inputs or result. If the script's own output shows mangled or unreadable escape
   sequences (a non-UTF-8 locale re-quoting a non-ASCII path or command —
   see `verify-claims.sh`'s own header note), copy it exactly as shown anyway
   and flag it plainly as unreliable for copy-paste reuse — never silently

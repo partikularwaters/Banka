@@ -28,7 +28,7 @@ never declared.
 alignment / System integrity, each PASS or ISSUES FOUND, then Production
 readiness, PASS / ISSUES FOUND / BLOCKED with a per-claim evidence ledger)
 with a severity-graded issue list, and — when warranted — a routing
-recommendation to `dredge`, `watershed`, or `verify` (Core/Standard only,
+recommendation to `dredge`, `watershed`, or `verify` (schema-3 Core/Standard only,
 for a `blocked` claim needing real evidence to resolve).
 
 **Write authority:** none. It does not fix anything itself.
@@ -147,10 +147,10 @@ never asserted bare:
   or bug); state what's wrong.
 - **blocked** — the available evidence cannot settle it either way (no
   test exercises the path, no observed behavior on record, and reading the
-  code alone can't prove runtime behavior). On Core/Standard, route it to
+  code alone can't prove runtime behavior). On schema-3 Core/Standard, route it to
   `verify` — it resolves what it can from real evidence (a project's own
   run/test command, if one exists) and writes a durable record either way;
-  on Minimal, name what would resolve it directly and re-run this layer
+  on Minimal or schema-2 pre-migration Core/Standard, name what would resolve it directly and re-run this layer
   once it's available. Never mark a claim `met` because it "looks right in
   the code" alone.
 
@@ -207,7 +207,7 @@ A finding is not always the kind of thing this skill should try to resolve by it
 - **Something visibly broken — code runs but produces wrong behavior, or won't run at all** — recommend the dredge skill rather than trying to diagnose the failure mode here; it exists specifically to separate a targeted fix from a hard reset from a genuine rethink.
 - **The implementation is "correct" against the plan, but the plan itself now looks like the wrong approach** — this is Failure Mode 3 territory (see `dredge`'s Rethink path) — say so plainly and point there, rather than approving code that faithfully executes a plan you now doubt.
 - **A genuine judgment call where reasonable engineers would disagree, or the stakes are high enough that one perspective (even a careful one) isn't enough** — recommend the watershed skill for a wider, multi-angle pass instead of rendering a single verdict here.
-- **A Layer 3 claim marked `blocked`** — not a finding of brokenness, so it doesn't route to `dredge` or `watershed` either. On Core/Standard, recommend `verify` — it resolves what real evidence can settle and writes a durable record either way. On Minimal, name what would resolve it (runtime evidence this skill can't gather itself) and let the developer decide whether to gather it now or accept the gap.
+- **A Layer 3 claim marked `blocked`** — not a finding of brokenness, so it doesn't route to `dredge` or `watershed` either. On schema-3 Core/Standard, recommend `verify` — it resolves what real evidence can settle and writes a durable record either way. On Minimal or schema-2 pre-migration Core/Standard, name what would resolve it (runtime evidence this skill can't gather itself) and let the developer decide whether to gather it now or accept the gap.
 
 State the recommendation plainly and why, then stop — do not invoke another skill automatically. The developer decides whether to follow the routing.
 

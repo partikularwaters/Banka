@@ -183,6 +183,11 @@ If the Design Craft Add-on (Section 7.7) is installed, its `pick-ui-library` ski
 
 ## Area overrides
 
+Use `context/area-overrides/<area-slug>.md` with a unique slug per area.
+Record the repository-relative area path, overridden convention, replacement,
+and reason. Link it below relative to this file. Existing linked files keep
+their paths; never use nested `AGENTS.md` files for overrides.
+
 _Empty until `charter` finds a real, repeated divergence from this file's
 defaults and the developer confirms capturing it (Protocol Section 2.10).
 Never an Absolute Invariant — those stay project-wide._

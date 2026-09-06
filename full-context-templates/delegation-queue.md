@@ -69,6 +69,17 @@ _Empty. Populated by the delegate skill._
 _Empty. Populated by the delegate skill — one row per ticket across all
 three tiers, ordered so every ticket's dependencies appear before it._
 
+## Threshold Check
+_Schema-3 Core/Standard only: copy the queue's row from
+`bash scripts/check-banka-thresholds.sh` after each append or archive.
+Minimal and schema-2 pre-migration Core/Standard self-estimate instead._
+
+_Last run: [date]._
+
+| File | Words | Threshold | Status |
+| --- | --- | --- | --- |
+| Full ticket specs | [N] | ~2,000 | [OK / OVER — action needed] |
+
 ## Full ticket specs
 _Empty. Populated by the delegate skill._
 

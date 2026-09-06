@@ -21,7 +21,10 @@ evidence (`scripts/verify-claims.sh`'s output — never verify's own
 narrative read). Each row cites the ticket or plan it verified against —
 the one already-durable anchor in the pipeline — the commit it was checked
 at, and the exact invocation copied verbatim from the script's own output,
-never paraphrased, so the same check can be re-run later. A `MET` in this
+never paraphrased. File/diff evidence uses `--revision <full-sha>` for
+replay against retained Git objects. Live checks and test runs are observations,
+not replayable historical evidence; record dirty paths and runtime details
+in Evidence scope, and keep different scopes in separate rows. A `MET` in this
 table means the specified evidence was found — a file exists, a diff
 touched a path, a command exited `0` — never that the claim itself is
 correct; read Invocation and Claims checked together to know exactly what
@@ -30,6 +33,6 @@ was actually confirmed. Once this table crosses ~2,000 words, start
 as every other overflow file) and link to it from here — rows never get
 archived out for being old._
 
-| ID | Ticket/Plan | Commit | Claims checked | Invocation | Verdict | Date |
-| --- | --- | --- | --- | --- | --- | --- |
-| `0001` | `Ticket 3` / `[charter plan citation]` | `abc1234` | `[what was checked]` | `` `--check-file src/foo.ts` `` | `MET / MISSING / BLOCKED` | `[date]` |
+| ID | Ticket/Plan | Commit | Evidence scope | Claims checked | Invocation | Verdict | Date |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `0001` | `Ticket 3` / `[charter plan citation]` | `[full SHA]` | `commit-pinned` | `[what was checked]` | `` `--revision <full-sha> --check-file src/foo.ts` `` | `MET / MISSING / BLOCKED` | `[date]` |

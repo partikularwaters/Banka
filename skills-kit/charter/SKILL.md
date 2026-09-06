@@ -153,7 +153,7 @@ or do you see it differently?
 
 Work through decisions in order of impact. If an answer makes another decision irrelevant, skip it.
 
-**A Step 1 area-convention divergence surfaces here as its own decision**, evidence stated plainly ("this area does X differently from `code-standards.md`, in N files"), never assumed as a defect to silently "fix" back to the root default. On confirmation, capturing it becomes a step in *How to build it* (Step 5) — this skill never writes it itself.
+**A Step 1 area-convention divergence surfaces here as its own decision**, evidence stated plainly ("this area does X differently from `code-standards.md`, in N files"), never assumed as a defect to silently "fix" back to the root default. On confirmation, capturing it in `context/area-overrides/<area-slug>.md` becomes a step in *How to build it* (Step 5): include the area path, overridden convention, replacement, and reason, then link it from `code-standards.md`'s Area overrides table (reuse an existing linked file for that area) — this skill never writes it itself.
 
 ## Step 4 — Know When You Are Done
 

@@ -261,7 +261,7 @@ Completed entries, an overflow file rollover), search this project's own
 Banka-generated files for links pointing at the path about to change and
 update them in the same save — never move-and-hope.
 
-Core/Standard's `decisions-index.md` paginates instead of archiving — once it
+Schema-3 Core/Standard's `decisions-index.md` paginates instead of archiving — once it
 crosses ~2,000 words, start `overflow/decisions-index/01-decisions-index.md`
 (next: `02-...`, Section 2.11) and link to it from the live table; rows
 never get swept out for being old, since a decision

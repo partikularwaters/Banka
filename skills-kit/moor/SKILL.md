@@ -14,8 +14,8 @@ for the tier and capture type (see Step 1).
 **Conditional:** every existing UI component file in the project — audit
 mode only, to build the whole-codebase baseline · evidence that `survey`
 has passed this build, before capturing a UI pattern or an invariant/token
-change — on Core/Standard, `verified-index.md`; on Minimal, the
-conversation — audit mode is exempt.
+change — use the schema-specific evidence source in Step 1; audit mode
+is exempt.
 
 **Excluded by default:** width/height, layout mechanics, positioning,
 animation/transition timing, and responsive breakpoint variants — Step 2

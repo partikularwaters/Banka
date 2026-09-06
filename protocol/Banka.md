@@ -324,15 +324,15 @@ The tier-resolved `delegation-queue.md` (root for Minimal/Core, `context/delegat
 
 ### Track A — Prevention (write-time: every `remember` save, and at initial tier-generation for a brownfield project; `moor` applies checks 1 and 3 only)
 
-1. **Promotion check.** Before logging a decision, ask whether it is a durable, standing fact — an architecture choice, an invariant, a convention, a library pattern. If so, write it into the file that owns it (Section 2.6's registry, the tier's Source of truth), not into session-state. Applies at initial generation too: a brownfield project's captured context should be sorted into owning files at adoption time, not dumped wholesale into the initial session-state log.
-2. **Supersession check** (`remember` only). If a new decision reverses an earlier one still recorded, mark the earlier entry `[SUPERSEDED — see <new decision>]` in place. Never leave a reversed decision silently orphaned — a cold session reading it as current is worse than the section being long.
-3. **Write-shape check.** If a decision's rationale runs past a sentence or two, write a one-line entry plus a link to a detail file (Track B's overflow structure), rather than an inline paragraph. Applies from the first write, not retroactively.
+1. **Promotion check.** Before logging a decision, ask whether it is a durable, standing fact — an architecture choice, an invariant, a convention, a library pattern. Put settled facts in their owning files. Store decisions and rationale under Section 2.11's schema-specific rules; `moor` captures only its permitted owning-file facts, never Decision Records. Applies at initial generation too: a brownfield project's captured context should be sorted into owning files at adoption time, not dumped wholesale into the initial session-state log.
+2. **Supersession check** (`remember` only). For schema-3 Decision Records, follow Section 2.11's supersession rules. For inline decisions, mark the earlier entry `[SUPERSEDED — see <new decision>]` in place. Never leave a reversed decision silently orphaned — a cold session reading it as current is worse than the section being long.
+3. **Write-shape check.** `remember` stores eligible decisions and rationale under Section 2.11's schema-specific rules: Logbook for schema-3 Core/Standard; inline for Minimal and schema-2 pre-migration Core/Standard. `moor` writes only a one-line owning-file summary and routes fuller rationale to `remember`.
 4. **Thread-tagging check** (`remember` only). Session Notes entries are tagged by the distinct line of work they belong to (a sub-heading is enough), never written as one flat, interleaved narrative — genuinely concurrent threads must be separable later without reconstruction. A third concurrently open thread gets a soft prompt ("worth a check — all three genuinely still active?"); a fourth requires a stated one-line reason on record before it is tagged. Neither ever blocks — this is a Soft Suggestion (Section 2.6), not a Hard Default, since reasonable concurrent-work capacity is not identity-independent or checkable the way error handling is.
 
 ### Track B — Correction (`remember` only for session-state; `delegate` for the delegation queue; automatic check every save/write, action only when a real threshold is crossed or explicitly requested, always previewed before applying)
 
-1. **Session Notes — split immediately once a thread settles, not on a word count.** Evaluate each tagged thread independently, on every save: the moment a thread reaches a genuine settled boundary, archive it immediately to `overflow/session-notes/` — do not wait for `session-notes.md` to also cross a size threshold first. A thread with no settled boundary stays live regardless of size. The ~2,000-word figure (provisional, revise once real usage data exists — Section 2.5's Rule 4) is now only a fallback: if the file crosses it while nothing is yet settled, flag it as oversized with no clean cut point and stop, consistent with `linis`'s rule to never act against unsettled work. In the common case this check rarely fires at all — settled threads leave before the file has a chance to grow large from them.
-2. **Completed — archive by phase boundary, not word count** (Core/Standard's `progress.md`/`progress-tracker.md` only; Minimal has no In Progress/Up Next/Blocked split and defers this entirely to `scale`'s own Minimal→Core threshold, same reasoning as the Logbook and the threshold script). The moment `**Current Phase:**` changes, the *previous* phase's `## Completed` entries are now permanently settled — archive them immediately to `overflow/completed/` and add a row to the live file's `## Completed Archive Index` (`Phase | File | Covers`, each a real link). A still-open phase's entries stay live regardless of size — the same "never act against unsettled work" boundary as check 1. The ~2,000-word figure is again only a fallback: if `## Completed` crosses it while the current phase is still open, flag it oversized with no clean cut point and stop. Unlike Session Notes or the Decisions Index, Completed needs no dedicated file of its own — its entries are one-line checkboxes with no per-item depth, so the routing index lives inside `progress.md`/`progress-tracker.md` itself, the same way Session Notes' Overflow Index lives inside `session-notes.md`. The running-total line next to `**Current Phase:**` is never hand-maintained: `scripts/check-banka-thresholds.sh` computes it mechanically — a count of checked `- [x]` items in the live section plus everything already archived to `overflow/completed/` — the same "never trust a self-estimate over the actual count" rule the rest of this section already applies to word counts, applied here to an item count instead.
+1. **Session Notes — split immediately once a thread settles, not on a word count.** On schema-2 pre-migration Core/Standard, retain the existing inline Session Notes rules until migration. Otherwise, evaluate each tagged thread independently, on every save: the moment a thread reaches a genuine settled boundary, archive it immediately to `overflow/session-notes/` — do not wait for `session-notes.md` to also cross a size threshold first. A thread with no settled boundary stays live regardless of size. The ~2,000-word figure (provisional, revise once real usage data exists — Section 2.5's Rule 4) is now only a fallback: if the file crosses it while nothing is yet settled, flag it as oversized with no clean cut point and stop, consistent with `linis`'s rule to never act against unsettled work. In the common case this check rarely fires at all — settled threads leave before the file has a chance to grow large from them.
+2. **Completed — archive by phase boundary, not word count** (Core/Standard's `progress.md`/`progress-tracker.md` only; Minimal has no In Progress/Up Next/Blocked split and defers this entirely to `scale`'s own Minimal→Core threshold, same reasoning as the Logbook and the threshold script). The moment `**Current Phase:**` changes, the *previous* phase's `## Completed` entries are now permanently settled — archive them immediately to `overflow/completed/` and add a row to the live file's `## Completed Archive Index` (`Phase | File | Covers`, each a real link). A still-open phase's entries stay live regardless of size — the same "never act against unsettled work" boundary as check 1. The ~2,000-word figure is again only a fallback: if `## Completed` crosses it while the current phase is still open, flag it oversized with no clean cut point and stop. Unlike Session Notes or the Decisions Index, Completed needs no dedicated file of its own — its entries are one-line checkboxes with no per-item depth, so the routing index lives inside `progress.md`/`progress-tracker.md` itself, the same way Session Notes' Overflow Index lives inside `session-notes.md`. On schema-3 Core/Standard, the running-total line next to `**Current Phase:**` is never hand-maintained: `scripts/check-banka-thresholds.sh` computes it mechanically — a count of checked `- [x]` items in the live section plus everything already archived to `overflow/completed/` — the same "never trust a self-estimate over the actual count" rule the rest of this section already applies to word counts, applied here to an item count instead. Schema-2 pre-migration Core/Standard has no script and self-counts instead.
 3. **Any overflow file ≥ ~2,000 words** (same provisional figure). Start the next sequentially numbered file in the same subfolder (`01-session-notes.md` → `02-session-notes.md`, `01-completed.md` → `02-completed.md`, or the delegation-tickets equivalent). Never split a file's content mid-file.
 4. **Delegation queue's `## Full ticket specs` ≥ ~1,500–2,000 words** (same provisional figure as check 1). Only tickets already moved to `## Completed` (survey-passed) are archive-eligible — an unstarted or in-progress ticket's full spec stays live no matter how long the file gets, the same "never act against unsettled work" boundary as check 1. Archive the oldest completed tickets first, to the next sequentially numbered file in `overflow/delegation-tickets/`. If no ticket is yet in `## Completed`, do not force an archive — flag the section as oversized with no archive-eligible ticket yet, and stop, the same fallback as check 1. Ticket numbers never change when a spec is archived — archiving relocates spec text, it does not renumber, resequence, or otherwise touch the stable append-only numbering `delegate` assigns. Leave the ticket's one-line summary (name, date, outcome) in `## Completed` with a link to the overflow file that holds its full spec.
 
@@ -366,7 +366,7 @@ The script's canonical definition lives here; the copy installed into a project 
 ### Resulting structure
 
 ```
-scripts/check-banka-thresholds.sh   (Core/Standard only — measures, never fixes)
+scripts/check-banka-thresholds.sh   (schema-3 Core/Standard — measures, never fixes)
 context/                              (Standard; Core: core/, same shape)
 ├── progress-tracker.md
 │     Threshold Check    — rollup rows for session-notes.md and
@@ -433,7 +433,7 @@ Standard tier's `code-standards.md` states one set of conventions for the whole 
 
 **Detection.** `charter`, while reading existing code for a Standard-tier feature it's planning, may notice a divergence from `code-standards.md`'s documented default. Evidence, not a guess: a *repeated* pattern across several files in that area, not one stray file. When found, `charter` surfaces it as a normal Step 3 decision — never writes anything itself, per its own Write authority. On confirmation, capturing the convention is one step in the resulting plan, same as any other build step.
 
-**Storage.** An area-local file, distinct from `AGENTS.md` (that name is reserved for root authority — reusing it for a nested file risks a session mistaking it for another root, and complicates the integrity tooling's marker-uniqueness checks). The exact file/folder shape for this is still open — flagged for a dedicated follow-up rather than settled here — but whatever shape it takes, it is discovered the same way: never a new destination a session has to already know to look for.
+**Storage.** Use `context/area-overrides/<area-slug>.md`, with a unique slug per area. Record the repository-relative area path, the convention being overridden, its replacement, and the reason. Link it from `code-standards.md`'s Area overrides table. Existing linked override files keep their paths. Never use a nested `AGENTS.md` for this purpose.
 
 **Discovery.** `code-standards.md` carries one `## Area overrides` table — area path → override file path — populated only once a real override exists, never pre-declared. Any session already reading `code-standards.md`, which every skill that touches code already does, finds the pointer without a change to the shared state-resolution preamble duplicated across the Skills Kit. One home for the fact, minimal edit surface.
 
@@ -528,8 +528,8 @@ Claude Code follows the import to the same root authority that Codex discovers
 directly. This makes each tier one directed chain:
 
 - Minimal: `CLAUDE.md` → `AGENTS.md` (all live state is in the marked block).
-- Core: `CLAUDE.md` → `AGENTS.md` → the seven files in `/core/`.
-- Standard: `CLAUDE.md` → `AGENTS.md` → the twelve files in `/context/`.
+- Core: `CLAUDE.md` → `AGENTS.md` → `/core/` (four files in schema 2; seven in schema 3).
+- Standard: `CLAUDE.md` → `AGENTS.md` → `/context/` (nine files in schema 2; twelve in schema 3).
 
 `IDEA-SCOPE.md` remains an immutable origin record, not another live authority.
 
@@ -670,10 +670,8 @@ interrupted session already decided.
 
 1. Read `core/progress.md` (or `context/progress-tracker.md`) in full. Its
    inline Session Notes and Decisions Made sections are the source for this
-   migration. Other domain files (`architecture.md`, `design.md`, etc.) are
-   not a *source* — nothing pre-existing there needs inspecting — but they
-   may become a *destination*, per step 2, if a non-eligible decision routes
-   to one of them.
+   migration. Read any owning file before planning an edit to it; preserve
+   its existing content and reconcile conflicting facts explicitly.
 2. Determine the destination content: the inline Session Notes section
    becomes `session-notes.md`; each entry in the inline Decisions Made
    section is checked against Section 2.11's eligibility bar individually —
@@ -708,17 +706,15 @@ interrupted session already decided.
    anything. A preview that omits any of these is incomplete; do not proceed
    to confirmation on a partial one.
 5. Obtain explicit confirmation of that preview.
-6. Apply the confirmed transformation, in full: write the three new files,
-   the trimmed `progress.md`, every owning-file edit and Decision Record
-   from step 4's preview, the updated Source of truth list, and any copied
-   script first, and only once all of it is genuinely in place, flip
-   `BANKA:STATE-SCHEMA` from `2` to `3` in the marked `AGENTS.md` block. The
-   marker must never read `3` while any confirmed piece of this write set
-   could still be missing — this sequencing, not any particular tool
-   mechanic, is what makes an interruption safe: it leaves the marker at `2`
-   alongside whatever has already been written, which Section 3.1's
-   interrupted-migration row exists specifically to recognize, letting this
-   same sequence resume from there rather than requiring a rollback.
+6. Write all destination content first: the three new files, every owning-file
+   edit and Decision Record, and any missing scripts. Keep the source sections
+   in `progress.md` intact until every mapped entry and its full rationale
+   has been read back and verified at its destination. Then trim `progress.md`,
+   update the Source of truth list, and flip `BANKA:STATE-SCHEMA` to `3` last.
+   On resume, preserve completed destinations and check the remaining mapping;
+   never overwrite them with empty content from an already-trimmed source.
+   If source content is missing and destination completeness cannot be proved,
+   recover it from version control or ask for the missing source; never infer it.
 7. Re-run the full detection matrix. Migration completes only when the
    project classifies as Active schema 3 and passes the Cold Agent Test.
 
@@ -964,7 +960,7 @@ becomes a Decision Record under `core/decisions/` with a row in
 `core/decisions-index.md`; a single-line settled fact with no real rationale
 goes to whichever owning file it belongs in instead, never into
 `decisions-index.md` directly. `core/verified-index.md` starts empty — Minimal
-has no equivalent to migrate from, since `verify` only runs on Core/Standard.
+has no equivalent to migrate from, since `verify` only runs on schema-3 Core/Standard.
 Carry the project's own content only — never backfill a destination file's
 generic instructional or scaffolding prose, which exists for fresh tier
 generation, not promotion. Replace only the marked Banka block

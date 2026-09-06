@@ -133,7 +133,7 @@ If triggered, perform the promotion:
      `core/decisions-index.md`; a single-line settled fact with no real
      rationale goes to whichever owning file it belongs in instead.
    - `core/verified-index.md` starts empty — Minimal has nothing to migrate
-     into it, since `verify` only runs on Core/Standard.
+     into it, since `verify` only runs on schema-3 Core/Standard.
    - Carry the project's own content only. Never backfill a destination
      file's generic instructional or scaffolding prose (e.g. `design.md`'s
      "how to fill this in" guidance) — that exists for fresh tier

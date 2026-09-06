@@ -5,6 +5,13 @@ set -euo pipefail
 script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 repo_root=$(cd "$script_dir/.." && pwd)
 skills=(charter delegate dredge linis moor remember scale survey watershed verify)
+package_only=false
+if [ "${1:-}" = "--package-only" ] && [ "$#" -eq 1 ]; then
+  package_only=true
+elif [ "$#" -gt 0 ]; then
+  echo "Usage: $0 [--package-only]" >&2
+  exit 1
+fi
 
 fail() {
   echo "ERROR: $1" >&2
@@ -331,7 +338,11 @@ verify_user_skills_dir() {
   done
 }
 
-verify_user_skills_dir "$HOME/.agents/skills"
-verify_user_skills_dir "$HOME/.claude/skills"
+if [ "$package_only" = true ]; then
+  echo "Package-only check: installed user skills were not checked."
+else
+  verify_user_skills_dir "$HOME/.agents/skills"
+  verify_user_skills_dir "$HOME/.claude/skills"
+fi
 
 echo "Banka repository integrity check passed."
