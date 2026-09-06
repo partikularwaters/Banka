@@ -143,7 +143,12 @@ Append one row to `verified-index.md` with these fields:
   copied verbatim from the script's own output (e.g. `` `--check-file
   src/foo.ts` `` or `` `--check-diff core/design.md` ``) — never paraphrased,
   never re-typed from memory, so a future session can re-run the identical
-  check.
+  check. If the script's own output shows mangled or unreadable escape
+  sequences (a non-UTF-8 locale re-quoting a non-ASCII path or command —
+  see `verify-claims.sh`'s own header note), copy it exactly as shown anyway
+  and flag it plainly as unreliable for copy-paste reuse — never silently
+  clean it up into something that looks right, and never treat the mangled
+  text as a sign the underlying check itself failed.
 - **Verdict** — if the script's checks disagree, state the worst case:
   `MISSING` beats `MET`, `BLOCKED` beats a false `MET`, never round up.
 - **Date.**

@@ -12,6 +12,15 @@
 #
 # Never fixes anything, never writes verified-index.md itself — reports
 # MET / MISSING / BLOCKED per check and stops.
+#
+# Reported invocations are re-quoted with `printf '%q'` for exact copy-paste
+# reproducibility. In a non-UTF-8 locale (e.g. LANG unset, "C" locale), %q
+# can mangle non-ASCII bytes in a path or command into unreadable escape
+# sequences. This is a known limitation, not corruption of the check itself
+# — the underlying check still ran correctly; only the reported invocation
+# for a non-ASCII argument may not be reliably copy-pasteable. If this
+# happens, verify should note it plainly rather than treat the mangled text
+# as the real invocation.
 
 set -euo pipefail
 
