@@ -230,6 +230,7 @@ for handoff_file in "$repo_root/skills-kit/delegate/SKILL.md" "$repo_root/full-c
   require_literal 'Files to touch:' "$handoff_file"
   require_literal 'Files not to touch:' "$handoff_file"
   require_literal 'Do not:' "$handoff_file"
+  require_literal 'Verification commands:' "$handoff_file"
   require_literal 'accepted dirty baseline' "$handoff_file"
   require_literal 'coordinator session hands ownership' "$handoff_file"
   require_literal 'Dirty files, one worktree, absence of .git/index.lock, and' "$handoff_file"
@@ -238,6 +239,10 @@ for handoff_file in "$repo_root/skills-kit/delegate/SKILL.md" "$repo_root/full-c
   require_literal 'For one ready ticket' "$handoff_file"
   require_literal 'For zero' "$handoff_file"
 done
+
+require_literal 'Current Phase, Session Memory Bank (including Next Immediate Step)' "$repo_root/skills-kit/scale/SKILL.md"
+require_literal 'no heading or entry in `core/progress.md` may be left without a destination' "$repo_root/skills-kit/scale/SKILL.md"
+require_literal '[PASS / ISSUES FOUND / BLOCKED]' "$repo_root/skills-kit/survey/SKILL.md"
 
 delegate_handoff_file="$integrity_tmp_dir/delegate-handoff.txt"
 template_handoff_file="$integrity_tmp_dir/template-handoff.txt"

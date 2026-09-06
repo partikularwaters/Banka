@@ -10,7 +10,10 @@ Design tokens for [PROJECT NAME]. Colors, typography, spacing, and component val
 
 ## How to fill this file in (read before writing anything below)
 
-This file has no single correct stack. Below are four fully committed, contrasting patterns — pick the one that matches this project's real stack, delete the others, and fill in real values. **Do not write a soft paragraph meant to cover all four** (Fill-In Discipline rule 5) — half-committing to four stacks produces a file that constrains nothing. Commit to one.
+This file has no single correct stack. Below are four fully committed,
+contrasting patterns — pick the one that matches this project's real stack,
+delete the others, and fill in real values. Do not write a soft paragraph meant
+to cover all four; half-committing to four stacks constrains nothing.
 
 If none of the four patterns match this project's actual stack, build one in the same spirit: real syntax, real file location, a real "never do X" invariant — not an abstract placeholder.
 
@@ -177,7 +180,10 @@ Use if the project uses shadcn/ui. This isn't a separate styling system from Pat
 
 **Invariant:** never edit a shadcn component's source file directly to change its look — override the token values in `globals.css` instead, or the next `shadcn` CLI update will conflict with your changes. New colors get added as a background/foreground pair, in both `:root` and `.dark`, then exposed via `@theme inline` — never as a one-off utility class.
 
-**Component selection, not just tokens:** shadcn/ui is a component library as much as a token system — which component to reach for (and whether a proposed one is trustworthy vs. an abandoned package) is exactly what the Design Craft Add-on's `pick-ui-library` skill (Section 7.7 — emilkowalski/skills) is for, if installed. This file governs the tokens those components consume; it doesn't govern which components get used.
+**Component selection, not just tokens:** shadcn/ui is a component library as
+much as a token system. If an external Design Craft Add-on with a
+`pick-ui-library` skill is installed, it governs which component to use. This
+file governs the tokens those components consume, not component selection.
 
 ---
 
@@ -210,7 +216,8 @@ Font: **[YOUR FONT]** — load it once, at the app root. Never fall back to a ba
 
 ## Spacing Scale
 
-Commit to real starting numbers now — revise once real UI exists, per Fill-In Discipline rule 4. Do not leave this as an abstract placeholder.
+Commit to real starting numbers now and revise once real UI exists. Do not leave
+this as an abstract placeholder.
 
 | Token | Value | Usage |
 | ----- | ----- | ----- |
@@ -234,5 +241,7 @@ Fill in using whichever pattern (A/B/C/D) was selected above — same values, ex
 
 - Never hardcode a hex value, RGB value, or magic-number spacing value directly in a component file — always reference the token source.
 - Every new color or spacing value gets added to the token source first, then used — never invented inline "just this once."
-- If this project has the Design Craft Add-on installed (Section 7.7 of the Context Transfer Protocol — emilkowalski/skills), that skill set governs animation timing, easing, and interaction feel. This file governs static values only. Do not let animation-related values (transition durations, easing curves) drift into this file if that skill set is present — it's the authoritative source for that domain.
+- If this project has an external Design Craft Add-on installed, that skill set
+  governs animation timing, easing, and interaction feel. This file governs
+  static values only; do not let animation values drift into it.
 - Building or updating a component's tokens is Junior-safe delegation material (see the `delegate` skill) *only* when it's matching an already-established pattern from `ui-registry.md` — establishing a new token category for the first time is Senior-required, since it sets a precedent every future component will copy.

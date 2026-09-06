@@ -47,19 +47,14 @@ one-line entry plus a link to `overflow/decisions/01-decisions-detail.md`
 (the next sequentially numbered file in that folder, once `01-...` itself
 crosses ~2,000 words), not an inline paragraph.
 
-If this section crosses ~1,500 words, or when a superseded entry above gets
-swept out in full, move the excess into `overflow/decisions/` (creating the
-folder if it doesn't exist yet) and add or update this Overflow Index — one
-shared table covering both decisions and session-notes overflow, added the
-first time either is needed:
-
-## Overflow Index
-| File | Type | Covers |
-| --- | --- | --- |
-| `overflow/decisions/01-decisions-detail.md` | decision detail | [what it covers] |
-
-Each overflow file carries its own short Contents note at its own top,
-naming what it covers, so it can be found without reading it in full.
+Create `overflow/decisions/` when a long rationale needs its own detail file,
+this section crosses ~1,500 words, or a superseded entry is swept out in full.
+When the first overflow file of either type is created, add one shared
+`## Overflow Index` section to this file at the same time. Its table schema is
+`File | Type | Covers`, with one row per decision or session-notes overflow
+file. Do not add the section before an overflow file exists. Each overflow file
+carries its own short Contents note at its top so it can be found without
+reading it in full.
 
 - **[Date]** — [Decision made and why]
 - **[Date]** — [Decision made and why]
@@ -79,8 +74,8 @@ If this section crosses ~2,000 words, archive whichever tagged thread has
 genuinely concluded to `overflow/session-notes/01-session-notes.md` (the
 next sequentially numbered file in that folder, once `01-...` itself
 crosses ~2,000 words) — never force a split against a thread that's still
-open. Add or update the same Overflow Index used by Decisions Made (see
-above), and give the new overflow file its own short Contents note at its
+open. Add or update the shared Overflow Index described under Decisions Made,
+and give the new overflow file its own short Contents note at its
 top, naming the arc it covers.
 
 **[Date]**

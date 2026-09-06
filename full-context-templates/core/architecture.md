@@ -10,7 +10,8 @@
 | `[e.g. Data storage]` | `[e.g. PostgreSQL / local encrypted files / SQLite]` | `[primary data store]` |
 | `[e.g. Access control]` | `[e.g. Clerk / NextAuth / local password+PIN]` | `[how users/sessions are authenticated]` |
 
-Per the Layer Principle (Section 2.6 of the Protocol): stack choice itself is always Agnostic — this table records what was chosen for *this* project, it is not a recommendation the framework is making.
+Stack choice varies by project. This table records what was chosen for *this*
+project; it is not a recommendation the framework is making.
 
 ---
 
@@ -36,7 +37,10 @@ Rules that must never be silently violated, in any session, regardless of which 
 
 ## Conventions
 
-Naming, formatting, syntax. Subject to Section 2.6's Layer Principle: identity-layer choices (styling approach, state management) get contrasted per Fill-In Discipline rule 5, never defaulted. Quality-layer conventions (error handling, comment policy) may be stated as Hard Default — see the Protocol's Section 2.6 registry before writing one in here as settled.
+Naming, formatting, and syntax. Identity-layer choices such as styling and state
+management must match this project's actual stack rather than being defaulted.
+Stack-independent, checkable quality rules such as never swallowing an error may
+be stated as settled requirements.
 
 - `[e.g. Never hardcode a hex color — reference a named constant.]`
 - `[e.g. No TODO comment without a linked ticket reference.]`

@@ -58,10 +58,23 @@ banned_patterns=(
   "matching Protocol"
   "see Protocol §"
   "see protocol/Banka.md"
+  "Protocol §"
+  "Section 7.7"
+  "Section 7.5"
+  "Section 2.6"
+  "Section 2.5"
+  "Fill-In Discipline"
+  "Context Transfer Protocol"
 )
 for pattern in "${banned_patterns[@]}"; do
-  if grep -rl -- "$pattern" "$tmp_dir/skills" >/dev/null 2>&1; then
-    fail "Found unresolvable downstream reference pattern in an installed skill: '$pattern'"
+  if grep -rl -- "$pattern" "$tmp_dir" >/dev/null 2>&1; then
+    fail "Found unresolvable downstream reference pattern in cold-installed content: '$pattern'"
+  fi
+done
+
+for template in "$repo_root/full-context-templates/core/progress.md" "$repo_root/full-context-templates/standard/progress-tracker.md"; do
+  if grep -Fx '## Overflow Index' "$template" >/dev/null 2>&1; then
+    fail "${template#$repo_root/} pre-declares an active Overflow Index before an overflow file exists"
   fi
 done
 

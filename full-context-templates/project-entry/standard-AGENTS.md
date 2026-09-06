@@ -11,8 +11,8 @@ You are acting as a Senior Technical Lead & Project Manager for this project.
 
 ## Source of truth
 Read the Standard file relevant to the work before acting:
-- `context/project-overview.md` — purpose, users, scope, and data model
-- `context/architecture.md` — stack, structure, data flows, and invariants
+- `context/project-overview.md` — purpose, users, scope, and product-level data overview
+- `context/architecture.md` — canonical stack, data model, structure, data flows, and invariants
 - `context/build-plan.md` — phased feature roadmap
 - `context/code-standards.md` — checkable implementation conventions
 - `context/library-docs.md` — project-specific third-party library patterns

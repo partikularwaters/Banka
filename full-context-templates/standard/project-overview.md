@@ -49,7 +49,11 @@
 
 ---
 
-## Data Architecture
+## Data Overview
+
+Keep this as a short product-level summary. The canonical entity fields,
+relationships, storage, and data-flow rules live in `architecture.md`; link to
+the relevant section there instead of repeating them here.
 
 ### [Main Data Entity — e.g. User Profile]
 
@@ -83,7 +87,10 @@
 
 ---
 
-## Tech Stack
+## Tech Stack Summary
+
+Summarize only what helps a reader understand the product. The canonical stack
+table and implementation boundaries live in `architecture.md`.
 
 - **Frontend:** [e.g. Next.js 14, Tailwind CSS]
 - **Backend:** [e.g. Next.js API routes, Node.js]

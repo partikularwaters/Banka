@@ -22,10 +22,9 @@ violation as high severity, per its own Sensitive-data severity rule.
 and the supplied plan/task — survey does not invent invariants the project
 never declared.
 
-**Outputs:** a three-layer review report (Plan alignment / System integrity /
-Production readiness, each PASS or ISSUES FOUND) with a severity-graded issue
-list, and — when warranted — a routing recommendation to `dredge` or
-`watershed`.
+**Outputs:** a three-layer review report with reviewer disclosure, a
+severity-graded issue list, a per-claim production evidence ledger, and — when
+warranted — a routing recommendation to `dredge` or `watershed`.
 
 **Write authority:** none. It does not fix anything itself.
 
@@ -113,10 +112,22 @@ states? Obvious bugs a real user would hit? For every new code path or external
 integration, state one realistic failure scenario and verify whether the user
 can see the failure, the system preserves valid state, and recovery is defined.
 
-**Evidence discipline:** before marking a layer `PASS` or claiming that a risk
-is handled elsewhere, identify the code, test, observed behavior, or declared
-project rule that supports the claim. If the available evidence cannot settle
-it, report it as unverified rather than saying it is probably safe or covered.
+**Production evidence ledger:** for each Layer 3 claim, record exactly one:
+
+- **met** — cite the code, test, or already observed behavior that establishes it;
+- **missing** — state the confirmed defect or gap and cite its evidence; or
+- **blocked** — name the runtime evidence needed when reading alone cannot settle it.
+
+Layer 3 is `PASS` only when every claim is met. It is `ISSUES FOUND` when any
+claim is missing, even if others are blocked. It is `BLOCKED` only when nothing
+is missing and at least one claim is blocked. Never turn unavailable evidence
+into either a pass or a confirmed defect.
+
+**Evidence discipline for Layers 1–2:** before marking a layer `PASS` or
+claiming that a risk is handled elsewhere, identify the code, test, observed
+behavior, or declared project rule that supports the claim. If the available
+evidence cannot settle it, report it as unverified rather than saying it is
+probably safe or covered.
 
 **Sensitive-data severity:** if the resolved architecture file declares a security, encryption, or access-isolation invariant for this project, treat violations of *that specific declared invariant* as high priority findings — never assume a domain (e.g. "this handles sensitive data") that the project's own files didn't actually state.
 
@@ -125,6 +136,8 @@ it, report it as unverified rather than saying it is probably safe or covered.
 ```
 ## Review — [Feature Name]
 
+**Reviewer:** [same model as this build / a different model / unknown — could not verify]
+
 ### Layer 1 — Plan alignment
 [PASS / ISSUES FOUND]
 
@@ -132,11 +145,16 @@ it, report it as unverified rather than saying it is probably safe or covered.
 [PASS / ISSUES FOUND]
 
 ### Layer 3 — Production readiness
-[PASS / ISSUES FOUND]
+[PASS / ISSUES FOUND / BLOCKED]
+- <claim> — met: <cited evidence> | missing: <confirmed gap> | blocked: <what would resolve it>
 
 ### Summary
-[X] issues found across [Y] layers.
+[X] issues found across [Y] layers. [Z claims blocked — omit if none.]
 ```
+
+State reviewer identity on a best-effort basis and never guess. A same-model
+review remains valid, but the developer needs the disclosure when deciding
+whether to seek a second opinion.
 
 Severity guide: **Critical** (architecture violations that break future features, missing error handling causing silent failures, planned functionality entirely missing) — fix before moving on. **Important** (design-system drift, code-standard violations, real edge cases) — fix soon. **Minor** (naming, missed optimizations, cosmetic) — fix when convenient.
 
@@ -148,6 +166,9 @@ A finding is not always the kind of thing this skill should try to resolve by it
 - **Something visibly broken — code runs but produces wrong behavior, or won't run at all** — recommend the dredge skill rather than trying to diagnose the failure mode here; it exists specifically to separate a targeted fix from a hard reset from a genuine rethink.
 - **The implementation is "correct" against the plan, but the plan itself now looks like the wrong approach** — this is Failure Mode 3 territory (see `dredge`'s Rethink path) — say so plainly and point there, rather than approving code that faithfully executes a plan you now doubt.
 - **A genuine judgment call where reasonable engineers would disagree, or the stakes are high enough that one perspective (even a careful one) isn't enough** — recommend the watershed skill for a wider, multi-angle pass instead of rendering a single verdict here.
+- **A Layer 3 claim marked `blocked`** — name the runtime observation or test
+  that would resolve it. It is not a confirmed defect, so do not route it to
+  dredge as though something has already broken.
 
 State the recommendation plainly and why, then stop — do not invoke another skill automatically. The developer decides whether to follow the routing.
 

@@ -120,6 +120,9 @@ is not ready — resolve the value first or reclassify as Senior-required.]
 [Specific, checkable completion condition — not "it works," but e.g. "form
 renders with these 4 fields, save button calls the existing save() handler,
 matches BatchForm.tsx spacing and validation pattern."]
+**Verification commands:**
+[Exact commands the executor must run, or "none — manual verification only"
+with the specific manual check named in Done when.]
 **Do not:**
 [Explicit boundaries — e.g. "do not modify the encryption module," "do not
 add new dependencies without flagging first"]
@@ -143,6 +146,9 @@ resolved during execution. That's expected here, unlike Junior-safe, where an
 open question means the ticket isn't ready.]
 **Done when:**
 [Specific, checkable completion condition.]
+**Verification commands:**
+[Exact commands the executor must run, or "none — manual verification only"
+with the specific manual check named in Done when.]
 **Do not:**
 [Explicit boundaries.]
 **Reason (Senior-required):** [one line — why this can't be Junior-safe]
@@ -281,10 +287,12 @@ Files not to touch: [exact Files not to touch field from Ticket N].
 
 Do not: [exact Do not field from Ticket N].
 
+Verification commands: [exact Verification commands field from Ticket N].
+
 Read Ticket [N]'s full spec in the queue before starting — it carries the
 exact Done when condition this handoff does not repeat.
 
-When finished, run every verification command in Ticket [N] and report:
+When finished, run every verification command above and report:
 1. files changed;
 2. completion against each Done when condition;
 3. verification commands and results;

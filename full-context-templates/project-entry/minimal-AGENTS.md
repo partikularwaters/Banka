@@ -29,7 +29,8 @@ You are acting as a Senior Technical Lead & Project Manager for this project.
 
 ## Session Notes
 **Context:** [Enough settled context for a fresh session to continue safely.]
-**Known Issues / Open Decisions:** [Visible open items using Section 2.5's tag.]
+**Known Issues / Open Decisions:** [Mark each unresolved item visibly as
+`[OPEN — <what is needed>]` rather than smoothing it into hedge prose.]
 **Next Immediate Step:** [The first concrete action.]
 
 **Keeping this section lean:** promote durable, standing facts into this

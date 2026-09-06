@@ -310,7 +310,7 @@ Every durable Banka rule or project fact has exactly one canonical home — the 
 
 This is not a new practice; it is already enforced mechanically. `scripts/check-repo-integrity.sh` verifies each project-entry `AGENTS.md` template is byte-identical to the tier block this protocol defines in Sections 3.3, 4, and 5 — the protocol is canonical, the templates are checked copies, never an independent source. The same script verifies the `delegate` skill's ready-to-paste handoff block is byte-identical to `full-context-templates/delegation-queue.md`'s copy of it, for the same reason.
 
-Where a fact must appear in more than one file for a skill to remain self-contained and portable — each skill's own state-resolution preamble in Section 7's Skills Kit is the clearest case — exact duplication of the load-bearing facts is checked by the repository's integrity tooling rather than left to manual consistency or rewritten into a single shared block. This is a deliberate, checked exception to "one home," not a gap in the principle: skill portability is itself a Banka invariant (Section 7), and a runtime include or generation step would trade one problem for another. Do not deduplicate a self-contained skill's required content merely to reduce line count.
+Where a fact must appear in more than one file for a skill to remain self-contained and portable — each state-resolving skill's own detection preamble in Section 7's Skills Kit is the clearest case — the repository's integrity tooling checks for selected marker literals, tier filenames, and detection phrases. It does not compare complete tier-shape definitions or stop-condition semantics; those still require manual review against Section 3.1. Skill-specific behavior after classification may differ, so these preambles are not byte-identical. This is a deliberate, partially checked exception to "one home": skill portability is itself a Banka invariant (Section 7), and a runtime include or generation step would trade one problem for another.
 
 ---
 
@@ -352,7 +352,7 @@ context/                              (Standard; Core: core/, same shape)
           of swept superseded entries)
 ```
 
-The `overflow/` folder and Overflow Index section are created the first time any threshold above actually fires — never pre-declared empty in a new project's generated files.
+The `overflow/` folder and Overflow Index section are created together the first time any overflow file is needed — whether the write-shape check routes a long rationale there immediately or a size/supersession threshold fires later. Never pre-declare an empty index in a new project's generated files.
 
 Downstream projects never receive this document directly — the compact, self-contained version of these rules lives in each tier's session-state template (its own "Keeping this section lean" note), which `remember` and `moor` read and apply. This section is the canonical full definition, maintained here for anyone editing Banka itself.
 
@@ -531,7 +531,8 @@ You are acting as a Senior Technical Lead & Project Manager for this project.
 
 ## Session Notes
 **Context:** [Enough settled context for a fresh session to continue safely.]
-**Known Issues / Open Decisions:** [Visible open items using Section 2.5's tag.]
+**Known Issues / Open Decisions:** [Mark each unresolved item visibly as
+`[OPEN — <what is needed>]` rather than smoothing it into hedge prose.]
 **Next Immediate Step:** [The first concrete action.]
 
 **Keeping this section lean:** promote durable, standing facts into this
@@ -647,8 +648,8 @@ You are acting as a Senior Technical Lead & Project Manager for this project.
 
 ## Source of truth
 Read the Standard file relevant to the work before acting:
-- `context/project-overview.md` — purpose, users, scope, and data model
-- `context/architecture.md` — stack, structure, data flows, and invariants
+- `context/project-overview.md` — purpose, users, scope, and product-level data overview
+- `context/architecture.md` — canonical stack, data model, structure, data flows, and invariants
 - `context/build-plan.md` — phased feature roadmap
 - `context/code-standards.md` — checkable implementation conventions
 - `context/library-docs.md` — project-specific third-party library patterns
@@ -714,8 +715,9 @@ Triggered when any of:
    UI patterns.
 
 Preview the mapping, then split the four `/core/` files into the nine Standard
-files: `core/overview.md` to `project-overview.md`; `core/architecture.md`
-mostly to `architecture.md`, with conventions to `code-standards.md` and
+files: `core/overview.md`'s purpose, users, scope, and success criteria to
+`project-overview.md`, with its concrete Data Model moving to
+`architecture.md`; `core/architecture.md` mostly to `architecture.md`, with conventions to `code-standards.md` and
 library patterns to `library-docs.md`; `core/design.md` to `ui-tokens.md`,
 `ui-rules.md`, and `ui-registry.md`; `core/progress.md` to `build-plan.md` and
 `progress-tracker.md`. Move the resulting files into `/context/` and remove the
@@ -800,8 +802,8 @@ or register skills.
 
 **Provenance, for clarity:** `charter`, `survey`, `dredge`, `remember`, `moor` are the original five. `scale`, `delegate`, `watershed`, and `linis` are Banka-native additions — `scale` operationalizes Section 6's promotion path as an actual runnable skill, `delegate` supports Section 7.5's Delegation Setup, `watershed` provides multi-perspective critique beyond a single survey, and `linis` ("clean," Filipino) removes narrative residue from settled files while preserving operational history and rationale.
 
-**Every skill that reads project files resolves state with Section 3.1's full
-detection matrix.** The schema-2 marker declares the tier; the filesystem shape
+**Every skill that reads or writes Banka project state resolves state with
+Section 3.1's full detection matrix.** The schema-2 marker declares the tier; the filesystem shape
 must corroborate it. Directory presence alone never selects a tier, and
 `CLAUDE.md` alone is either the exact import shim, a legacy compatibility-read
 source, or a conflict — never schema-2 Minimal state. Skills that can operate

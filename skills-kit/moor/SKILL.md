@@ -110,7 +110,10 @@ entry; do not create a link to a file this skill has no authority to write.
 
 **Extract:** background, border, border color/width, border radius, text color roles, text size/weight, spacing/padding/gap, interactive states (hover/focus/active), shadow, accent usage.
 
-**Do not extract:** width/height, flex/grid layout mechanics, positioning (absolute/relative/z-index), animation/transition timing (that's the Design Craft Add-on's domain if installed — Section 7.7), responsive breakpoint variants (capture the base pattern only).
+**Do not extract:** width/height, flex/grid layout mechanics, positioning
+(absolute/relative/z-index), animation/transition timing (when an external
+Design Craft Add-on is installed, it owns that domain), or responsive
+breakpoint variants (capture the base pattern only).
 
 ## Step 3 — Write the entry
 

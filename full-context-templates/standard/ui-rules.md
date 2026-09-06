@@ -4,7 +4,11 @@
 
 Behavioral and compositional rules for [PROJECT NAME]'s UI — how components are laid out, combined, and how they respond to interaction. This file does not redefine token *values* — those live in `ui-tokens.md`. Every rule here refers to a token by its **role** (`surface`, `text-primary`, `space-4`, etc.), so these rules apply unchanged no matter which Pattern (A/B/C/D) was selected in `ui-tokens.md`.
 
-**This file governs static composition — what's on screen and how it's arranged. Interaction *feel* (hover transitions, animation timing, easing) is governed by the Design Craft Add-on if installed (Section 7.7 — emilkowalski/skills). Where a rule below needs a transition, it states a plain, non-opinionated fallback — replace it with that skill set's guidance if installed, don't run both at once.**
+**This file governs static composition — what's on screen and how it's
+arranged. If an external Design Craft Add-on is installed, it governs
+interaction feel (hover transitions, animation timing, and easing). Where a
+rule below needs a transition, use the plain fallback unless that add-on is
+installed; never run both standards at once.**
 
 ---
 
