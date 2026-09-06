@@ -205,10 +205,12 @@ If the source clone is missing and no version worktree already covers this
 tag, re-clone it fresh before continuing. From that source clone, create
 ~/.banka/versions/<tag>/ with `git worktree add ~/.banka/versions/<tag>
 <tag>` if it doesn't already exist; if it exists, confirm with `git worktree
-list` that it's a valid registered worktree for this tag and reuse it as-is
-(never recreate it) — if the path exists but isn't a valid worktree, stop
-and report the conflict rather than forcing creation over it. Then install
-its Skills Kit: link each of these ten skills-kit/<skill> directories from
+list` that it's a valid registered worktree for this tag AND run `git
+status` inside it to confirm a clean tree with no local modification before
+reusing it as-is (never recreate it) — if either check fails, stop and
+report the conflict rather than forcing creation over it or reusing
+possibly-altered content. Then install its Skills Kit: link each of these
+ten skills-kit/<skill> directories from
 that worktree into ~/.claude/skills/<skill>/: charter, delegate, dredge,
 linis, moor, remember, scale, survey, verify, watershed. If a version
 worktree or symlinks cannot be used, copy from the resolved tag instead;
@@ -243,10 +245,12 @@ If the source clone is missing and no version worktree already covers this
 tag, re-clone it fresh before continuing. From that source clone, create
 ~/.banka/versions/<tag>/ with `git worktree add ~/.banka/versions/<tag>
 <tag>` if it doesn't already exist; if it exists, confirm with `git worktree
-list` that it's a valid registered worktree for this tag and reuse it as-is
-(never recreate it) — if the path exists but isn't a valid worktree, stop
-and report the conflict rather than forcing creation over it. Then install
-its Skills Kit for the current user: link each of these ten skills-kit/<skill>
+list` that it's a valid registered worktree for this tag AND run `git
+status` inside it to confirm a clean tree with no local modification before
+reusing it as-is (never recreate it) — if either check fails, stop and
+report the conflict rather than forcing creation over it or reusing
+possibly-altered content. Then install its Skills Kit for the current user:
+link each of these ten skills-kit/<skill>
 directories from that worktree into ~/.agents/skills/<skill>/: charter,
 delegate, dredge, linis, moor, remember, scale, survey, verify, watershed.
 If a version worktree or symlinks cannot be used, copy from the resolved

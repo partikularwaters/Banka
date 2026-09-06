@@ -72,10 +72,12 @@ three tiers, ordered so every ticket's dependencies appear before it._
 ## Full ticket specs
 _Empty. Populated by the delegate skill._
 
-**On Core/Standard, don't estimate this section's size — measure it:** run
-`bash scripts/check-banka-thresholds.sh` and read its `## Full ticket specs`
-row before deciding whether archiving is warranted (Protocol Section 2.9).
-Minimal has no script installed; self-estimate there as before.
+**On schema-3 Core/Standard, don't estimate this section's size — measure
+it:** run `bash scripts/check-banka-thresholds.sh` and read its `## Full
+ticket specs` row before deciding whether archiving is warranted (Protocol
+Section 2.9). Minimal, and schema-2 pre-migration Core/Standard (which
+predates the script — Protocol Section 3.2), have no script installed;
+self-estimate there as before.
 
 **Keeping this section lean:** an unstarted or in-progress ticket's full spec
 always stays here in full, no matter how long the section gets — never

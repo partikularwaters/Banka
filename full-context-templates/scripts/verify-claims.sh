@@ -56,6 +56,10 @@ diff_touches() {
     echo "MET — uncommitted change touches $path"
     return
   fi
+  if ! git rev-parse --verify -q HEAD~1 >/dev/null 2>&1; then
+    echo "BLOCKED — no HEAD~1 to compare against (first commit, or a shallow checkout missing its parent)"
+    return
+  fi
   if git diff --name-only HEAD~1 -- "$path" 2>/dev/null | grep -q .; then
     local sha
     sha=$(git rev-parse --short HEAD)

@@ -670,8 +670,10 @@ interrupted session already decided.
 
 1. Read `core/progress.md` (or `context/progress-tracker.md`) in full. Its
    inline Session Notes and Decisions Made sections are the source for this
-   migration — nothing else needs inspecting, since Core/Standard's other
-   domain files are untouched by the schema-2/3 split.
+   migration. Other domain files (`architecture.md`, `design.md`, etc.) are
+   not a *source* — nothing pre-existing there needs inspecting — but they
+   may become a *destination*, per step 2, if a non-eligible decision routes
+   to one of them.
 2. Determine the destination content: the inline Session Notes section
    becomes `session-notes.md`; each entry in the inline Decisions Made
    section is checked against Section 2.11's eligibility bar individually —
@@ -681,33 +683,42 @@ interrupted session already decided.
    settled fact with no real rationale goes to whichever owning file it
    belongs in instead, never dropped and never left as a bare
    `decisions-index.md` row with no record behind it — the same treatment
-   `scale`'s Minimal → Core promotion already gives an inline decision.
-   `verified-index.md` starts empty; no prior equivalent exists to migrate
-   from. The now-extracted sections are removed from `progress.md`, which
-   keeps only a rollup pointer to each new file (Section 2.9's "Resulting
-   structure").
+   `scale`'s Minimal → Core promotion already gives an inline decision. Name
+   every such owning-file destination explicitly at this step; it is part of
+   this migration's write set from here on, not an aside. `verified-index.md`
+   starts empty; no prior equivalent exists to migrate from. The now-extracted
+   sections are removed from `progress.md`, which keeps only a rollup pointer
+   to each new file (Section 2.9's "Resulting structure").
 3. Check whether the project's own `scripts/` directory already has
    `check-banka-thresholds.sh` and `verify-claims.sh` — a schema-2
    pre-migration project predates both and will not have them. If either is
    missing, copying it in from `full-context-templates/scripts/` is part of
    this migration's preview and confirmation, not a separate step; schema
    3's Threshold Check blocks and `verify` are non-functional without them.
-4. Preview all three new files in full, the trimmed `progress.md`, the
-   updated `AGENTS.md` Source of truth list (adding the three new files
-   alongside the existing ones, matching Section 4/5's canonical router
-   text), and any script being copied in — showing exactly what moves and
-   what's added, before writing anything.
+   If a file of that name already exists but doesn't match the canonical
+   script (a pre-existing, unrelated file happens to share the name), stop
+   and report the conflict rather than overwriting it silently.
+4. Preview everything step 2 and step 3 identified: all three new files in
+   full, the trimmed `progress.md`, every non-eligible decision's edit to
+   its owning file, every Decision Record (`decision.md` + `rationale.md`)
+   being created for an eligible decision, the updated `AGENTS.md` Source of
+   truth list (adding the three new files alongside the existing ones,
+   matching Section 4/5's canonical router text), and any script being
+   copied in — showing exactly what moves and what's added, before writing
+   anything. A preview that omits any of these is incomplete; do not proceed
+   to confirmation on a partial one.
 5. Obtain explicit confirmation of that preview.
-6. Apply the confirmed transformation: write the three new files, the
-   trimmed `progress.md`, the updated Source of truth list, and any copied
-   script first, and only once they're genuinely in place, flip
+6. Apply the confirmed transformation, in full: write the three new files,
+   the trimmed `progress.md`, every owning-file edit and Decision Record
+   from step 4's preview, the updated Source of truth list, and any copied
+   script first, and only once all of it is genuinely in place, flip
    `BANKA:STATE-SCHEMA` from `2` to `3` in the marked `AGENTS.md` block. The
-   marker must never read `3` while any of the three new files could still
-   be missing — this sequencing, not any particular tool mechanic, is what
-   makes an interruption safe: it leaves the marker at `2` alongside
-   whatever new files already exist, which Section 3.1's interrupted-migration
-   row exists specifically to recognize, letting this same sequence resume
-   from there rather than requiring a rollback.
+   marker must never read `3` while any confirmed piece of this write set
+   could still be missing — this sequencing, not any particular tool
+   mechanic, is what makes an interruption safe: it leaves the marker at `2`
+   alongside whatever has already been written, which Section 3.1's
+   interrupted-migration row exists specifically to recognize, letting this
+   same sequence resume from there rather than requiring a rollback.
 7. Re-run the full detection matrix. Migration completes only when the
    project classifies as Active schema 3 and passes the Cold Agent Test.
 
