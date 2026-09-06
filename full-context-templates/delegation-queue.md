@@ -5,7 +5,7 @@
 This file is empty until the delegate skill is invoked against an approved charter plan. See the `delegate` skill for how tickets get written here.
 
 **Rule for any session reading this file:** resolve queue placement from a valid
-`AGENTS.md` authority (schema 2 or schema 3 — both are active; see Protocol
+`AGENTS.md` authority (any active Banka schema; see Protocol
 Section 3.1) whose comments occur exactly once and in this order:
 
 ```markdown
@@ -70,9 +70,10 @@ _Empty. Populated by the delegate skill — one row per ticket across all
 three tiers, ordered so every ticket's dependencies appear before it._
 
 ## Threshold Check
-_Schema-3 Core/Standard only: copy the queue's row from
+_Where `SPLIT-STATE` is present only: copy the queue's row from
 `bash scripts/check-banka-thresholds.sh` after each append or archive.
-Minimal and schema-2 pre-migration Core/Standard self-estimate instead._
+Where `SPLIT-STATE` is absent (Minimal, or Core/Standard before migration)
+self-estimate instead._
 
 _Last run: [date]._
 
@@ -83,12 +84,11 @@ _Last run: [date]._
 ## Full ticket specs
 _Empty. Populated by the delegate skill._
 
-**On schema-3 Core/Standard, don't estimate this section's size — measure
+**Where `SPLIT-STATE` is present, don't estimate this section's size — measure
 it:** run `bash scripts/check-banka-thresholds.sh` and read its `## Full
 ticket specs` row before deciding whether archiving is warranted (Protocol
-Section 2.9). Minimal, and schema-2 pre-migration Core/Standard (which
-predates the script — Protocol Section 3.2), have no script installed;
-self-estimate there as before.
+Section 2.9). Where `SPLIT-STATE` is absent (no script installed — Protocol
+Section 3.2), self-estimate there as before.
 
 **Keeping this section lean:** an unstarted or in-progress ticket's full spec
 always stays here in full, no matter how long the section gets — never
