@@ -234,6 +234,7 @@ it; several rows are already enforced by `scripts/check-repo-integrity.sh`.
 | Framework concept | Inspect when changed |
 | --- | --- |
 | State schema markers | `protocol/Banka.md` §3, all three project-entry templates, every skill's state-resolution block, the integrity script's marker/count checks |
+| `SPLIT-STATE` capability | `protocol/Banka.md` §3.1 (definition), §2.9/§2.11 (operating rules), every state-writing skill's operating steps, `full-context-templates/delegation-queue.md`, `scripts/check-schema-containment.sh` (enforces schema numbers stay out of operating text) |
 | Tier shape and required files | `protocol/Banka.md` §3–§5, project-entry templates, `full-context-templates/core/` and `/standard/`, `scale`, every skill's tier-shape description, the integrity script's required-file checks |
 | Skill roster | `protocol/Banka.md` §7, `README.md`'s skill table, this file's Stage 3, the integrity script's skills list |
 | Delegation handoff block | `delegate/SKILL.md`, `full-context-templates/delegation-queue.md`, the integrity script's byte-identical check |

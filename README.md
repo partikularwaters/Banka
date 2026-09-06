@@ -267,7 +267,12 @@ Invoke skills with `$skill-name`, for example `$charter` or `$remember restore`.
 Run `scripts/check-repo-integrity.sh` from the cloned checkout to verify every
 canonical `SKILL.md` file and name, confirm repository-local Banka
 duplicates have not been reintroduced, check the generated Banka block
-markers, and scan for known obsolete terminology.
+markers, and scan for known obsolete terminology. Run
+`scripts/check-schema-containment.sh` alongside it: it fails if a state-schema
+number leaks into a skill's operating steps or the protocol's operating
+sections, which must branch on the derived `SPLIT-STATE` capability (Section
+3.1) instead — schema numbers belong only in detection (§3.1) and migration
+(§3.2). Pass `--report` to list findings without failing.
 
 The Banka source repository is not itself a Banka-enabled application project:
 it intentionally has no project-state `AGENTS.md`, `CLAUDE.md`, `/core/`, or
@@ -427,6 +432,7 @@ Banka/
 ├── CHANGELOG.md                   # retrospective milestones and release notes
 ├── scripts/check-repo-integrity.sh # repository-local packaging smoke check
 ├── scripts/check-cold-downstream.sh # simulates a cold install, catches downstream-unreachable references
+├── scripts/check-schema-containment.sh # fails if a schema number leaks into skill/operating text (SPLIT-STATE guard)
 ├── system-map.md                  # one-doc orientation, start here
 ├── skills-kit/                    # the Skills — install once, use everywhere
 │   └── {charter,delegate,dredge,linis,moor,remember,scale,survey,watershed,verify}/SKILL.md

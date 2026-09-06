@@ -22,10 +22,10 @@
 # protocol/Banka.md, for a human to confirm it is a detection / migration /
 # file-count / promotion use.
 #
-# Default: report-only, exit 0 (use during the refactor). With --enforce, a
-# strict-zone hit exits 1 (use once the refactor is complete, in CI).
+# Default: enforcing — any strict-zone hit exits 1, like check-repo-integrity.sh.
+# Pass --report to print the same findings but always exit 0 (for exploration).
 #
-# Scans only the surfaces above. README.md, system-map.md, docs/, and scripts/
+# Scans only the surfaces above. README.md, system-map.md, dev/, and scripts/
 # legitimately discuss the schema and are never scanned — this script's own
 # mention of the tokens therefore never self-trips.
 
@@ -35,13 +35,14 @@ script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 repo_root=$(cd "$script_dir/.." && pwd)
 cd "$repo_root"
 
-enforce=0
+enforce=1
 case "${1:-}" in
   --enforce) enforce=1 ;;
+  --report|--report-only) enforce=0 ;;
   -h|--help)
-    echo "Usage: check-schema-containment.sh [--enforce]"
-    echo "  (default) report-only, exit 0"
-    echo "  --enforce  strict-zone violations exit 1"
+    echo "Usage: check-schema-containment.sh [--report]"
+    echo "  (default)  strict-zone violations exit 1 (enforcing)"
+    echo "  --report   print findings but always exit 0"
     exit 0 ;;
   "") ;;
   *) echo "Unknown flag: $1" >&2; exit 1 ;;
@@ -164,6 +165,6 @@ if [ "${#strict[@]}" -gt 0 ]; then
     echo "      mention into §3.1 detection / §3.2 migration." >&2
     exit 1
   fi
-  echo "(report-only; re-run with --enforce to fail on these)"
+  echo "(--report mode; a bare run would exit 1 on these)"
 fi
 exit 0
