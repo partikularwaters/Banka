@@ -582,6 +582,33 @@ nine files (schema 2) or its twelve files from Section 5 (schema 3). Unrelated
 project prose outside the marked `AGENTS.md` block is preserved and is not
 competing Banka state. A second Banka block is a conflict, not an extension.
 
+**The `SPLIT-STATE` capability.** Detection above yields one derived
+capability that the operating sections (2.9, 2.11) and every state-resolving
+skill branch on, so that the schema *number* itself never has to appear in an
+operating instruction. It is **derived, never stored** — computed from the
+classification a skill has already made here, not from a new on-disk marker:
+
+- `SPLIT-STATE` **present** — Active schema 3 Core/Standard. Session state is
+  the day-one three-file split (`progress.md`/`progress-tracker.md`,
+  `session-notes.md`, `decisions-index.md`), durable decisions go to the
+  Logbook (Section 2.11), `verified-index.md` exists, and
+  `scripts/check-banka-thresholds.sh` / `verify-claims.sh` are installed.
+- `SPLIT-STATE` **absent** — Minimal, **or** Active schema 2 Core/Standard
+  (pre-migration shape). Session state is inline — Minimal in the Banka-owned
+  `AGENTS.md` block, schema-2 Core/Standard in `progress.md`/`progress-tracker.md` —
+  with no Logbook, no `verified-index.md`, and no threshold/verify scripts.
+  A skill treats the absent destinations exactly as it already does for
+  Minimal; schema-2 Core/Standard is not a third behavior to describe, only a
+  second way to reach the `absent` branch.
+
+Because the distinction is captured once here, an operating instruction says
+"on `SPLIT-STATE` present … otherwise …" and never names a schema number.
+Schema numbers are legitimate only in this detection contract (3.1) and the
+migration sequence (3.2), where a project's shape is identified or changed — a
+skill's own "Resolve Banka state first" preamble mirrors 3.1 and may name them
+for that reason; its operating steps may not. `scripts/check-schema-containment.sh`
+enforces this boundary mechanically.
+
 A legacy `CLAUDE.md` authority is recognizable only when it contains the
 `# Project Operating Protocol` heading and has exactly one complete legacy
 shape: neither state directory for Minimal, `/core/` with all four Core files
