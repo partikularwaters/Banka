@@ -1,4 +1,4 @@
-# Banka 2.0.1
+# Banka 2.0.2
 **Scoping-to-Agent Handoff Protocol**
 
 > **TO THE AI AGENT READING THIS:**

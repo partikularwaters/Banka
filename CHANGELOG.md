@@ -1,5 +1,26 @@
 # Changelog
 
+## 2.0.2 — 2026-09-07
+
+**Compatibility impact:** Patch. Documentation only — no skill, template, tier,
+runtime, or workflow behavior changes.
+**Required consumer action:** none. Installed skills are byte-identical to
+2.0.1; updating is optional and picks up only documentation corrections.
+**Project-state migration:** none. Existing Minimal, Core, and Standard project
+state remains valid.
+**State-schema impact:** none — state schema stays 2.
+
+- Closes the unterminated code fence in `BANKA-ADOPTION-GUIDE.md` so sections 1–6
+  render as headings rather than one preformatted block.
+- Clarifies Docking's role consistently across `README.md`, protocol §0.2,
+  `system-map.md`, and the adoption guide: ASMP is an optional scoping method,
+  Docking is a conditional brownfield adoption dependency the agent retrieves
+  and applies when readiness evidence is missing, with an explicit
+  pause-and-report path when it cannot be retrieved; no permanent installation
+  is required.
+- Simplifies protocol §1's skill reference to the Skills Kit as a whole rather
+  than naming only the original five.
+
 ## 2.0.1 — 2026-09-06
 
 **Compatibility impact:** Patch. New Skills Kit installs copy complete skill
