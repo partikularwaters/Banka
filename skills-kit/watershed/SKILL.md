@@ -77,7 +77,7 @@ legacy `CLAUDE.md` for legacy Minimal. For an unstructured repository, use the
 supplied subject and relevant repository documentation, state that no Banka
 state was found, and do not invent project-specific invariants.
 
-## Step 2 — Run five independent audits
+## Step 2 — Run five isolated audits
 
 Check whether this environment has a subagent- or parallel-task-dispatch tool available (something that can spawn a separate model call and return its result, distinct from just continuing this session). If one exists, use it: dispatch all five perspectives below as separate calls, run in parallel, each given the subject and context files read in Step 1 plus that perspective's paragraph verbatim as its entire instruction. Wait for all five to return before Step 3. Dispatching them one at a time and calling it parallel doesn't count — if the tool can't actually run them concurrently, that's the fallback path below, not this one.
 

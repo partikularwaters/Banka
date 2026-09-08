@@ -137,8 +137,10 @@ exists): Session Notes crossing ~2,000 words — evaluate each tagged thread
 independently, archive only a thread with a genuine settled boundary to
 `overflow/session-notes/`, never force a split against one that's still
 open; an overflow file itself crossing ~2,000 words — start the next
-sequentially numbered file in the same subfolder; the Decisions section
-crossing ~1,500 words — recommend a dedicated decisions file. Always
+sequentially numbered file in the same subfolder; the Decisions section plus
+`overflow/decisions/` crossing ~1,500 words — recommend a dedicated decisions
+file. Count the swept detail too: supersession sweeps drain the section
+independently of size, so the section alone can stay small forever. Always
 preview these corrective actions before applying them, and act on them only
 when a real threshold is crossed or explicitly requested. This restriction
 does not delay the write-shape rule above. Each overflow file gets its own

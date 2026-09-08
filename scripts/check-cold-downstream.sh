@@ -38,6 +38,8 @@ done
 # full-context-templates/ directory itself.
 mkdir -p "$tmp_dir/project-minimal" "$tmp_dir/project-core/core" "$tmp_dir/project-standard/context"
 cp "$repo_root/full-context-templates/project-entry/minimal-AGENTS.md" "$tmp_dir/project-minimal/AGENTS.md"
+cp "$repo_root/full-context-templates/project-entry/core-AGENTS.md" "$tmp_dir/project-core/AGENTS.md"
+cp "$repo_root/full-context-templates/project-entry/standard-AGENTS.md" "$tmp_dir/project-standard/AGENTS.md"
 cp "$repo_root/full-context-templates/core/"*.md "$tmp_dir/project-core/core/"
 cp "$repo_root/full-context-templates/standard/"*.md "$tmp_dir/project-standard/context/"
 

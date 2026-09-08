@@ -16,18 +16,11 @@ structure is the primary reliability benefit. It can also reduce unnecessary
 context because future sessions have fewer ambiguous places to search, but
 that is a consequence—not a promise of universal token efficiency.
 
-**Release:** Banka 2.0.2. This release version identifies the Banka package;
-the separate state schema identifies the on-disk project format. Banka 2.0.2
+**Release:** Banka 2.0.3. This release version identifies the Banka package;
+the separate state schema identifies the on-disk project format. Banka 2.0.3
 uses state schema 2. See [VERSION](VERSION) and [CHANGELOG.md](CHANGELOG.md).
 
 **New here?** Jump straight to [Getting started](#getting-started) to begin.
-
-> **Coming soon:** Banka 3.0.0. The `scalability-improvements` branch adds a
-> 10th skill (`verify`, mechanical claim verification), splits Core/Standard
-> session state into smaller per-concern files, and adds overflow archiving so
-> long-running projects stay lean. `main` reflects the latest stable release;
-> if you're reading this from that branch, expect protocol and skill changes
-> not yet folded into a numbered release.
 
 ## Why "Banka" 🛶
 
@@ -173,7 +166,7 @@ discovery location and used across every Banka project regardless of tier:
 | `delegate` | Splits an approved plan into Junior-safe tickets, Senior-required work (current session or fresh-session handoff, decided per ticket), and Owner-required work only the project owner can do. Model choice remains explicit and user-controlled. |
 | `survey` | Checks a build against what was planned, the project's own declared rules, and production-readiness — then routes real findings to the right next skill. |
 | `dredge` | Diagnoses a build failure before responding to it — including when it can't be reproduced at all — targeted fix, hard reset, or genuine rethink are different problems. |
-| `watershed` | Runs a genuinely contested or high-stakes call through five independent perspectives, then consolidates one recommendation. |
+| `watershed` | Runs a genuinely contested or high-stakes call through five isolated perspectives, then consolidates one recommendation. |
 | `moor` | Captures a UI pattern or engineering outcome once it's settled — registry and invariant captures wait for survey to pass first — so the next session builds on it instead of drifting. |
 | `remember` | Saves session state on close, restores it on open — always checking disk/git reality first, and keeping the session-state file itself from bloating as it grows. |
 | `scale` | Promotes a project exactly one tier at a time, Minimal → Core → Standard, only when a real threshold is met. |

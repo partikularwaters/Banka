@@ -50,10 +50,12 @@ adoption       already established?
                          |
                          v
                    Banka operation
+```
 
 A brownfield project may reveal inadequate scope during Docking.
 If that happens:
 
+```
 Docking
    |
    v
