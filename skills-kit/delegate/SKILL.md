@@ -17,10 +17,9 @@ and security/compliance boundaries when classifying each item's tier.
 
 **Conditional:** the existing delegation queue, when it already has
 unstarted or in-progress tickets — read before appending, never silently
-overwritten · where `SPLIT-STATE` is present, `scripts/check-banka-thresholds.sh`,
+overwritten · on Core/Standard, `scripts/check-banka-thresholds.sh`,
 consulted before archiving and re-run after appending any ticket (Protocol
-Section 2.9); where `SPLIT-STATE` is absent the script is not present
-(Section 3.2) and the count is self-estimated instead, same as Minimal.
+Section 2.9); Minimal self-estimates without a script.
 
 **Excluded by default:** anything outside the approved plan's scope — this
 skill splits an already-approved plan, it does not re-plan.
@@ -41,47 +40,50 @@ describe.
 
 Before reading or writing project state, inspect `AGENTS.md`, the complete
 contents of `CLAUDE.md`, `/core/`, `/context/`, and the required tier files.
-An active schema requires one complete Banka block in `AGENTS.md` containing
-these exact comments exactly once and in this order: `<!-- BANKA:START -->`,
-`<!-- BANKA:STATE-SCHEMA: 2 -->` or `<!-- BANKA:STATE-SCHEMA: 3 -->`, exactly
-one of `<!-- BANKA:TIER: Minimal -->`, `<!-- BANKA:TIER: Core -->`, or
-`<!-- BANKA:TIER: Standard -->`, then `<!-- BANKA:END -->`. The declared tier
-must match the filesystem shape required for that schema number. `CLAUDE.md`
-must be exactly `@AGENTS.md`; if it is missing, the active schema is still
-active for a runtime that discovers `AGENTS.md` directly, but report that
-Claude Code compatibility is unavailable.
+A valid Banka block contains these comments exactly once, in order:
+`<!-- BANKA:START -->`, `<!-- BANKA:STATE-SCHEMA: 2 -->` or
+`<!-- BANKA:STATE-SCHEMA: 3 -->`, exactly one `<!-- BANKA:TIER: Minimal -->`,
+`<!-- BANKA:TIER: Core -->`, or `<!-- BANKA:TIER: Standard -->`, then
+`<!-- BANKA:END -->`. This Skills Kit operates schema 3 only.
 
-A matching Minimal shape has neither `/core/` nor `/context/`, identical under
-either schema number. Core has `/core/` with no `/context/`: schema 2 requires
-exactly `overview.md`, `architecture.md`, `design.md`, and `progress.md`;
-schema 3 additionally requires `session-notes.md`, `decisions-index.md`, and
-`verified-index.md`. Standard has `/context/` with no `/core/`: schema 2
-requires exactly `project-overview.md`, `architecture.md`, `build-plan.md`,
-`code-standards.md`, `library-docs.md`, `ui-tokens.md`, `ui-rules.md`,
-`ui-registry.md`, and `progress-tracker.md`; schema 3 additionally requires
-`session-notes.md`, `decisions-index.md`, and `verified-index.md`. Schema-2
-Core/Standard is a fully active, permanent classification, not a transitional
-one — nothing requires migrating to schema 3.
+Minimal has neither `/core/` nor `/context/`. Core has `/core/` only:
+`overview.md`, `architecture.md`, `design.md`, `progress.md`,
+`session-notes.md`, `decisions-index.md`, and `verified-index.md`.
+Standard has `/context/` only: `project-overview.md`, `architecture.md`,
+`build-plan.md`, `code-standards.md`, `library-docs.md`, `ui-tokens.md`,
+`ui-rules.md`, `ui-registry.md`, `progress-tracker.md`, `session-notes.md`,
+`decisions-index.md`, and `verified-index.md`.
 
-Stop state-dependent work for competing authority, malformed/partial/duplicate
-or unknown Banka markers, a non-exact `CLAUDE.md` beside an active schema, an
-exact shim with missing authority, both state directories, tier mismatch, or
-missing required tier files for the declared schema. A schema-2 Core/Standard
-project already showing one or more of schema 3's three additional files is
-mid-migration, not broken — stop and point to resuming or reverting the
-migration (Protocol Section 3.2), never treat it as ordinary incomplete state
-and never invent or discard content. Do not choose, repair, or normalize any
-of these states.
+Schema 2 has the same Minimal shape, or Core/Standard's original four/nine
+files without `session-notes.md`, `decisions-index.md`, or `verified-index.md`.
+If any of those three files exists with marker `2`, stop for interrupted
+migration: resume Protocol Section 3.2 directly or restore from version
+control. Do not route an interrupted migration to ordinary schema-2 skills.
+For valid schema 2 at any tier, stop before this skill's operating steps and
+use the refusal below. Schema 2 remains supported by its own release line;
+never add files or change its marker merely to run this skill.
 
-Without a valid schema-2 or schema-3 block, recognize legacy Banka state only
-when `CLAUDE.md` has the `# Project Operating Protocol` heading and exactly
-one complete legacy tier shape, with or without an old AGENTS block pointing
-to it. Legacy's Core/Standard shape coincides with schema 2's own file count,
-but the two are distinguished by the marker, not the file count — check for a
-valid schema block first. If neither an active schema nor recognizable legacy
-state exists, treat the repository as unstructured/non-Banka — never assume
-Minimal, never create Banka state
+Stop for malformed, partial, duplicate, or unknown markers, tier/file-shape
+mismatch, both state directories, missing required files, or competing
+root authority. `CLAUDE.md`, when present, must be exactly `@AGENTS.md`.
+A missing shim only disables Claude Code compatibility; it does not bypass
+schema-2 refusal for runtimes that discover `AGENTS.md` directly.
+Do not repair, merge, or normalize these states implicitly.
+
+Without a valid schema block, recognize legacy state only from a
+`CLAUDE.md` with `# Project Operating Protocol` and one complete original
+tier shape. Legacy is compatibility-read-only until explicit migration.
+An exact shim without valid `AGENTS.md` is broken authority, not legacy.
+Without active or recognizable legacy state, treat the repository as
+unstructured/non-Banka — never assume Minimal or create Banka state
 implicitly.
+
+**Schema-2 refusal:** This skill requires schema 3. Use `/delegate-s2` (Claude Code) or `$delegate-s2` (Codex).
+If unavailable, install the suffixed copies from the latest stable release
+that explicitly supports schema 2. Alternatively, ask directly to migrate
+using `protocol/Banka.md` Section 3.2 from a release supporting schema 3,
+with a full preview and confirmation. Migration is a protocol task, not a
+skill invocation; neither path runs automatically.
 
 delegate writes, so legacy state is stricter than the shared default: it may
 be inspected, but delegate must not create or change a queue until an
@@ -246,7 +248,7 @@ AI-execution fields that don't apply to the owner.]
 
 **Ticket numbers are append-only.** Never renumber or reuse a number already used in this file — not across separate delegate runs, and not when a merge collapses two candidates into one. A stable number is what lets a session-opening handoff point at "Ticket N" unambiguously; a number that can shift meaning defeats that.
 
-**Full ticket specs archiving.** Before appending, where `SPLIT-STATE` is present, run `scripts/check-banka-thresholds.sh` and read its `## Full ticket specs` row — never estimate by eye. Where `SPLIT-STATE` is absent, self-estimate instead. If the measured or estimated count has crossed ~1,500–2,000 words, archive the oldest tickets already listed in `## Completed` (survey-passed) to the next sequentially numbered file in `overflow/delegation-tickets/` (creating the folder if it doesn't exist yet) — never an unstarted or in-progress ticket's spec, no matter how long the section gets. If no ticket is yet in `## Completed`, do not force an archive — flag the section as oversized with no archive-eligible ticket yet, and stop. Archiving relocates the full spec text only; it never renumbers, resequences, or otherwise touches the stable ticket number. Leave the archived ticket's one-line summary in `## Completed` with a real link (never a vague description) to the overflow file now holding its full spec, and add or update the queue's own `## Overflow Index` (file, ticket numbers covered, date archived) the first time this fires, each row a real link. Before archiving, search the queue and session-state for anything else linking to the ticket's old in-file location and update it in the same operation — reference integrity, not move-and-hope. Give the new overflow file its own short Contents note at its top, naming the ticket numbers it covers. Always preview this action before applying it, same as any other action on a real threshold. Where `SPLIT-STATE` is present, re-run the script after appending or archiving and copy the queue's row into its `## Threshold Check` block.
+**Full ticket specs archiving.** Before appending, on Core/Standard, run `scripts/check-banka-thresholds.sh` and read its `## Full ticket specs` row — never estimate by eye. On Minimal, self-estimate instead. If the measured or estimated count has crossed ~1,500–2,000 words, archive the oldest tickets already listed in `## Completed` (survey-passed) to the next sequentially numbered file in `overflow/delegation-tickets/` (creating the folder if it doesn't exist yet) — never an unstarted or in-progress ticket's spec, no matter how long the section gets. If no ticket is yet in `## Completed`, do not force an archive — flag the section as oversized with no archive-eligible ticket yet, and stop. Archiving relocates the full spec text only; it never renumbers, resequences, or otherwise touches the stable ticket number. Leave the archived ticket's one-line summary in `## Completed` with a real link (never a vague description) to the overflow file now holding its full spec, and add or update the queue's own `## Overflow Index` (file, ticket numbers covered, date archived) the first time this fires, each row a real link. Before archiving, search the queue and session-state for anything else linking to the ticket's old in-file location and update it in the same operation — reference integrity, not move-and-hope. Give the new overflow file its own short Contents note at its top, naming the ticket numbers it covers. Always preview this action before applying it, same as any other action on a real threshold. On Core/Standard, re-run the script after appending or archiving and copy the queue's row into its `## Threshold Check` block.
 
 For a merged ticket, the one-line spec summary in the checklist below must name both folded-in behaviors, not just the more prominent one — that line is often the only thing a future skim reads without opening the full spec.
 

@@ -28,7 +28,7 @@ never declared.
 alignment / System integrity, each PASS or ISSUES FOUND, then Production
 readiness, PASS / ISSUES FOUND / BLOCKED with a per-claim evidence ledger)
 with a severity-graded issue list, and — when warranted — a routing
-recommendation to `dredge`, `watershed`, or `verify` (where `SPLIT-STATE` is present only,
+recommendation to `dredge`, `watershed`, or `verify` (on Core/Standard only,
 for a `blocked` claim needing real evidence to resolve).
 
 **Write authority:** none. It does not fix anything itself.
@@ -37,47 +37,50 @@ for a `blocked` claim needing real evidence to resolve).
 
 Before reading or writing project state, inspect `AGENTS.md`, the complete
 contents of `CLAUDE.md`, `/core/`, `/context/`, and the required tier files.
-An active schema requires one complete Banka block in `AGENTS.md` containing
-these exact comments exactly once and in this order: `<!-- BANKA:START -->`,
-`<!-- BANKA:STATE-SCHEMA: 2 -->` or `<!-- BANKA:STATE-SCHEMA: 3 -->`, exactly
-one of `<!-- BANKA:TIER: Minimal -->`, `<!-- BANKA:TIER: Core -->`, or
-`<!-- BANKA:TIER: Standard -->`, then `<!-- BANKA:END -->`. The declared tier
-must match the filesystem shape required for that schema number. `CLAUDE.md`
-must be exactly `@AGENTS.md`; if it is missing, the active schema is still
-active for a runtime that discovers `AGENTS.md` directly, but report that
-Claude Code compatibility is unavailable.
+A valid Banka block contains these comments exactly once, in order:
+`<!-- BANKA:START -->`, `<!-- BANKA:STATE-SCHEMA: 2 -->` or
+`<!-- BANKA:STATE-SCHEMA: 3 -->`, exactly one `<!-- BANKA:TIER: Minimal -->`,
+`<!-- BANKA:TIER: Core -->`, or `<!-- BANKA:TIER: Standard -->`, then
+`<!-- BANKA:END -->`. This Skills Kit operates schema 3 only.
 
-A matching Minimal shape has neither `/core/` nor `/context/`, identical under
-either schema number. Core has `/core/` with no `/context/`: schema 2 requires
-exactly `overview.md`, `architecture.md`, `design.md`, and `progress.md`;
-schema 3 additionally requires `session-notes.md`, `decisions-index.md`, and
-`verified-index.md`. Standard has `/context/` with no `/core/`: schema 2
-requires exactly `project-overview.md`, `architecture.md`, `build-plan.md`,
-`code-standards.md`, `library-docs.md`, `ui-tokens.md`, `ui-rules.md`,
-`ui-registry.md`, and `progress-tracker.md`; schema 3 additionally requires
-`session-notes.md`, `decisions-index.md`, and `verified-index.md`. Schema-2
-Core/Standard is a fully active, permanent classification, not a transitional
-one — nothing requires migrating to schema 3.
+Minimal has neither `/core/` nor `/context/`. Core has `/core/` only:
+`overview.md`, `architecture.md`, `design.md`, `progress.md`,
+`session-notes.md`, `decisions-index.md`, and `verified-index.md`.
+Standard has `/context/` only: `project-overview.md`, `architecture.md`,
+`build-plan.md`, `code-standards.md`, `library-docs.md`, `ui-tokens.md`,
+`ui-rules.md`, `ui-registry.md`, `progress-tracker.md`, `session-notes.md`,
+`decisions-index.md`, and `verified-index.md`.
 
-Stop state-dependent work for competing authority, malformed/partial/duplicate
-or unknown Banka markers, a non-exact `CLAUDE.md` beside an active schema, an
-exact shim with missing authority, both state directories, tier mismatch, or
-missing required tier files for the declared schema. A schema-2 Core/Standard
-project already showing one or more of schema 3's three additional files is
-mid-migration, not broken — stop and point to resuming or reverting the
-migration (Protocol Section 3.2), never treat it as ordinary incomplete state
-and never invent or discard content. Do not choose, repair, or normalize any
-of these states.
+Schema 2 has the same Minimal shape, or Core/Standard's original four/nine
+files without `session-notes.md`, `decisions-index.md`, or `verified-index.md`.
+If any of those three files exists with marker `2`, stop for interrupted
+migration: resume Protocol Section 3.2 directly or restore from version
+control. Do not route an interrupted migration to ordinary schema-2 skills.
+For valid schema 2 at any tier, stop before this skill's operating steps and
+use the refusal below. Schema 2 remains supported by its own release line;
+never add files or change its marker merely to run this skill.
 
-Without a valid schema-2 or schema-3 block, recognize legacy Banka state only
-when `CLAUDE.md` has the `# Project Operating Protocol` heading and exactly
-one complete legacy tier shape, with or without an old AGENTS block pointing
-to it. Legacy's Core/Standard shape coincides with schema 2's own file count,
-but the two are distinguished by the marker, not the file count — check for a
-valid schema block first. If neither an active schema nor recognizable legacy
-state exists, treat the repository as unstructured/non-Banka — never assume
-Minimal, never create Banka state
+Stop for malformed, partial, duplicate, or unknown markers, tier/file-shape
+mismatch, both state directories, missing required files, or competing
+root authority. `CLAUDE.md`, when present, must be exactly `@AGENTS.md`.
+A missing shim only disables Claude Code compatibility; it does not bypass
+schema-2 refusal for runtimes that discover `AGENTS.md` directly.
+Do not repair, merge, or normalize these states implicitly.
+
+Without a valid schema block, recognize legacy state only from a
+`CLAUDE.md` with `# Project Operating Protocol` and one complete original
+tier shape. Legacy is compatibility-read-only until explicit migration.
+An exact shim without valid `AGENTS.md` is broken authority, not legacy.
+Without active or recognizable legacy state, treat the repository as
+unstructured/non-Banka — never assume Minimal or create Banka state
 implicitly.
+
+**Schema-2 refusal:** This skill requires schema 3. Use `/survey-s2` (Claude Code) or `$survey-s2` (Codex).
+If unavailable, install the suffixed copies from the latest stable release
+that explicitly supports schema 2. Alternatively, ask directly to migrate
+using `protocol/Banka.md` Section 3.2 from a release supporting schema 3,
+with a full preview and confirmation. Migration is a protocol task, not a
+skill invocation; neither path runs automatically.
 
 survey never writes, so the shared default (report the classification, read
 the chain when safe, never change Banka state) already matches survey's own
@@ -147,10 +150,10 @@ never asserted bare:
   or bug); state what's wrong.
 - **blocked** — the available evidence cannot settle it either way (no
   test exercises the path, no observed behavior on record, and reading the
-  code alone can't prove runtime behavior). Where `SPLIT-STATE` is present, route it to
+  code alone can't prove runtime behavior). On Core/Standard, route it to
   `verify` — it resolves what it can from real evidence (a project's own
   run/test command, if one exists) and writes a durable record either way;
-  where `SPLIT-STATE` is absent, name what would resolve it directly and re-run this layer
+  on Minimal, name what would resolve it directly and re-run this layer
   once it's available. Never mark a claim `met` because it "looks right in
   the code" alone.
 
@@ -207,7 +210,7 @@ A finding is not always the kind of thing this skill should try to resolve by it
 - **Something visibly broken — code runs but produces wrong behavior, or won't run at all** — recommend the dredge skill rather than trying to diagnose the failure mode here; it exists specifically to separate a targeted fix from a hard reset from a genuine rethink.
 - **The implementation is "correct" against the plan, but the plan itself now looks like the wrong approach** — this is Failure Mode 3 territory (see `dredge`'s Rethink path) — say so plainly and point there, rather than approving code that faithfully executes a plan you now doubt.
 - **A genuine judgment call where reasonable engineers would disagree, or the stakes are high enough that one perspective (even a careful one) isn't enough** — recommend the watershed skill for a wider, multi-angle pass instead of rendering a single verdict here.
-- **A Layer 3 claim marked `blocked`** — not a finding of brokenness, so it doesn't route to `dredge` or `watershed` either. Where `SPLIT-STATE` is present, recommend `verify` — it resolves what real evidence can settle and writes a durable record either way. Where `SPLIT-STATE` is absent, name what would resolve it (runtime evidence this skill can't gather itself) and let the developer decide whether to gather it now or accept the gap.
+- **A Layer 3 claim marked `blocked`** — not a finding of brokenness, so it doesn't route to `dredge` or `watershed` either. On Core/Standard, recommend `verify` — it resolves what real evidence can settle and writes a durable record either way. On Minimal, name what would resolve it (runtime evidence this skill can't gather itself) and let the developer decide whether to gather it now or accept the gap.
 
 State the recommendation plainly and why, then stop — do not invoke another skill automatically. The developer decides whether to follow the routing.
 

@@ -267,12 +267,7 @@ Invoke skills with `$skill-name`, for example `$charter` or `$remember restore`.
 Run `scripts/check-repo-integrity.sh` from the cloned checkout to verify every
 canonical `SKILL.md` file and name, confirm repository-local Banka
 duplicates have not been reintroduced, check the generated Banka block
-markers, and scan for known obsolete terminology. Run
-`scripts/check-schema-containment.sh` alongside it: it fails if a state-schema
-number leaks into a skill's operating steps or the protocol's operating
-sections, which must branch on the derived `SPLIT-STATE` capability (Section
-3.1) instead — schema numbers belong only in detection (§3.1) and migration
-(§3.2). Pass `--report` to list findings without failing.
+markers, and scan for known obsolete terminology.
 
 The Banka source repository is not itself a Banka-enabled application project:
 it intentionally has no project-state `AGENTS.md`, `CLAUDE.md`, `/core/`, or
@@ -414,7 +409,7 @@ This is what Banka generates *inside a project you build* — not this repo's ow
 | Artifact | Path | Written by |
 | --- | --- | --- |
 | `IDEA-SCOPE.md` | project root | Section 1.5 — permanent record of original scope, never edited afterward |
-| `AGENTS.md` | project root | Sections 3/4/5 — the canonical, runtime-neutral Banka source of truth. Its one marked schema-2 block declares the tier and routes to any tier files. |
+| `AGENTS.md` | project root | Sections 3/4/5 — the canonical, runtime-neutral Banka source of truth. Its one marked schema-3 block declares the tier and routes to any tier files. |
 | `CLAUDE.md` | project root | Claude Code compatibility import only: exactly `@AGENTS.md` plus a newline. It contains no separate project state. |
 | Core files — see `full-context-templates/core/` for the current list | `/core/` | Core-tier generation; restructured by `scale` on promotion |
 | Standard files — see `full-context-templates/standard/` for the current list | `/context/` | Standard-tier generation; restructured by `scale` on promotion |
@@ -426,17 +421,24 @@ This is what Banka generates *inside a project you build* — not this repo's ow
 
 ### Current state and migration
 
-For technical readers, `AGENTS.md` is the source of truth in every active
-schema-2 Banka project. Its marked block contains `BANKA:START`,
-`BANKA:STATE-SCHEMA: 2`, the declared tier, and `BANKA:END`. Minimal keeps live
-state in that block; Core routes to `/core/`; Standard routes to `/context/`.
-Claude Code follows the exact one-line `CLAUDE.md` import to the same state.
+This branch's Skills Kit operates schema 3 only, including Minimal. Valid
+schema-2 projects remain supported by their own release line: use the matching
+`-s2` command (for example `/remember-s2 restore` or `$remember-s2 restore`).
+There is no `verify-s2`; use `survey-s2` and gather evidence directly.
+If needed, install the suffixed generation using the procedure above.
 
-Older CLAUDE-first Banka projects remain readable for compatible read-only
-work. Banka never silently converts them. Migration requires an explicit
-request, a preview of the file-by-file result, confirmation, and a final check
-that one matching schema-2 structure remains. The complete detection matrix
-and migration sequence are in [protocol/Banka.md](protocol/Banka.md#section-3-runtime-authority-and-minimal-state).
+To migrate, ask a fresh session directly to follow Section 3.2 of
+`protocol/Banka.md` from a stable tag explicitly supporting schema 3, with a
+full preview and confirmation before writing. This does not invoke a skill.
+Select tags by declared schema support, not package major version. If no
+compatible release exists, stop rather than using a development branch.
+Minimal needs only a confirmed marker change; Core/Standard migrate their
+state files and install the scripts. Interrupted migrations must be resumed
+or reverted before either generation operates.
+
+`AGENTS.md` remains the root authority; `CLAUDE.md` is exactly `@AGENTS.md`.
+Legacy CLAUDE-first state is compatibility-read-only until explicit migration.
+See the [detection and migration contract](protocol/Banka.md#section-3-runtime-authority-and-minimal-state).
 
 ## This repo's own structure
 
@@ -447,7 +449,6 @@ Banka/
 ├── CHANGELOG.md                   # retrospective milestones and release notes
 ├── scripts/check-repo-integrity.sh # repository-local packaging smoke check
 ├── scripts/check-cold-downstream.sh # simulates a cold install, catches downstream-unreachable references
-├── scripts/check-schema-containment.sh # fails if a schema number leaks into skill/operating text (SPLIT-STATE guard)
 ├── system-map.md                  # one-doc orientation, start here
 ├── skills-kit/                    # the Skills — install once, use everywhere
 │   └── {charter,delegate,dredge,linis,moor,remember,scale,survey,watershed,verify}/SKILL.md

@@ -60,6 +60,14 @@ If the fix doesn't work: stop. Don't suggest another fix immediately — the roo
 
 ## Step 3B — Hard Reset
 
+Before a Banka restore handoff, inspect its root authority. For schema 2,
+stop and use `/dredge-s2` or `$dredge-s2` (then `remember-s2 restore`),
+installed from a stable release explicitly supporting schema 2. Alternatively,
+request direct migration via `protocol/Banka.md` Section 3.2 from a release
+supporting schema 3, with preview and confirmation. Interrupted migration or
+conflicting authority must be resolved first; never route it to ordinary skills.
+Without Banka state, this diagnosis remains state-independent.
+
 Acknowledge plainly this isn't a failure, it's the correct response to a polluted context. Extract what's worth keeping (original feature intent, what's actually correct so far, what's been learned about what doesn't work) into a reset note. Instruct: save the note, end this session, start fresh, invoke the remember skill in restore mode if Banka state exists, and approach again with the reset note as context. Do not continue in this session.
 
 ## Step 3C — Rethink

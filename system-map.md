@@ -234,7 +234,6 @@ it; several rows are already enforced by `scripts/check-repo-integrity.sh`.
 | Framework concept | Inspect when changed |
 | --- | --- |
 | State schema markers | `protocol/Banka.md` §3, all three project-entry templates, every skill's state-resolution block, the integrity script's marker/count checks |
-| `SPLIT-STATE` capability | `protocol/Banka.md` §3.1 (definition), §2.9/§2.11 (operating rules), every state-writing skill's operating steps, `full-context-templates/delegation-queue.md`, `scripts/check-schema-containment.sh` (enforces schema numbers stay out of operating text) |
 | Tier shape and required files | `protocol/Banka.md` §3–§5, project-entry templates, `full-context-templates/core/` and `/standard/`, `scale`, every skill's tier-shape description, the integrity script's required-file checks |
 | Skill roster | `protocol/Banka.md` §7, `README.md`'s skill table, this file's Stage 3, the integrity script's skills list |
 | Delegation handoff block | `delegate/SKILL.md`, `full-context-templates/delegation-queue.md`, the integrity script's byte-identical check |
@@ -244,6 +243,7 @@ it; several rows are already enforced by `scripts/check-repo-integrity.sh`.
 | Release version | `protocol/Banka.md`'s title line, `README.md`, `CHANGELOG.md`, `VERSION`, the integrity script's version checks |
 | Existing-project release update | `protocol/Banka.md` §7's update procedure, `README.md`'s install/adopt/update prompts, `BANKA-ADOPTION-GUIDE.md` §6, release compatibility/action/schema notes in `CHANGELOG.md`, annotated release tags, the integrity script's update-path checks |
 | Session-state and delegation-queue bloat mechanism | `protocol/Banka.md` §2.9, `remember`/`moor`/`delegate` SKILL.md, `charter`'s Outcome Owner check, `scale`'s disambiguation note, the tier's `overflow/` folder shape, `full-context-templates/delegation-queue.md`'s own note |
+| Schema refusal and migration | `protocol/Banka.md` §3.1/§3.2, each skill's refusal, `README.md` dual-generation install, `full-context-templates/delegation-queue.md` |
 | Claim verification (`verify`) | `protocol/Banka.md` §4/§5 (`verified-index.md`), §7 (roster/provenance), `verify/SKILL.md`, `survey`'s Layer 3 routing, `moor`'s promotion check, the integrity script's skills list |
 | CONTRIBUTING.md adoption-time generation | `protocol/Banka.md` §8, `full-context-templates/project-entry/CONTRIBUTING.md`, the integrity script's project-entry template checks |
 | Downstream self-containment | `scripts/check-cold-downstream.sh`, any skill or template that could reference protocol-only content |

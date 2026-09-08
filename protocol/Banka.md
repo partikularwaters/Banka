@@ -316,7 +316,7 @@ Each skill's own state-resolution preamble in Section 7's Skills Kit is this pri
 
 ## SECTION 2.9: SESSION-STATE AND DELEGATION-QUEUE BLOAT PREVENTION AND CORRECTION
 
-A project's session-state destination is an ever-appending log with no built-in bound. Sustained development will eventually bloat it. Where `SPLIT-STATE` is present (Section 3.1), task-tracking (`core/progress.md` / `context/progress-tracker.md`), thread-tagged narrative (`core/session-notes.md` / `context/session-notes.md`), and the Logbook routing table (`core/decisions-index.md` / `context/decisions-index.md`) are three separate files from day one — Section 4/5's file split, not an earned or conditional promotion — so each accumulates and is checked independently. Where `SPLIT-STATE` is absent, session state stays inline in a single destination with none of that split — the Banka-owned `AGENTS.md` block on Minimal, `progress.md`/`progress-tracker.md` on Core/Standard — until Section 3.2's migration establishes the split for a Core/Standard project. The fix has two tracks: prevent what can be prevented at write time, correct what still accumulates on a real threshold.
+A project's session state grows with use. Minimal keeps it inline in the Banka-owned `AGENTS.md` block. Core/Standard use separate task-tracking, `session-notes.md`, and `decisions-index.md` files from day one (Sections 4/5). Check each independently. These operating rules apply only after Section 3.1 accepts the project for this Skills Kit.
 
 The tier-resolved `delegation-queue.md` (root for Minimal/Core, `context/delegation-queue.md` for Standard) has the same shape of problem for a different reason: `delegate` appends tickets with stable, never-reused numbers, and completed tickets accumulate in the queue's `## Completed` section indefinitely. Track B extends to it below, using the same overflow mechanism, not a second one.
 
@@ -325,24 +325,24 @@ The tier-resolved `delegation-queue.md` (root for Minimal/Core, `context/delegat
 ### Track A — Prevention (write-time: every `remember` save, and at initial tier-generation for a brownfield project; `moor` applies checks 1 and 3 only)
 
 1. **Promotion check.** Before logging a decision, ask whether it is a durable, standing fact — an architecture choice, an invariant, a convention, a library pattern. Put settled facts in their owning files. Store decisions and rationale under Section 2.11's schema-specific rules; `moor` captures only its permitted owning-file facts, never Decision Records. Applies at initial generation too: a brownfield project's captured context should be sorted into owning files at adoption time, not dumped wholesale into the initial session-state log.
-2. **Supersession check** (`remember` only). For Logbook Decision Records (`SPLIT-STATE` present), follow Section 2.11's supersession rules. For inline decisions (`SPLIT-STATE` absent), mark the earlier entry `[SUPERSEDED — see <new decision>]` in place. Never leave a reversed decision silently orphaned — a cold session reading it as current is worse than the section being long.
-3. **Write-shape check.** `remember` stores eligible decisions and rationale under Section 2.11's rules: the Logbook where `SPLIT-STATE` is present, inline where it is absent. `moor` writes only a one-line owning-file summary and routes fuller rationale to `remember`.
+2. **Supersession check** (`remember` only). For Logbook Decision Records (Core/Standard), follow Section 2.11's supersession rules. For inline decisions (Minimal), mark the earlier entry `[SUPERSEDED — see <new decision>]` in place. Never leave a reversed decision silently orphaned — a cold session reading it as current is worse than the section being long.
+3. **Write-shape check.** `remember` stores eligible decisions and rationale under Section 2.11's rules: the Logbook on Core/Standard, inline on Minimal. `moor` writes only a one-line owning-file summary and routes fuller rationale to `remember`.
 4. **Thread-tagging check** (`remember` only). Session Notes entries are tagged by the distinct line of work they belong to (a sub-heading is enough), never written as one flat, interleaved narrative — genuinely concurrent threads must be separable later without reconstruction. A third concurrently open thread gets a soft prompt ("worth a check — all three genuinely still active?"); a fourth requires a stated one-line reason on record before it is tagged. Neither ever blocks — this is a Soft Suggestion (Section 2.6), not a Hard Default, since reasonable concurrent-work capacity is not identity-independent or checkable the way error handling is.
 
 ### Track B — Correction (`remember` only for session-state; `delegate` for the delegation queue; automatic check every save/write, action only when a real threshold is crossed or explicitly requested, always previewed before applying)
 
-1. **Session Notes — split immediately once a thread settles, not on a word count.** Where `SPLIT-STATE` is absent, session notes stay inline (Minimal in the `AGENTS.md` block, Core/Standard in `progress.md`/`progress-tracker.md`) and retain those inline rules until a migration establishes the split. Where `SPLIT-STATE` is present, evaluate each tagged thread independently, on every save: the moment a thread reaches a genuine settled boundary, archive it immediately to `overflow/session-notes/` — do not wait for `session-notes.md` to also cross a size threshold first. A thread with no settled boundary stays live regardless of size. The ~2,000-word figure (provisional, revise once real usage data exists — Section 2.5's Rule 4) is now only a fallback: if the file crosses it while nothing is yet settled, flag it as oversized with no clean cut point and stop, consistent with `linis`'s rule to never act against unsettled work. In the common case this check rarely fires at all — settled threads leave before the file has a chance to grow large from them.
-2. **Completed — archive by phase boundary, not word count** (Core/Standard's `progress.md`/`progress-tracker.md` only; Minimal has no In Progress/Up Next/Blocked split and defers this entirely to `scale`'s own Minimal→Core threshold, same reasoning as the Logbook and the threshold script). The moment `**Current Phase:**` changes, the *previous* phase's `## Completed` entries are now permanently settled — archive them immediately to `overflow/completed/` and add a row to the live file's `## Completed Archive Index` (`Phase | File | Covers`, each a real link). A still-open phase's entries stay live regardless of size — the same "never act against unsettled work" boundary as check 1. The ~2,000-word figure is again only a fallback: if `## Completed` crosses it while the current phase is still open, flag it oversized with no clean cut point and stop. Unlike Session Notes or the Decisions Index, Completed needs no dedicated file of its own — its entries are one-line checkboxes with no per-item depth, so the routing index lives inside `progress.md`/`progress-tracker.md` itself, the same way Session Notes' Overflow Index lives inside `session-notes.md`. Where `SPLIT-STATE` is present, the running-total line next to `**Current Phase:**` is never hand-maintained: `scripts/check-banka-thresholds.sh` computes it mechanically — a count of checked `- [x]` items in the live section plus everything already archived to `overflow/completed/` — the same "never trust a self-estimate over the actual count" rule the rest of this section already applies to word counts, applied here to an item count instead. Where `SPLIT-STATE` is absent, there is no script and the count is self-estimated instead.
+1. **Session Notes — split immediately once a thread settles, not on a word count.** Minimal keeps Session Notes inline and uses `scale` when its tier threshold is met. On Core/Standard, evaluate each tagged `session-notes.md` thread on every save: the moment a thread reaches a genuine settled boundary, archive it immediately to `overflow/session-notes/` — do not wait for `session-notes.md` to also cross a size threshold first. A thread with no settled boundary stays live regardless of size. The ~2,000-word figure (provisional, revise once real usage data exists — Section 2.5's Rule 4) is now only a fallback: if the file crosses it while nothing is yet settled, flag it as oversized with no clean cut point and stop, consistent with `linis`'s rule to never act against unsettled work. In the common case this check rarely fires at all — settled threads leave before the file has a chance to grow large from them.
+2. **Completed — archive by phase boundary, not word count** (Core/Standard's `progress.md`/`progress-tracker.md` only; Minimal has no In Progress/Up Next/Blocked split and defers this entirely to `scale`'s own Minimal→Core threshold, same reasoning as the Logbook and the threshold script). The moment `**Current Phase:**` changes, the *previous* phase's `## Completed` entries are now permanently settled — archive them immediately to `overflow/completed/` and add a row to the live file's `## Completed Archive Index` (`Phase | File | Covers`, each a real link). A still-open phase's entries stay live regardless of size — the same "never act against unsettled work" boundary as check 1. The ~2,000-word figure is again only a fallback: if `## Completed` crosses it while the current phase is still open, flag it oversized with no clean cut point and stop. Unlike Session Notes or the Decisions Index, Completed needs no dedicated file of its own — its entries are one-line checkboxes with no per-item depth, so the routing index lives inside `progress.md`/`progress-tracker.md` itself, the same way Session Notes' Overflow Index lives inside `session-notes.md`. The running-total line next to `**Current Phase:**` is never hand-maintained: `scripts/check-banka-thresholds.sh` computes it mechanically — a count of checked `- [x]` items in the live section plus everything already archived to `overflow/completed/` — the same "never trust a self-estimate over the actual count" rule the rest of this section already applies to word counts, applied here to an item count instead.
 3. **Any overflow file ≥ ~2,000 words** (same provisional figure). Start the next sequentially numbered file in the same subfolder (`01-session-notes.md` → `02-session-notes.md`, `01-completed.md` → `02-completed.md`, or the delegation-tickets equivalent). Never split a file's content mid-file.
 4. **Delegation queue's `## Full ticket specs` ≥ ~1,500–2,000 words** (same provisional figure as check 1). Only tickets already moved to `## Completed` (survey-passed) are archive-eligible — an unstarted or in-progress ticket's full spec stays live no matter how long the file gets, the same "never act against unsettled work" boundary as check 1. Archive the oldest completed tickets first, to the next sequentially numbered file in `overflow/delegation-tickets/`. If no ticket is yet in `## Completed`, do not force an archive — flag the section as oversized with no archive-eligible ticket yet, and stop, the same fallback as check 1. Ticket numbers never change when a spec is archived — archiving relocates spec text, it does not renumber, resequence, or otherwise touch the stable append-only numbering `delegate` assigns. Leave the ticket's one-line summary (name, date, outcome) in `## Completed` with a link to the overflow file that holds its full spec.
 
-**Decisions no longer accumulate here where `SPLIT-STATE` is present.** The former check 3 (a "Decisions section ≥ ~1,500 words" correction) is retired for that shape: those projects write durable decisions to the Logbook now (Section 2.11), not inline in session-state, so the section this check corrected no longer receives new content to correct there. Where `SPLIT-STATE` is absent, a project still logs decisions inline exactly as before — the retired check's original word-count correction still applies to its `progress.md`/`progress-tracker.md` Decisions Made section until a migration establishes the Logbook. `overflow/decisions/` below is legacy-only — a project that already has one from before this change keeps it untouched (no retroactive migration), but a project with `SPLIT-STATE` present, newly generated or newly promoted or migrated, never creates one.
+**Decisions live in the Logbook on Core/Standard.** The former inline Decisions Made size check is retired. Minimal keeps inline decisions. Existing `overflow/decisions/` archives remain readable; new Core/Standard decisions never create them.
 
 **Links, not paths — a Hard Default.** Every pointer this section produces (an archived entry's summary, an Overflow Index row, a Decisions Index row, a superseded record's replacement) is a real markdown link (`[text](path.md)`) to the exact target, never a vague prose description ("see the earlier thread about X"). This is what makes reference integrity (below) mechanically reliable — a link that's always written the same exact way is always findable by search; one written inconsistently isn't.
 
 **Reference integrity.** Before any of Track B's three archiving/superseding operations actually moves or retires a file — a Session Notes thread, an overflow file being superseded by the next numbered one, a ticket's full spec, or a Decision Record being marked Superseded (Section 2.11) — search this project's own Banka-generated files (session-state, `delegation-queue.md`, `decisions/`) for every link pointing at the exact path about to change, and update each one in the same operation, never move-and-hope. This is fully mechanical for Banka's own artifacts: nothing outside a project is ever expected to hardcode a path into them, so unlike a general-purpose reference-integrity check, there is no external-consumer case to ask a human about — the in-project search is the whole check.
 
-**Mechanical verification.** Every Track B check above is a threshold judgment, and a prose instruction asking a session to notice when a section has grown too long is not reliable on its own — nothing about writing one more entry naturally prompts stepping back to total a whole section's word count, and there is no confirmed evidence this class of check has ever fired autonomously without something external prompting it. The fix is to stop trusting an LLM's self-estimate for the *measurement* itself: projects with `SPLIT-STATE` present install `scripts/check-banka-thresholds.sh` (installed at tier generation, `scale` promotion, and Section 3.2's migration for a project that predates it; Minimal is excluded, same reasoning as the Logbook — outgrowing "no extra files" is itself the promotion signal). It counts words per tracked section against these provisional thresholds, plus a checked-item count for Completed's running total (Track B check 2), and prints a report — it never archives, splits, or fixes anything itself, only measures. Critically, it runs independent of any AI session: a developer can invoke it directly from a terminal, or wire it into a git hook, so the measurement no longer depends on any session remembering to take it.
+**Mechanical verification.** Every Track B check above is a threshold judgment, and a prose instruction asking a session to notice when a section has grown too long is not reliable on its own — nothing about writing one more entry naturally prompts stepping back to total a whole section's word count, and there is no confirmed evidence this class of check has ever fired autonomously without something external prompting it. The fix is to stop trusting an LLM's self-estimate for the *measurement* itself: Core/Standard projects install `scripts/check-banka-thresholds.sh` (installed at tier generation, `scale` promotion, and Section 3.2's migration for a project that predates it; Minimal is excluded, same reasoning as the Logbook — outgrowing "no extra files" is itself the promotion signal). It counts words per tracked section against these provisional thresholds, plus a checked-item count for Completed's running total (Track B check 2), and prints a report — it never archives, splits, or fixes anything itself, only measures. Critically, it runs independent of any AI session: a developer can invoke it directly from a terminal, or wire it into a git hook, so the measurement no longer depends on any session remembering to take it.
 
 Each file it covers carries its own `## Threshold Check` block, reporting only that file's own count — never one global table naming every tracked file, so the shape survives a future split unchanged. `progress.md`/`progress-tracker.md` no longer holds Session Notes or Decisions Index content itself (Section 4/5's file split put each in its own file, checked independently); it instead carries a rollup row for each, so a session reading only the task-tracking file never loses visibility into the other two. Completed, unlike those two, was never split into its own file (Track B check 2 above), so its row is a direct in-file section count, not a rollup:
 
@@ -366,7 +366,7 @@ The script's canonical definition lives here; the copy installed into a project 
 ### Resulting structure
 
 ```
-scripts/check-banka-thresholds.sh   (SPLIT-STATE present — measures, never fixes)
+scripts/check-banka-thresholds.sh   (Core/Standard — measures, never fixes)
 context/                              (Standard; Core: core/, same shape)
 ├── progress-tracker.md
 │     Threshold Check    — rollup rows for session-notes.md and
@@ -443,7 +443,7 @@ Downstream projects never receive this document directly — the compact, self-c
 
 ---
 
-## SECTION 2.11: THE LOGBOOK — DURABLE DECISION RECORDS (`SPLIT-STATE` present only)
+## SECTION 2.11: THE LOGBOOK — DURABLE DECISION RECORDS (Core and Standard only)
 
 Section 2.9 keeps session-state from bloating by compressing what accumulates there past a threshold. That's the right correction for session narrative, but it's the wrong one for *why a durable decision was made* — compressing rationale to a one-line pointer means the actual reasoning is effectively lost the moment it's swept, recoverable only by opening an overflow file most sessions never think to check. The Logbook exists so a project's decision rationale is never subject to that tradeoff: permanent from the moment it's written, discoverable through a short index, never compressed.
 
@@ -453,7 +453,7 @@ Section 2.9 keeps session-state from bloating by compressing what accumulates th
 
 **Eligibility.** Reuses Section 2.9 Track A rule 1's existing promotion check, unchanged — no new threshold invented: is this a durable, standing fact? If yes, and it's the kind of decision that carries real reasoning worth preserving (the kind that today would be logged with its rationale, not a single-line settled fact that belongs directly in an owning file), it's Logbook-eligible.
 
-**Tier scope.** `SPLIT-STATE` present only. Where `SPLIT-STATE` is absent, no Logbook exists yet and this section is untouched: Minimal has no state folder by design (Section 2.9's own reasoning, applied identically here) and keeps logging decisions inline in the Banka-owned `AGENTS.md` block exactly as before, and a Core/Standard project before migration keeps a durable decision as a plain entry in `progress.md`/`progress-tracker.md`'s inline Decisions Made section until Section 3.2's migration establishes the Logbook.
+**Tier scope.** Core and Standard only. Minimal keeps decisions inline in its Banka-owned `AGENTS.md` block and has no Logbook.
 
 **Structure.** One folder, `decisions/` (`core/decisions/` for Core, `context/decisions/` for Standard). Each decision is its own numbered subdirectory, append-only, reusing `delegation-queue.md`'s `NNNN` numbering convention — never renumbered, never reused:
 
@@ -481,9 +481,9 @@ The split is a genuine loading boundary, not just a readability convention: a se
 
 **Discovery.** `decisions-index.md` (`core/decisions-index.md` for Core, `context/decisions-index.md` for Standard) carries a `## Decisions Index` table — ID, title, status, one-line summary, each row's title a real link to that record's `decision.md` — replacing the old freeform Decisions Made section. Populated only once a real Decision Record exists, never pre-declared. This is the routing table; the records themselves are never duplicated into it. `progress.md`/`progress-tracker.md` carries a rollup row pointing at it instead of the table itself (Section 2.9's "Resulting structure"). Once the Decisions Index itself crosses ~2,000 words (Section 2.9's provisional overflow figure, reused here — rows don't go stale the way narrative does, so this paginates rather than archiving anything out of view): start `overflow/decisions-index/01-decisions-index.md` (next: `02-decisions-index.md`, sequentially numbered, same convention as every other overflow file), add a link to it from the live table, and continue new rows there. Distinct from `overflow/decisions/`, which is legacy-only (pre-Logbook Decisions Made overflow) — `overflow/decisions-index/` never holds anything but paginated Decisions Index rows.
 
-**Who writes.** `remember` gains write authority to the Logbook (where `SPLIT-STATE` is present) for an in-session decision that clears the eligibility bar during a save — it writes the Decision Record directly and adds the Decisions Index row. `charter` does not gain write authority — a Step 3 decision the developer confirms becomes a step in the resulting plan's *How to build it* (create the Decision Record, add the index row), executed once building begins, same as any other implementation step. `charter`'s Context Contract stays "Write authority: none." Where `SPLIT-STATE` is absent, both skills log the same decision as a plain inline entry instead — never by inventing `decisions/` or `decisions-index.md` on a project without the split, which would misclassify it as an interrupted migration under Section 3.1.
+**Who writes.** `remember` gains write authority to the Logbook (Core/Standard) for an in-session decision that clears the eligibility bar during a save — it writes the Decision Record directly and adds the Decisions Index row. `charter` does not gain write authority — a Step 3 decision the developer confirms becomes a step in the resulting plan's *How to build it* (create the Decision Record, add the index row), executed once building begins, same as any other implementation step. `charter`'s Context Contract stays "Write authority: none." Minimal decisions stay inline; `charter` only plans the write.
 
-**No retroactive migration.** This governs decisions going forward only. An already-generated project's existing Decisions Made content, and any `overflow/decisions/` it already has, stay exactly as they are (Section 2.9's own note) — a project without the split starts using the Logbook only once Section 3.2's explicit, previewed, confirmed migration actually runs, never automatically "once regenerated or promoted."
+**No retroactive migration.** Existing decision archives are preserved. Detection never authorizes migration; Section 3.2 governs any change of state schema.
 
 Downstream projects never receive this document directly — the compact, self-contained version of this mechanism lives in `charter`'s and `remember`'s own SKILL.md, and in the Core/Standard session-state templates' own Decisions Index note. This section is the canonical full definition, maintained here for anyone editing Banka itself.
 
@@ -559,10 +559,10 @@ succeeded.
 
 | Observed state | Classification and required behavior |
 | --- | --- |
-| Valid schema-2 block, Core/Standard shape matches exactly the original four/nine files (none of schema 3's three additional files present), tier matches, `CLAUDE.md` exactly `@AGENTS.md` (Minimal has no separate schema-2 shape distinction — see below) | Active schema 2 (pre-migration shape). Fully active, not degraded or transitional — read and write through the declared authority chain indefinitely. `moor` and `verify` treat the absent Logbook/verified-index destinations the same way they already do for Minimal. Section 3.2 offers an optional, explicit migration to schema 3; nothing requires taking it. |
+| Valid schema-2 block with matching Minimal shape or original Core/Standard four/nine-file shape, and an exact or missing shim | Supported by the schema-2 release line, but refused by this Skills Kit. Stop ordinary reads/writes and offer the two routes below. A missing shim additionally disables Claude Code compatibility. |
 | Valid schema-3 block, its tier matches the filesystem shape, all required files for that tier exist, and `CLAUDE.md` is exactly `@AGENTS.md` | Active schema 3. Read and write only through the declared authority chain. |
 | Schema marker still `2`, but one or more of schema 3's three additional files (`session-notes.md`, `decisions-index.md`, `verified-index.md` or their Standard equivalents) already exist alongside the original four/nine | Interrupted schema-2→3 migration. Stop; do not treat as broken and do not invent or discard content — resume the Section 3.2 migration sequence from its confirmed preview, or restore from version control to roll back cleanly. This row is checked before the general incomplete-state row below. |
-| Valid schema-2 or schema-3 `AGENTS.md`, its tier matches the filesystem shape, all required files for that schema exist, but `CLAUDE.md` is missing | Active for runtimes that discover `AGENTS.md` directly. Codex-capable reads and writes operate normally. Report only that Claude Code compatibility is unavailable until the exact shim is added. |
+| Valid schema-3 `AGENTS.md`, its tier matches the filesystem shape, all required files exist, but `CLAUDE.md` is missing | Active for runtimes that discover `AGENTS.md` directly. Codex-capable reads and writes operate normally. Report only that Claude Code compatibility is unavailable until the exact shim is added. |
 | Valid schema-2 or schema-3 `AGENTS.md`, but `CLAUDE.md` exists with any content other than the exact shim (including an empty file) | Competing or broken root integration. Stop; do not choose, merge, overwrite, or write state until an explicitly requested reconciliation is previewed and confirmed. |
 | No valid schema-2 or schema-3 block, but a legacy Banka `CLAUDE.md` authority exists (with or without an old AGENTS block that points to it) | Legacy compatibility-read-only. Read the legacy chain when a read-only operation can do so safely, identify it as legacy, and do not mutate or promote it until migration is explicitly requested, previewed, and confirmed. |
 | `CLAUDE.md` contains exactly `@AGENTS.md`, but `AGENTS.md` is missing or has no valid schema-2 or schema-3 block | Broken import/missing authority. Stop state-dependent work; the shim is not state. |
@@ -574,40 +574,46 @@ succeeded.
 For this matrix, Minimal's matching shape has neither `/core/` nor `/context/` —
 true under either schema number, since Minimal's own shape is unaffected by
 the schema-2/3 split; a fresh Minimal generation writes 3 for consistency with
-new Core/Standard installs, but an existing schema-2 Minimal project needs no
-migration and no distinct treatment. Core has `/core/`, not `/context/`, and
+new Core/Standard installs. An existing schema-2 Minimal project is still
+refused by this Skills Kit; Section 3.2 offers a marker-only migration. Core has `/core/`, not `/context/`, and
 either its original four files (schema 2) or its seven files from Section 4
 (schema 3); Standard has `/context/`, not `/core/`, and either its original
 nine files (schema 2) or its twelve files from Section 5 (schema 3). Unrelated
 project prose outside the marked `AGENTS.md` block is preserved and is not
 competing Banka state. A second Banka block is a conflict, not an extension.
 
-**The `SPLIT-STATE` capability.** Detection above yields one derived
-capability that the operating sections (2.9, 2.11) and every state-resolving
-skill branch on, so that the schema *number* itself never has to appear in an
-operating instruction. It is **derived, never stored** — computed from the
-classification a skill has already made here, not from a new on-disk marker:
+**Schema-2 refusal and supported routes.** This Skills Kit operates schema 3
+only, including Minimal. After ruling out conflicts and interrupted migration,
+stop and say:
 
-- `SPLIT-STATE` **present** — Active schema 3 Core/Standard. Session state is
-  the day-one three-file split (`progress.md`/`progress-tracker.md`,
-  `session-notes.md`, `decisions-index.md`), durable decisions go to the
-  Logbook (Section 2.11), `verified-index.md` exists, and
-  `scripts/check-banka-thresholds.sh` / `verify-claims.sh` are installed.
-- `SPLIT-STATE` **absent** — Minimal, **or** Active schema 2 Core/Standard
-  (pre-migration shape). Session state is inline — Minimal in the Banka-owned
-  `AGENTS.md` block, schema-2 Core/Standard in `progress.md`/`progress-tracker.md` —
-  with no Logbook, no `verified-index.md`, and no threshold/verify scripts.
-  A skill treats the absent destinations exactly as it already does for
-  Minimal; schema-2 Core/Standard is not a third behavior to describe, only a
-  second way to reach the `absent` branch.
+> This project uses schema 2; this skill requires schema 3. Continue with the
+> corresponding schema-2 command below, or request direct protocol migration
+> using Section 3.2. Neither route runs automatically.
 
-Because the distinction is captured once here, an operating instruction says
-"on `SPLIT-STATE` present … otherwise …" and never names a schema number.
-Schema numbers are legitimate only in this detection contract (3.1) and the
-migration sequence (3.2), where a project's shape is identified or changed — a
-skill's own "Resolve Banka state first" preamble mirrors 3.1 and may name them
-for that reason; its operating steps may not. `scripts/check-schema-containment.sh`
-enforces this boundary mechanically.
+| Skill | Claude Code | Codex |
+| --- | --- | --- |
+| charter | `/charter-s2` | `$charter-s2` |
+| delegate | `/delegate-s2` | `$delegate-s2` |
+| dredge | `/dredge-s2` | `$dredge-s2` |
+| linis | `/linis-s2` | `$linis-s2` |
+| moor | `/moor-s2` | `$moor-s2` |
+| remember | `/remember-s2` | `$remember-s2` |
+| scale | `/scale-s2` | `$scale-s2` |
+| survey | `/survey-s2` | `$survey-s2` |
+| watershed | `/watershed-s2` | `$watershed-s2` |
+
+There is no `verify-s2`; use `survey-s2` and gather runtime evidence directly.
+If a suffixed command is unavailable, install real copies with patched `name:`
+frontmatter using Section 7's dual-generation procedure. Keep plain defaults
+unchanged. Select the latest stable annotated tag explicitly supporting the
+required state schema; confirm its VERSION and release documentation. Package
+major versions are not schema selectors. If no compatible release exists,
+report that route unavailable; never substitute an unreleased branch.
+
+Schema numbers belong in detection, refusal, and migration. Operating steps
+use ordinary tier distinctions: Minimal is inline; Core/Standard are split.
+Each skill carries its own refusal; no runtime resolver or capability alias is
+required.
 
 A legacy `CLAUDE.md` authority is recognizable only when it contains the
 `# Project Operating Protocol` heading and has exactly one complete legacy
@@ -633,11 +639,20 @@ Any operation needing a state destination stops.
 
 ### 3.2 Explicit migration sequence
 
-Migration is not adoption-by-detection and has no new skill or command. Two
-independent migrations exist, triggered separately, never combined into one
-confirmation: Legacy → Schema 3, below, and Schema 2 (pre-migration shape) →
-Schema 3, following it. Use either sequence only after the user explicitly
-requests that specific migration.
+Migration is a direct protocol task, not a Skills Kit invocation. In a fresh
+session in the project, use this request:
+
+> Migrate this project's Banka state to schema 3. From a tagged Banka checkout
+> whose release documentation explicitly supports schema 3, read Section 3.1
+> and follow Section 3.2 of `protocol/Banka.md`. Preview the complete change
+> and wait for confirmation before writing. Do not invoke a refused skill.
+
+Resolve that checkout using Section 7's stable-tag validation. If no released
+tag supports the destination schema, stop; never use an unreleased branch
+without an explicit development-testing request. Reading detection/migration
+for this explicit task is permitted; schema refusal blocks ordinary operation,
+not the migration procedure itself. Legacy → Schema 3 and Schema 2 → Schema 3
+are separate requests, never combined into one confirmation.
 
 **Legacy → Schema 3**
 
@@ -677,8 +692,12 @@ timestamp, file size, directory precedence, or runtime.
 
 **Schema 2 (pre-migration shape) → Schema 3**
 
-Core/Standard only — Minimal has no shape distinction between the two schema
-numbers, so it never needs this migration. Confirm via Section 3.1 that the
+**Minimal:** validate the complete schema-2 state and shim under Section 3.1.
+Preview changing only `BANKA:STATE-SCHEMA` from `2` to `3`; after confirmation,
+apply that change and re-run detection and the Cold Agent Test. Preserve all
+other bytes; create no state files, Logbook, or scripts.
+
+**Core/Standard:** confirm via Section 3.1 that the
 project is genuinely schema-2 pre-migration shape (marker exactly `2`, only
 the original four/nine files present) before starting; a project already
 showing one or more of schema 3's three additional files is mid-migration,
@@ -951,8 +970,8 @@ A project can outgrow its current tier. Do not promote automatically: act only
 when explicitly asked or when the current tier's threshold is actually met,
 and always promote exactly one tier at a time. Before editing, require an active
 schema chain under Section 3.1; legacy state must complete the confirmed
-migration sequence first, and a schema-2 pre-migration Core or Standard
-project must complete the schema-2→3 migration first — promotion always
+migration sequence first, and any schema-2 project
+must complete the schema-2→3 migration first — promotion always
 produces schema 3's file shape. Every promotion below must leave the project passing
 the Cold Agent Test (Section 3.1) — a fresh session opening the promoted
 project should recover tier, scope, state, and next action exactly as

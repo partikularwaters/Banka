@@ -4,7 +4,8 @@ description: Clean up narrative residue in settled files after a milestone witho
 argument-hint: [optional — specific settled file(s); defaults to files changed in the current completed milestone]
 ---
 
-*Linis* — Filipino for "clean." Code and context files accumulate the residue of how they were built: a name here, a date there, a line quoting what someone said mid-session, a comment narrating an experiment instead of stating its settled result. None of that is wrong to have *during* a build — some of it is exactly what `remember` and the session-state file(s) (the Minimal Banka block in `AGENTS.md`; where `SPLIT-STATE` is present, `core/progress.md`, `core/session-notes.md`, and `core/decisions-index.md` for Core or the `context/` equivalents for Standard; where `SPLIT-STATE` is absent on Core/Standard, `progress.md`/`progress-tracker.md` alone) are supposed to capture while work is active. But once a version ships or a milestone closes, that residue stops being useful context and starts being clutter a future session has to read past to find what actually matters.
+*Linis* — Filipino for "clean." Code and context files accumulate the residue of how they were built: a name here, a date there, a line quoting what someone said mid-session, a comment narrating an experiment instead of stating its settled result. None of that is wrong to have *during* a build — some of it is exactly what `remember` and the session-state file(s) (Minimal's Banka-owned `AGENTS.md` block; Core/Standard's task-tracking,
+session-notes, and decisions-index files) are supposed to capture while work is active. But once a version ships or a milestone closes, that residue stops being useful context and starts being clutter a future session has to read past to find what actually matters.
 
 This skill does not touch correctness — it never changes what code does. It only changes how it's described.
 
@@ -20,10 +21,8 @@ from the session-state file and the version-control diff.
 runs against unsettled code, by design, regardless of requested scope.
 
 **Outputs:** every proposed cleanup, listed for approval before any file is
-touched · where `SPLIT-STATE` is present, `scripts/check-banka-thresholds.sh`'s
-report, appended to the same proposal, informational only — where
-`SPLIT-STATE` is absent the script is not present (Section 3.2) and has no
-equivalent report to append.
+touched · on Core/Standard, `scripts/check-banka-thresholds.sh`'s
+report, appended to the same proposal, informational only — Minimal has no script or report.
 
 **Write authority:** only the confirmed settled file(s) in scope, and only
 narrative/descriptive content — operational history, provenance,
@@ -34,47 +33,50 @@ removed.
 
 Before reading or writing project state, inspect `AGENTS.md`, the complete
 contents of `CLAUDE.md`, `/core/`, `/context/`, and the required tier files.
-An active schema requires one complete Banka block in `AGENTS.md` containing
-these exact comments exactly once and in this order: `<!-- BANKA:START -->`,
-`<!-- BANKA:STATE-SCHEMA: 2 -->` or `<!-- BANKA:STATE-SCHEMA: 3 -->`, exactly
-one of `<!-- BANKA:TIER: Minimal -->`, `<!-- BANKA:TIER: Core -->`, or
-`<!-- BANKA:TIER: Standard -->`, then `<!-- BANKA:END -->`. The declared tier
-must match the filesystem shape required for that schema number. `CLAUDE.md`
-must be exactly `@AGENTS.md`; if it is missing, the active schema is still
-active for a runtime that discovers `AGENTS.md` directly, but report that
-Claude Code compatibility is unavailable.
+A valid Banka block contains these comments exactly once, in order:
+`<!-- BANKA:START -->`, `<!-- BANKA:STATE-SCHEMA: 2 -->` or
+`<!-- BANKA:STATE-SCHEMA: 3 -->`, exactly one `<!-- BANKA:TIER: Minimal -->`,
+`<!-- BANKA:TIER: Core -->`, or `<!-- BANKA:TIER: Standard -->`, then
+`<!-- BANKA:END -->`. This Skills Kit operates schema 3 only.
 
-A matching Minimal shape has neither `/core/` nor `/context/`, identical under
-either schema number. Core has `/core/` with no `/context/`: schema 2 requires
-exactly `overview.md`, `architecture.md`, `design.md`, and `progress.md`;
-schema 3 additionally requires `session-notes.md`, `decisions-index.md`, and
-`verified-index.md`. Standard has `/context/` with no `/core/`: schema 2
-requires exactly `project-overview.md`, `architecture.md`, `build-plan.md`,
-`code-standards.md`, `library-docs.md`, `ui-tokens.md`, `ui-rules.md`,
-`ui-registry.md`, and `progress-tracker.md`; schema 3 additionally requires
-`session-notes.md`, `decisions-index.md`, and `verified-index.md`. Schema-2
-Core/Standard is a fully active, permanent classification, not a transitional
-one — nothing requires migrating to schema 3.
+Minimal has neither `/core/` nor `/context/`. Core has `/core/` only:
+`overview.md`, `architecture.md`, `design.md`, `progress.md`,
+`session-notes.md`, `decisions-index.md`, and `verified-index.md`.
+Standard has `/context/` only: `project-overview.md`, `architecture.md`,
+`build-plan.md`, `code-standards.md`, `library-docs.md`, `ui-tokens.md`,
+`ui-rules.md`, `ui-registry.md`, `progress-tracker.md`, `session-notes.md`,
+`decisions-index.md`, and `verified-index.md`.
 
-Stop state-dependent work for competing authority, malformed/partial/duplicate
-or unknown Banka markers, a non-exact `CLAUDE.md` beside an active schema, an
-exact shim with missing authority, both state directories, tier mismatch, or
-missing required tier files for the declared schema. A schema-2 Core/Standard
-project already showing one or more of schema 3's three additional files is
-mid-migration, not broken — stop and point to resuming or reverting the
-migration (Protocol Section 3.2), never treat it as ordinary incomplete state
-and never invent or discard content. Do not choose, repair, or normalize any
-of these states.
+Schema 2 has the same Minimal shape, or Core/Standard's original four/nine
+files without `session-notes.md`, `decisions-index.md`, or `verified-index.md`.
+If any of those three files exists with marker `2`, stop for interrupted
+migration: resume Protocol Section 3.2 directly or restore from version
+control. Do not route an interrupted migration to ordinary schema-2 skills.
+For valid schema 2 at any tier, stop before this skill's operating steps and
+use the refusal below. Schema 2 remains supported by its own release line;
+never add files or change its marker merely to run this skill.
 
-Without a valid schema-2 or schema-3 block, recognize legacy Banka state only
-when `CLAUDE.md` has the `# Project Operating Protocol` heading and exactly
-one complete legacy tier shape, with or without an old AGENTS block pointing
-to it. Legacy's Core/Standard shape coincides with schema 2's own file count,
-but the two are distinguished by the marker, not the file count — check for a
-valid schema block first. If neither an active schema nor recognizable legacy
-state exists, treat the repository as unstructured/non-Banka — never assume
-Minimal, never create Banka state
+Stop for malformed, partial, duplicate, or unknown markers, tier/file-shape
+mismatch, both state directories, missing required files, or competing
+root authority. `CLAUDE.md`, when present, must be exactly `@AGENTS.md`.
+A missing shim only disables Claude Code compatibility; it does not bypass
+schema-2 refusal for runtimes that discover `AGENTS.md` directly.
+Do not repair, merge, or normalize these states implicitly.
+
+Without a valid schema block, recognize legacy state only from a
+`CLAUDE.md` with `# Project Operating Protocol` and one complete original
+tier shape. Legacy is compatibility-read-only until explicit migration.
+An exact shim without valid `AGENTS.md` is broken authority, not legacy.
+Without active or recognizable legacy state, treat the repository as
+unstructured/non-Banka — never assume Minimal or create Banka state
 implicitly.
+
+**Schema-2 refusal:** This skill requires schema 3. Use `/linis-s2` (Claude Code) or `$linis-s2` (Codex).
+If unavailable, install the suffixed copies from the latest stable release
+that explicitly supports schema 2. Alternatively, ask directly to migrate
+using `protocol/Banka.md` Section 3.2 from a release supporting schema 3,
+with a full preview and confirmation. Migration is a protocol task, not a
+skill invocation; neither path runs automatically.
 
 linis's own legacy handling is narrower than the shared default: it may
 report the classification and inspect state only to resolve scope and
@@ -156,7 +158,7 @@ Do not silently rewrite files. Show the proposed changes as a before/after diff 
 
 Wait for confirmation. Then apply exactly what was shown — no additional changes introduced during application that weren't in the proposal.
 
-**Where `SPLIT-STATE` is present, also run `scripts/check-banka-thresholds.sh` as a standard part of this pass** and append anything over threshold to the proposal, clearly separated from the narrative-cleanup findings above — informational only, `linis` doesn't archive or split, it surfaces the finding for the developer to act on via `remember`/`dredge`. This is a natural fit for `linis`'s own cadence (a milestone/version boundary, repo-wide) and closes the loop on Protocol Section 2.9's mechanical verification, independent of whether any other skill happened to catch it first. Where `SPLIT-STATE` is absent the script is not present (Section 3.2) — this step simply does not apply there.
+**On Core/Standard, also run `scripts/check-banka-thresholds.sh` as a standard part of this pass** and append anything over threshold to the proposal, clearly separated from the narrative-cleanup findings above — informational only, `linis` doesn't archive or split, it surfaces the finding for the developer to act on via `remember`/`dredge`. This is a natural fit for `linis`'s own cadence (a milestone/version boundary, repo-wide) and closes the loop on Protocol Section 2.9's mechanical verification, independent of whether any other skill happened to catch it first. This step does not apply to Minimal.
 
 ## Delegation note
 

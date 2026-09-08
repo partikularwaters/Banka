@@ -5,18 +5,19 @@
 This file is empty until the delegate skill is invoked against an approved charter plan. See the `delegate` skill for how tickets get written here.
 
 **Rule for any session reading this file:** resolve queue placement from a valid
-`AGENTS.md` authority (any active Banka schema; see Protocol
-Section 3.1) whose comments occur exactly once and in this order:
+`AGENTS.md` authority (schema 3; see Protocol Section 3.1) whose comments occur exactly once and in this order:
 
 ```markdown
 <!-- BANKA:START -->
-<!-- BANKA:STATE-SCHEMA: 2 -->
+<!-- BANKA:STATE-SCHEMA: 3 -->
 <!-- BANKA:TIER: Minimal -->
 <!-- BANKA:END -->
 ```
 
-(`STATE-SCHEMA` is `2` or `3` — this illustrates the marker format, not a
-required value.)
+For schema 2, stop: use `/delegate-s2` or `$delegate-s2` from a stable release
+supporting schema 2, or request direct migration via `protocol/Banka.md`
+Section 3.2. If migration is already interrupted, resume or revert it first;
+never execute tickets or alter state under this generation's queue rules.
 
 The third comment is exactly one of `<!-- BANKA:TIER: Minimal -->`,
 `<!-- BANKA:TIER: Core -->`, or `<!-- BANKA:TIER: Standard -->`; it must match
@@ -70,10 +71,9 @@ _Empty. Populated by the delegate skill — one row per ticket across all
 three tiers, ordered so every ticket's dependencies appear before it._
 
 ## Threshold Check
-_Where `SPLIT-STATE` is present only: copy the queue's row from
+_Core/Standard only: copy the queue's row from
 `bash scripts/check-banka-thresholds.sh` after each append or archive.
-Where `SPLIT-STATE` is absent (Minimal, or Core/Standard before migration)
-self-estimate instead._
+Minimal self-estimates instead._
 
 _Last run: [date]._
 
@@ -84,11 +84,10 @@ _Last run: [date]._
 ## Full ticket specs
 _Empty. Populated by the delegate skill._
 
-**Where `SPLIT-STATE` is present, don't estimate this section's size — measure
+**On Core/Standard, don't estimate this section's size — measure
 it:** run `bash scripts/check-banka-thresholds.sh` and read its `## Full
 ticket specs` row before deciding whether archiving is warranted (Protocol
-Section 2.9). Where `SPLIT-STATE` is absent (no script installed — Protocol
-Section 3.2), self-estimate there as before.
+Section 2.9). Minimal has no script; self-estimate there.
 
 **Keeping this section lean:** an unstarted or in-progress ticket's full spec
 always stays here in full, no matter how long the section gets — never
