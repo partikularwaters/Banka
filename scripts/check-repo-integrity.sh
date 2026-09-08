@@ -46,7 +46,7 @@ for label in 'Outcome Owner' 'User' 'Builder' 'Maintainer' 'Risk Owner'; do
   grep -Fq "$label" "$repo_root/skills-kit/watershed/SKILL.md" || fail "Missing $label in skills-kit/watershed/SKILL.md"
 done
 
-if rg -n 'SINGLE-FILE OUTPUT|neither exists\s+→ Minimal|`memory\.md`' \
+if grep -rEn 'SINGLE-FILE OUTPUT|neither exists[[:space:]]+→ Minimal|`memory\.md`' \
   "$repo_root/README.md" "$repo_root/system-map.md" "$repo_root/protocol" \
   "$repo_root/skills-kit" "$repo_root/full-context-templates" >/dev/null; then
   fail "Found an obsolete tier or memory-path phrase"
@@ -70,9 +70,10 @@ exact_line_count() {
   grep -Fxc "$literal" "$file" || true
 }
 
-extract_protocol_tier_block() {
-  local tier=$1
-  local occurrence=$2
+extract_tier_block_from() {
+  local file=$1
+  local tier=$2
+  local occurrence=$3
 
   awk -v marker="<!-- BANKA:TIER: $tier -->" -v wanted="$occurrence" '
     $0 == marker {
@@ -91,7 +92,11 @@ extract_protocol_tier_block() {
       next
     }
     { previous_two = previous_one; previous_one = $0 }
-  ' "$repo_root/protocol/Banka.md"
+  ' "$file"
+}
+
+extract_protocol_tier_block() {
+  extract_tier_block_from "$repo_root/protocol/Banka.md" "$1" "$2"
 }
 
 extract_handoff_block() {
@@ -179,6 +184,20 @@ for tier in Minimal Core Standard; do
     fail "Protocol $tier block differs from ${template#$repo_root/}"
 done
 
+# scale rewrites the Banka-owned block during a tier promotion, which happens
+# long after adoption with no Banka checkout present. It therefore carries both
+# routers verbatim; they must stay byte-identical to the protocol's own blocks.
+for tier in Core Standard; do
+  protocol_router_file="$integrity_tmp_dir/protocol-router-$tier.md"
+  scale_router_file="$integrity_tmp_dir/scale-router-$tier.md"
+  extract_protocol_tier_block "$tier" 1 > "$protocol_router_file"
+  extract_tier_block_from "$repo_root/skills-kit/scale/SKILL.md" "$tier" 1 > "$scale_router_file"
+  test -s "$scale_router_file" || \
+    fail "skills-kit/scale/SKILL.md does not inline the $tier router"
+  cmp -s "$protocol_router_file" "$scale_router_file" || \
+    fail "scale's inlined $tier router differs from the protocol $tier block"
+done
+
 schema_marker_count=$(grep -Fh 'BANKA:STATE-SCHEMA' "$project_entry_dir"/*-AGENTS.md | wc -l | tr -d ' ')
 test "$schema_marker_count" -eq 3 || fail "Expected exactly 3 schema markers across canonical AGENTS templates, found $schema_marker_count"
 tier_declaration_count=$(grep -Fh 'BANKA:TIER:' "$project_entry_dir"/*-AGENTS.md | wc -l | tr -d ' ')
@@ -195,7 +214,7 @@ require_literal '## Source of truth' "$project_entry_dir/core-AGENTS.md"
 require_literal '## Source of truth' "$project_entry_dir/standard-AGENTS.md"
 require_literal 'Banka-owned schema-2 block in `AGENTS.md`' "$repo_root/full-context-templates/standard/code-standards.md"
 
-if rg -n -i '@CLAUDE\.md|AGENTS\.md[^\n]*(points? to|imports?)[^\n]*CLAUDE\.md|CLAUDE\.md[^\n]*(canonical|current|primary)[^\n]*(authority|source of truth|state)' \
+if grep -rEni '@CLAUDE\.md|AGENTS\.md.*(points? to|imports?).*CLAUDE\.md|CLAUDE\.md.*(canonical|current|primary).*(authority|source of truth|state)' \
   "$repo_root/README.md" "$repo_root/BANKA-ADOPTION-GUIDE.md" "$repo_root/system-map.md" \
   "$repo_root/protocol" "$repo_root/skills-kit" "$repo_root/full-context-templates" "$repo_root/scripts" >/dev/null; then
   fail "Found obsolete CLAUDE-authority claim; CLAUDE.md may only be a compatibility shim or legacy read-only state"
@@ -244,6 +263,9 @@ done
 
 require_literal 'Current Phase, Session Memory Bank (including Next Immediate Step)' "$repo_root/skills-kit/scale/SKILL.md"
 require_literal 'no heading or entry in `core/progress.md` may be left without a destination' "$repo_root/skills-kit/scale/SKILL.md"
+require_literal 'Move `core/overflow/` to `context/overflow/` intact' "$repo_root/skills-kit/scale/SKILL.md"
+require_literal 'equivalence includes the overflow tree' "$repo_root/skills-kit/scale/SKILL.md"
+require_literal 'equivalence includes the overflow tree' "$repo_root/protocol/Banka.md"
 require_literal '[PASS / ISSUES FOUND / BLOCKED]' "$repo_root/skills-kit/survey/SKILL.md"
 
 delegate_handoff_file="$integrity_tmp_dir/delegate-handoff.txt"
