@@ -16,18 +16,11 @@ structure is the primary reliability benefit. It can also reduce unnecessary
 context because future sessions have fewer ambiguous places to search, but
 that is a consequence—not a promise of universal token efficiency.
 
-**Release:** Banka 2.0.2. This release version identifies the Banka package;
-the separate state schema identifies the on-disk project format. Banka 2.0.2
+**Release:** Banka 2.0.3. This release version identifies the Banka package;
+the separate state schema identifies the on-disk project format. Banka 2.0.3
 uses state schema 2. See [VERSION](VERSION) and [CHANGELOG.md](CHANGELOG.md).
 
 **New here?** Jump straight to [Getting started](#getting-started) to begin.
-
-> **Coming soon:** Banka 3.0.0. The `scalability-improvements` branch adds a
-> 10th skill (`verify`, mechanical claim verification), splits Core/Standard
-> session state into smaller per-concern files, and adds overflow archiving so
-> long-running projects stay lean. `main` reflects the latest stable release;
-> if you're reading this from that branch, expect protocol and skill changes
-> not yet folded into a numbered release.
 
 ## Why "Banka" 🛶
 

@@ -1,5 +1,59 @@
 # Changelog
 
+## 2.0.3 — 2026-09-09
+
+**Compatibility impact:** Patch. Corrections and integrity checks that preserve
+the public contract — no capability, skill, or output field is added. Tier-promotion
+and session-state thresholds now measure the set they were always meant to measure,
+so a long-running project can reach a threshold it previously could not.
+**Required consumer action:** none. Updating picks up the corrected thresholds
+and a `scale` skill that carries the canonical tier routers; skills are no
+longer byte-identical to 2.0.1, so an update does change installed content.
+Projects already at Core with a populated `core/overflow/` should update before
+their next promotion — see the overflow-migration entry below.
+**Project-state migration:** none. Existing Minimal, Core, and Standard project
+state remains valid.
+**State-schema impact:** none — state schema stays 2.
+
+- Counts `core/overflow/` toward `scale`'s Core→Standard word threshold. Track B
+  archiving moves state out of the four `/core/` files without reducing what a
+  session must read, so measuring the four alone let a project grow indefinitely
+  without ever tripping promotion.
+- Counts `overflow/decisions/` toward `remember`'s dedicated-decisions-file
+  threshold, for the same reason: supersession sweeps drain the Decisions
+  section independently of its size.
+- Migrates `core/overflow/` to `context/overflow/` during a Core→Standard
+  promotion, and gates the `/core/` deletion on that migration. Promotion
+  previously deleted `/core/` without moving the overflow tree, destroying
+  archived session history and the full text of swept superseded decisions,
+  which none of the nine Standard files reproduce. The corrected Core→Standard
+  threshold above makes this path reachable for exactly the projects with the
+  most archived history, so both changes ship together.
+- Inlines the canonical Core and Standard routers into `scale`, which rewrites
+  the Banka-owned `AGENTS.md` block during a promotion that happens long after
+  adoption with no Banka checkout present. Previously `scale` was asked to
+  reproduce a block it had no access to, so a promoted project silently lost the
+  Persona and Critical-context sections. `check-repo-integrity.sh` now verifies
+  both inlined routers are byte-identical to the protocol's tier blocks, and
+  protocol §2.8 records the exception.
+- Removes the `ripgrep` dependency from `check-repo-integrity.sh`. Two obsolete-
+  phrase guards sat inside `if rg …` conditions, so on a machine without
+  ripgrep — including the fresh checkouts the README install prompts create —
+  the script skipped both checks and still reported success.
+- Extends the cold-downstream simulation to place the Core and Standard
+  project-entry blocks in the simulated project, which its banned-pattern checks
+  previously never examined.
+- Closes the adoption guide's inter-diagram prose out of the code fence, so it
+  renders as prose rather than preformatted text.
+- Describes `watershed`'s five perspectives as isolated rather than independent,
+  matching the skill's own caveat that they share one underlying model.
+- Records the overflow migration and the Banka-owned `AGENTS.md` block in
+  `system-map.md`'s Stage 4 and concept table, so both facts this release
+  spreads across more than one file have a listed home.
+- Removes the 3.0.0 roadmap note. It addressed a reader on a branch and so read
+  as false from a release tag, and the work it advertised is not planned for
+  this line.
+
 ## 2.0.2 — 2026-09-07
 
 **Compatibility impact:** Patch. Documentation only — no skill, template, tier,
