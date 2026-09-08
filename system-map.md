@@ -192,8 +192,12 @@ A project can outgrow its tier. The scale skill promotes exactly one tier at a
 time — Minimal → Core, or Core → Standard, never skipping — only when a real
 threshold is met or explicitly requested. It works only from active schema-2
 state, shows what moves where, keeps the matching tier marker, and preserves
-the exact `CLAUDE.md` import before anything old is deleted. Legacy state must
-complete the confirmed migration sequence before promotion.
+the exact `CLAUDE.md` import before anything old is deleted. A Core→Standard
+promotion also migrates `core/overflow/` to `context/overflow/` intact and
+carries the Overflow Index across; the `/core/` deletion is gated on that
+migration, since no Standard file reproduces archived session history or the
+full text of swept superseded decisions. Legacy state must complete the
+confirmed migration sequence before promotion.
 
 ## Existing-project release updates (§7)
 
@@ -228,7 +232,9 @@ it; several rows are already enforced by `scripts/check-repo-integrity.sh`.
 | State schema markers | `protocol/Banka.md` §3, all three project-entry templates, every skill's state-resolution block, the integrity script's marker/count checks |
 | Tier shape and required files | `protocol/Banka.md` §3–§5, project-entry templates, `full-context-templates/core/` and `/standard/`, `scale`, every skill's tier-shape description, the integrity script's required-file checks |
 | Skill roster | `protocol/Banka.md` §7, `README.md`'s skill table, this file's Stage 3, the integrity script's skills list |
+| Banka-owned `AGENTS.md` block | `protocol/Banka.md` §3.3/§4/§5, the three project-entry templates, `scale`'s inlined Core and Standard routers, the integrity script's byte-identical checks |
 | Delegation handoff block | `delegate/SKILL.md`, `full-context-templates/delegation-queue.md`, the integrity script's byte-identical check |
+| Overflow migration on promotion | `protocol/Banka.md` §6, `scale`'s Core→Standard steps, the integrity script's migration literals |
 | Delegation tier model | `protocol/Banka.md` §7.5, `delegate/SKILL.md`, `full-context-templates/delegation-queue.md`, `README.md`'s skill table and build loop, this file's Stage 3 |
 | Operational perspectives | `protocol/Banka.md` §7.1, `charter`/`survey`/`watershed` SKILL.md, the integrity script's persona-ban and label checks |
 | `CLAUDE.md` shim | `protocol/Banka.md` §3, `full-context-templates/project-entry/CLAUDE.md`, the integrity script's shim check |

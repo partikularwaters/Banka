@@ -173,7 +173,7 @@ discovery location and used across every Banka project regardless of tier:
 | `delegate` | Splits an approved plan into Junior-safe tickets, Senior-required work (current session or fresh-session handoff, decided per ticket), and Owner-required work only the project owner can do. Model choice remains explicit and user-controlled. |
 | `survey` | Checks a build against what was planned, the project's own declared rules, and production-readiness — then routes real findings to the right next skill. |
 | `dredge` | Diagnoses a build failure before responding to it — including when it can't be reproduced at all — targeted fix, hard reset, or genuine rethink are different problems. |
-| `watershed` | Runs a genuinely contested or high-stakes call through five independent perspectives, then consolidates one recommendation. |
+| `watershed` | Runs a genuinely contested or high-stakes call through five isolated perspectives, then consolidates one recommendation. |
 | `moor` | Captures a UI pattern or engineering outcome once it's settled — registry and invariant captures wait for survey to pass first — so the next session builds on it instead of drifting. |
 | `remember` | Saves session state on close, restores it on open — always checking disk/git reality first, and keeping the session-state file itself from bloating as it grows. |
 | `scale` | Promotes a project exactly one tier at a time, Minimal → Core → Standard, only when a real threshold is met. |
