@@ -1180,6 +1180,54 @@ The protocol never regenerates skill contents per project. If the Skills Kit is
 not discoverable in the chosen runtime, configure its user-level Claude Code or
 Codex location before the first build session.
 
+### Optional: pinning a schema generation alongside the default install
+
+Skills install once per machine, at one flat, user-level location per
+runtime — there is no project-level pin. A developer who has both a
+schema-2-pinned project (Section 3.1's refusal routes here — see Section 3.2)
+and a project on a newer generation on the *same machine* needs both
+generations' skills reachable at once, under names that don't collide.
+
+Neither runtime's own scoping helps here: Claude Code resolves same-named
+personal (`~/.claude/skills/`) and project-local (`.claude/skills/`) skills
+by frontmatter `name:`, not by directory, and personal wins the collision —
+the opposite of an override. Relying on it is not an option; distinct names
+are.
+
+**Convention:** the plain, unsuffixed skill names always mean the machine's
+default generation. A pinned legacy generation gets a **`-s<N>` suffix**
+(schema number, not package version — the two are deliberately decoupled
+elsewhere in this protocol) applied to every skill that exists in that
+generation's release: `charter-s2`, `delegate-s2`, `dredge-s2`, `linis-s2`,
+`moor-s2`, `remember-s2`, `scale-s2`, `survey-s2`, `watershed-s2` for schema
+2. Only install a skill that actually shipped in the pinned tag — a skill the
+current generation added later (for example `verify`, absent from every
+schema-2 release) has no suffixed counterpart to create.
+
+**Mechanism — copy and patch, not a second symlink.** A skill's identity to
+the runtime is the `name:` field inside its `SKILL.md` frontmatter, not the
+directory it lives in. A `-s2`-suffixed directory that only symlinks to the
+same worktree content as the plain install still declares the unsuffixed
+`name:` and silently collapses into the plain entry — confirmed by direct
+test, not assumed. To register as a distinct, invocable skill:
+
+1. Resolve the pinned tag's worktree per the shared mechanism above (reuse if
+   already present; never mutate it).
+2. Copy each of that release's `skills-kit/<skill>` directories to
+   `<install-root>/<skill>-s<N>/` — a real copy, not a symlink.
+3. Patch only the copy's `SKILL.md` frontmatter `name:` line to
+   `<skill>-s<N>`; leave the rest of the file's content unchanged.
+
+This makes the suffixed copy a point-in-time snapshot rather than a live
+link to the worktree, unlike the plain install. That's acceptable here
+specifically because the source is an immutable, already-released tag that
+will never change under it — re-run the copy-and-patch step only if that
+generation's pin ever moves to a newer tag within the same schema number.
+
+This is optional infrastructure: a single-generation machine never creates
+a `-s<N>` set, and installing one adds nothing to the common single-generation
+install above.
+
 ### Updating an existing Banka-managed project
 
 An update is not adoption, tier promotion, or state-schema migration. It moves

@@ -280,6 +280,21 @@ it intentionally has no project-state `AGENTS.md`, `CLAUDE.md`, `/core/`, or
 Read-only skills can inspect an explicitly supplied subject and these repository
 docs; state-writing skills stop rather than treating the repository as Minimal.
 
+### Working across two schema generations on one machine
+
+Skills install once per machine, so a developer with both a schema-2-pinned
+project and a project on a newer generation needs both reachable without one
+clobbering the other. Plain skill names always mean the machine's default
+generation; a pinned older generation gets every one of its skills installed
+a second time under a `-s<N>` suffix (schema number — for example `charter-s2`,
+`remember-s2`), as real copies with only the `SKILL.md` frontmatter `name:`
+patched, not symlinks (a symlinked duplicate collapses back into the plain
+entry, since the runtime resolves identity by that frontmatter field, not the
+directory name). Only needed if you actually work across generations; skip it
+otherwise. Full mechanism and rationale: [protocol/Banka.md](protocol/Banka.md),
+Section 7, "Optional: pinning a schema generation alongside the default
+install."
+
 ## Adopting a project
 
 Once the Skills Kit is installed, paste this into a fresh session working in
