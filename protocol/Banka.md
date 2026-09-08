@@ -316,7 +316,7 @@ A contract entry points at where a detail is already defined rather than restati
 
 Every durable Banka rule or project fact has exactly one canonical home — the file where it is actually defined. Every other file may reference it, operationalize it, verify it, or summarize it in passing, but must not independently redefine it. A second definition of the same fact is drift waiting to happen, not redundancy for safety.
 
-This is not a new practice; it is already enforced mechanically. `scripts/check-repo-integrity.sh` verifies each project-entry `AGENTS.md` template is byte-identical to the tier block this protocol defines in Sections 3.3, 4, and 5 — the protocol is canonical, the templates are checked copies, never an independent source. The same script verifies the `delegate` skill's ready-to-paste handoff block is byte-identical to `full-context-templates/delegation-queue.md`'s copy of it, for the same reason.
+This is not a new practice; it is already enforced mechanically. `scripts/check-repo-integrity.sh` verifies each project-entry `AGENTS.md` template is byte-identical to the tier block this protocol defines in Sections 3.3, 4, and 5 — the protocol is canonical, the templates are checked copies, never an independent source. The same script verifies the `delegate` skill's ready-to-paste handoff block is byte-identical to `full-context-templates/delegation-queue.md`'s copy of it, for the same reason. It likewise verifies the Core and Standard routers inlined in the `scale` skill are byte-identical to those same tier blocks: `scale` rewrites the Banka-owned block during a tier promotion, which happens long after adoption with no Banka checkout present, so it must carry the canonical text rather than reconstruct it from memory.
 
 Where a fact must appear in more than one file for a skill to remain self-contained and portable — each state-resolving skill's own detection preamble in Section 7's Skills Kit is the clearest case — the repository's integrity tooling checks for selected marker literals, tier filenames, and detection phrases. It does not compare complete tier-shape definitions or stop-condition semantics; those still require manual review against Section 3.1. Skill-specific behavior after classification may differ, so these preambles are not byte-identical. This is a deliberate, partially checked exception to "one home": skill portability is itself a Banka invariant (Section 7), and a runtime include or generation step would trade one problem for another.
 
@@ -339,7 +339,7 @@ A project's session-state destination (the Banka-owned `AGENTS.md` block for Min
 
 1. **Session Notes ≥ ~2,000 words** (provisional, revise once real usage data exists — Section 2.5's Rule 4). Evaluate each tagged thread independently: a thread with a genuine settled boundary is archive-eligible and moves to `overflow/session-notes/`; a thread with no settled boundary stays live regardless of size. If no thread has a settled boundary, do not force a split — flag the section as oversized with no clean cut point and stop, consistent with `linis`'s rule to never act against unsettled work.
 2. **Any overflow file ≥ ~2,000 words** (same provisional figure). Start the next sequentially numbered file in the same subfolder (`01-session-notes.md` → `02-session-notes.md`, or the decisions equivalent). Never split a file's content mid-file.
-3. **Decisions section ≥ ~1,500 words** (provisional, matching `scale`'s own Minimal→Core figure — the same "this now deserves its own file" signal). Recommend a dedicated decisions file, previewed and confirmed like any `scale` promotion, but this is a within-tier action `remember` performs directly — it is not a `scale` tier promotion.
+3. **Decisions section plus `overflow/decisions/` ≥ ~1,500 words** (provisional, matching `scale`'s own Minimal→Core figure — the same "this now deserves its own file" signal). Recommend a dedicated decisions file, previewed and confirmed like any `scale` promotion, but this is a within-tier action `remember` performs directly — it is not a `scale` tier promotion.
 
 ### Resulting structure
 
@@ -716,8 +716,11 @@ moved where before finalizing.
 
 Triggered when any of:
 
-1. The four `/core/` files combined exceed roughly 4,000 words (~25,000
-   characters).
+1. The four `/core/` files and everything under `core/overflow/` combined
+   exceed roughly 4,000 words (~25,000 characters). The overflow tree counts:
+   Track B archiving moves state out of the four files without reducing the
+   total a cold session has to read, so measuring the four alone lets a
+   project grow indefinitely without ever tripping this threshold.
 2. The project has split into a genuinely distinct architectural environment.
 3. `core/design.md`'s Component Registry exceeds roughly 15 distinct reusable
    UI patterns.
@@ -728,8 +731,16 @@ files: `core/overview.md`'s purpose, users, scope, and success criteria to
 `architecture.md`; `core/architecture.md` mostly to `architecture.md`, with conventions to `code-standards.md` and
 library patterns to `library-docs.md`; `core/design.md` to `ui-tokens.md`,
 `ui-rules.md`, and `ui-registry.md`; `core/progress.md` to `build-plan.md` and
-`progress-tracker.md`. Move the resulting files into `/context/` and remove the
-superseded `/core/` authority only after equivalence is verified. Replace only
+`progress-tracker.md`. Move `core/overflow/` to `context/overflow/` intact if it
+exists — the whole tree, filenames and numbering unchanged — and carry
+`core/progress.md`'s Overflow Index into `progress-tracker.md` with each row's
+link rewritten to the moved path. The overflow tree holds archived session
+history and the full text of swept superseded decisions, which none of the nine
+Standard files reproduce; it is migrated, never re-split. Move the resulting
+files into `/context/` and remove the superseded `/core/` authority only after
+equivalence is verified — equivalence includes the overflow tree, so every file
+that was under `core/overflow/` must exist under `context/overflow/` first, and
+an unaccounted-for overflow file is a stop condition, not a deletion. Replace only
 the marked Banka block with the Standard router from Section 5, changing
 exactly `<!-- BANKA:TIER: Core -->` to `<!-- BANKA:TIER: Standard -->`.
 Preserve all content outside the block, keep `CLAUDE.md` exactly `@AGENTS.md`,

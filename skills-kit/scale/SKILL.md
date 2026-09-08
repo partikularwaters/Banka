@@ -92,10 +92,39 @@ If triggered, perform the promotion:
    - Project Overview's Stack, Folder Matrix, and Absolute Invariants → `core/architecture.md`
    - Any UI-related content → `core/design.md`
    - Current Status and Session Notes → `core/progress.md`
-3. Replace only the Banka-owned block in `AGENTS.md` with the Core router, set
-   its tier marker to Core, and make its Source of truth section list the four
-   `/core/` files. Preserve all content outside the block and keep `CLAUDE.md`
-   exactly `@AGENTS.md`.
+3. Replace only the Banka-owned block in `AGENTS.md` with the Core router
+   below, reproduced exactly. Preserve all content outside the block and keep
+   `CLAUDE.md` exactly `@AGENTS.md`. Carry forward the project's existing
+   Critical context about the user rather than re-inserting the placeholder.
+
+```
+<!-- BANKA:START -->
+<!-- BANKA:STATE-SCHEMA: 2 -->
+<!-- BANKA:TIER: Core -->
+# Project Operating Protocol
+
+## Persona
+You are acting as a Senior Technical Lead & Project Manager for this project.
+
+## Critical context about the user
+[Insert the user's technical background and any domain sensitivity.]
+
+## Source of truth
+Read the Core file relevant to the work before acting:
+- `core/overview.md` — vision and data model
+- `core/architecture.md` — stack, structure, invariants, conventions, and library patterns
+- `core/design.md` — UI tokens, layout rules, and component registry
+- `core/progress.md` — milestones, completed work, and session memory
+
+If `IDEA-SCOPE.md` exists, consult it for original intent. Never overwrite it.
+
+## Skills available
+This project uses the standard Skills Kit: charter, survey, dredge, remember,
+moor, scale, delegate, watershed, and linis. Install it once per runtime; do
+not create a project-local copy. Follow each skill's own instructions exactly.
+<!-- BANKA:END -->
+```
+
 4. Output all four new files and the proposed replacement Banka block in full.
    Explicitly list what moves from the Minimal block into each new file so the
    user can confirm before inline state is removed. Once confirmed, replace the
@@ -104,7 +133,9 @@ If triggered, perform the promotion:
 ## Core → Standard
 
 Thresholds — any one is sufficient:
-1. The four `/core/` files combined exceed ~4,000 words (~25,000 characters).
+1. The four `/core/` files and everything under `core/overflow/` combined
+   exceed ~4,000 words (~25,000 characters). Count the overflow tree: archiving
+   moves state out of the four files without reducing what a session must read.
 2. The project has split into a fundamentally distinct architectural environment (e.g., a mobile companion app or standalone service alongside this project).
 3. `core/design.md`'s Component Registry exceeds 15 complex, unique UI definitions.
 
@@ -123,16 +154,61 @@ If triggered, perform the promotion:
    - Active Milestones and Completed Actions → `context/build-plan.md`
    - Current Phase, Session Memory Bank (including Next Immediate Step), and any
      Known Issues / Open Decisions → `context/progress-tracker.md`
+   - Its `## Overflow Index`, if present → `context/progress-tracker.md`, with
+     every row's link rewritten to the moved path
    - Before previewing the result, account for every source section explicitly;
      no heading or entry in `core/progress.md` may be left without a destination
-6. Replace only the Banka-owned block in `AGENTS.md` with the Standard router,
-   set its tier marker to Standard, and make its Source of truth section list
-   all nine `/context/` files. Preserve all content outside the block and keep
-   `CLAUDE.md` exactly `@AGENTS.md`. The Skills available note reflects that
-   moor writes to `context/ui-registry.md` or `context/progress-tracker.md`, and
-   remember uses `context/progress-tracker.md`.
-7. Output all nine new files and the proposed replacement Banka block in full.
+6. Move `core/overflow/` to `context/overflow/` intact, if it exists — the whole
+   tree, both `session-notes/` and `decisions/`, with filenames and numbering
+   unchanged. This is a move, never a re-split or a rewrite: overflow files hold
+   archived session history and the full text of swept superseded decisions, and
+   nothing in the nine Standard files reproduces them. Confirm every file listed
+   in the Overflow Index resolves at its new path before continuing.
+7. Replace only the Banka-owned block in `AGENTS.md` with the Standard router
+   below, reproduced exactly. Preserve all content outside the block and keep
+   `CLAUDE.md` exactly `@AGENTS.md`. Carry forward the project's existing
+   Critical context about the user rather than re-inserting the placeholder.
+
+```
+<!-- BANKA:START -->
+<!-- BANKA:STATE-SCHEMA: 2 -->
+<!-- BANKA:TIER: Standard -->
+# Project Operating Protocol
+
+## Persona
+You are acting as a Senior Technical Lead & Project Manager for this project.
+
+## Critical context about the user
+[Insert the user's technical background and any domain sensitivity.]
+
+## Source of truth
+Read the Standard file relevant to the work before acting:
+- `context/project-overview.md` — purpose, users, scope, and product-level data overview
+- `context/architecture.md` — canonical stack, data model, structure, data flows, and invariants
+- `context/build-plan.md` — phased feature roadmap
+- `context/code-standards.md` — checkable implementation conventions
+- `context/library-docs.md` — project-specific third-party library patterns
+- `context/ui-tokens.md` and `context/ui-rules.md` — design system
+- `context/ui-registry.md` — living catalog of built components
+- `context/progress-tracker.md` — current status, decisions, and session memory
+
+If `IDEA-SCOPE.md` exists, consult it for original intent. Never overwrite it.
+
+## Skills available
+This project uses the standard Skills Kit: charter, survey, dredge, remember,
+moor, scale, delegate, watershed, and linis. Install it once per runtime; do
+not create a project-local copy. Follow each skill's own instructions exactly.
+The moor skill writes UI patterns to `context/ui-registry.md` and general
+outcomes to `context/progress-tracker.md`; remember updates session state in
+`context/progress-tracker.md`.
+<!-- BANKA:END -->
+```
+
+8. Output all nine new files and the proposed replacement Banka block in full.
    Explicitly list what moves from each `/core/` file into each new file,
    including Current Phase and Next Immediate Step, so the user can confirm
-   before anything is deleted. Once confirmed and equivalence
-   is verified, delete `/core/`; never leave both state directories.
+   before anything is deleted. Once confirmed and equivalence is verified —
+   equivalence includes the overflow tree, so every file that was under
+   `core/overflow/` must exist under `context/overflow/` before anything is
+   removed — delete `/core/`; never leave both state directories. If any
+   overflow file is unaccounted for, stop and report rather than deleting.
